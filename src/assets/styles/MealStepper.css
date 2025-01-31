@@ -1,0 +1,451 @@
+body {
+    margin: 0;
+    font-family: "Arial", sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.app-container {
+    display: flex;
+    min-height: 100vh;
+    background: white;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    width: 25%;
+    background-color: #f4f5f7;
+    padding: 2rem;
+    border-right: 1px solid #ddd;
+}
+
+.title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+}
+
+.steps {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    color: #777;
+    margin-top: 10vh;
+}
+
+.step {
+    display: flex;
+    align-items: start;
+    margin-bottom: 1.5rem;
+}
+
+.step.completed {
+    color: #007bff;
+}
+
+.step.active {
+    color: #000000;
+}
+
+.checkmark {
+    font-size: 1.0rem;
+    margin-right: 1rem;
+    color: rgb(157, 202, 245);
+}
+
+.step p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #ddd;
+}
+
+/* Form Section */
+.form-container {
+    flex: 1;
+    padding: 2rem 3rem;
+    position: relative;
+    margin: 0 auto;
+
+    
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    margin-top: 8vh;
+}
+
+.icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #6c6c6e;
+}
+
+h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+p {
+    color: #666;
+}
+
+.form {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: 0.75vh;
+    padding-bottom: 0 !important;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.05rem;
+    font-weight: bold;
+    font-size: 1.8vh;
+}
+
+/* Add box-sizing globally */
+* {
+    box-sizing: border-box;
+}
+
+
+
+/* Input Fields and Submit Button */
+.form-group input,
+.custom-select .css-13cymwt-control ,
+.submit-btn {
+    width: 100%;
+    /* Ensure they always take full width of their container */
+    max-width: 400px;
+    /* Limit the width to 400px */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1.8vh;
+    height: 4vh;
+    box-sizing: border-box;
+
+
+    /* Ensure padding does not add extra width */
+}
+
+/* Ensure Placeholder Font Size */
+.form-group input::placeholder {
+    font-size: 1.8vh;
+}
+
+/* Submit Button */
+.submit-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 1rem auto 0;
+    height: 5vh;
+    display: block;
+
+}
+
+.submit-btn:hover {
+    background-color: #0056b3;
+}
+
+.submit-btn:hover {
+    background-color: #0056b3;
+}
+
+.step.active {
+    font-weight: bold;
+}
+
+.step.completed .checkmark {
+    color: #007bff;
+}
+
+.step.completed strong {
+    color: #007bff;
+}
+
+/* Short Stepper */
+.short-stepper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+}
+
+.short-stepper span {
+    font-size: 2rem;
+    margin: 0 5px;
+}
+
+.short-stepper .dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-color: #ddd;
+    border-radius: 50%;
+}
+
+.short-stepper .dash {
+    display: inline-block;
+    width: 35px;
+    height: 10px;
+    background-color: #007bff;
+    border-radius: 10px;
+}
+
+/* Row Group Styling for Specific Fields */
+.row-group {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    max-width: 400px;
+}
+
+.row-group .form-group {
+    flex: 1;
+}
+
+.form-group input {
+    width: 100%;
+    max-width: 400px;
+    padding: 1vh;
+    font-size: 2vh;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+
+}
+/* Focused Input - Border color changes to blue */
+.form-group input:focus {
+    border-color: #007bff;  /* Change border to blue on focus */
+    outline: none;          /* Remove default outline on focus */
+    border-width: 2px;
+}
+
+
+
+/* Ensure the input field inside the control is vertically centered */
+.custom-select .css-19bb58m input {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    font-size: 1.8vh;
+    line-height: 4vh;
+    height: 100%;                /* Fill the entire height of the control */
+    padding: 0 10px;             /* Adjust left/right padding */
+
+
+}
+
+
+ 
+
+.custom-select .css-13cymwt-control {
+    display: flex;
+    align-items: center;
+     padding-left: 0.75vh;
+     justify-content: flex-start;   
+     height: 4vh;  
+    padding-bottom: 0;
+    padding-top: 0;
+    font-size: 1.8vh;             
+    border: 1px solid #ddd;      
+    border-radius: 5px;          
+    box-sizing: border-box;       
+     min-height: 4vh; 
+     overflow: hidden;   
+ 
+}
+
+
+/* Custom Select Input Field (Inside .css-13cymwt-control) */
+.custom-select .css-19bb58m input {
+    width: 100%;
+    max-width: 400px;
+    padding: 1vh;
+    font-size: 2vh;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+ 
+}
+.custom-select css-b62m3t-container {
+    height: 4vh;
+    min-height: 4vh;
+    max-height: 4vh;
+}
+
+
+
+.custom-select .css-13cymwt-control--is-focused {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 1.8vh;
+}
+ 
+.custom-select .css-hlgwow {
+    padding: 0;   
+    padding-top: 0;
+    display: flex;
+    align-items: center;   
+    font-size: 1.8vh;   
+    overflow: hidden;   
+    text-overflow: ellipsis;   
+    white-space: nowrap;   
+    /* height: 100%;    */
+}
+
+.custom-select .css-1nmdiq5-menu {
+    font-size: 1.8vh;
+}
+
+.custom-select .css-13cymwt-placeholder {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 1.8vh;
+}
+
+.custom-select .css-1jqq78o-input {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.error-message {
+    color: red;
+    font-size: 1.25vh;
+    display: block;
+    margin-top: 0;
+    padding-top: 0;
+    margin-left: 0;
+}
+
+.link-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.link-container a {
+    font-size: 1.0rem;
+    color: #007bff;
+    text-decoration: none;
+}
+
+/* Responsive Styles */
+@media (max-width: 1200px) {
+    .sidebar {
+        width: 30%;
+        padding: 1rem;
+    }
+
+    .form-container {
+        padding: 2rem 2rem;
+    }
+
+    .form-group input,
+    .custom-select .css-13cymwt-control,
+    .custom-select .css-t3ipsp-control ,
+    .custom-select .css-1nmdiq5-menu,
+    .submit-btn {
+        font-size: 1.6vh;
+    }
+    label {
+        font-size: 1.6vh;      /* Adjust label font size for smaller screens */
+    }
+
+    .form-group input::placeholder {
+        font-size: 1.6vh;
+    }
+}
+
+@media (max-width: 768px) {
+    .app-container {
+        flex-direction: column;
+        padding: 1rem;
+    }
+
+    .sidebar {
+        width: 100%;
+        border-right: none;
+        padding: 1rem;
+    }
+
+    .form-container {
+        padding: 2rem 1rem;
+    }
+
+    .form {
+        max-width: 100%;
+    }
+
+    /* .form-group input,
+    .custom-select .css-13cymwt-control,
+    .custom-select .css-t3ipsp-control ,
+    .custom-select .css-1nmdiq5-menu,
+    .submit-btn {
+        font-size: 1.4vh;
+    } */
+    label {
+        font-size: 1.4vh;      /* Adjust label font size for smaller screens */
+    }
+
+    .form-group input::placeholder {
+        font-size: 1.4vh;
+    }
+
+    .short-stepper {
+        bottom: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        width: 100%;
+        padding: 1rem;
+    }
+
+    .form-container {
+        padding: 1.5rem;
+    }
+/* 
+    .form-group input,
+    .custom-select .css-13cymwt-control,
+    .custom-select .css-t3ipsp-control ,
+    .custom-select .css-1nmdiq5-menu
+    .submit-btn {
+        font-size: 1.8vh;
+    } */
+    label {
+        font-size: 1.2vh;      /* Adjust label font size for smaller screens */
+    }
+    .form-group input::placeholder {
+        font-size: 1.8vh;
+    }
+
+    .short-stepper span {
+        font-size: 1.5rem;
+    }
+
+    .form {
+        max-width: 100%;
+    }
+}
