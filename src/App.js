@@ -17,6 +17,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom'; // Updated for React Router v6
 import MealPlanStepper from './MealStepper'; // Your existing Meal Plan Stepper component
 import AdminDashboard from './adminDashboard'; // Your Admin Login component
+import AdminPanel from './components/adminPanel';
 
 function App() {
   return (
@@ -30,6 +31,8 @@ function App() {
           
           {/* Route for Admin Login */}
           <Route path="/admin-login" element={<AdminDashboard />} />
+          <Route path="/admin-p" element={<AdminPanel />} />
+
         </Routes>
       </div>
     </Router>

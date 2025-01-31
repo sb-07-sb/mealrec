@@ -20,6 +20,7 @@ export const handleSignup = async (semail, spassword) => {
         return { success: false, message: "Something went wrong" };
     }
 };
+ 
 
 // Handle Login API request
 export const handleLogin = async (email, password) => {
@@ -43,6 +44,7 @@ export const handleLogin = async (email, password) => {
     }
 };
 
+
 // Handle Admin Login API request
 export const handleAdminLogin = async (email, password) => {
     try {
@@ -64,6 +66,7 @@ export const handleAdminLogin = async (email, password) => {
         return { success: false, message: "Something went wrong" };
     }
 };
+
 
 // Save user data API request
 export const handleSaveUserData = async (data) => {
@@ -88,6 +91,7 @@ export const handleSaveUserData = async (data) => {
     }
 };
 
+
 // API Request to fetch users for admin
 export const fetchUsers = async () => {
     try {
@@ -111,7 +115,8 @@ export const fetchUsers = async () => {
     }
   };
   
-  // API Request to fetch user data for admin
+
+// API Request to fetch user data for admin
 export const fetchUserData = async (userId) => {
   try {
     const response = await fetch(`http://localhost:5000/admin/get_user_data/${userId}`, {
@@ -122,8 +127,8 @@ export const fetchUserData = async (userId) => {
     const result = await response.json();
     console.log("Raw API Response:", result); // Debugging
 
-    if (response.ok && result.success && result.user_details) {
-      return { success: true, userDetails: result.user_details };
+    if (response.ok && result.success && result.user_data) {
+      return { success: true, userDetails: result.user_data }; // Corrected to match the response field name
     } else {
       console.warn("Unexpected API response format:", result);
       return {
@@ -143,26 +148,24 @@ export const fetchUserData = async (userId) => {
 };
 
   
-  
-  // API Request to update user role
-  export const updateUserRole = async (userId, newRole) => {
-    try {
-      const response = await fetch("http://localhost:5000/admin/update-role", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, role: newRole }),
+export const updateUserData = async (userData) => {
+  try {
+      const response = await fetch(`http://localhost:5000/admin/update_user_data/${userData._id}`, { // Update the URL to your Flask API
+          method: 'PUT',
+          headers: {
+              'Content-Type': 'application/json', // Make sure to set this header
+          },
+          body: JSON.stringify(userData), // Send the data as JSON
       });
-      const result = await response.json();
-      if (response.ok) {
-        return { success: true };
-      } else {
-        return { success: false, message: result.error || "Failed to update role." };
-      }
-    } catch (error) {
-      console.error("Error updating role:", error);
-      return { success: false, message: "Something went wrong while updating role." };
-    }
-  };
+
+      const data = await response.json();
+      return data;
+  } catch (err) {
+      return { success: false, message: 'Error updating user data' };
+  }
+};
+
+
   
   // API Request to delete user
   export const deleteUser = async (userId) => {

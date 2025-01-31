@@ -6,8 +6,8 @@ import  { ManageUsersStep } from './manageUsers';  // Import the ManageUsersStep
 // Steps configuration: Each step has a title, description, and a content component.
 const stepsAdmin = [
   {
-    title: "Email & Password",
-    description: "Set your email and password for the account.",
+    title: "Sign In",
+    description: "Provide your email and password for the account.",
     content: ({ formData, handleInputChange, errors, setCurrentStep }) => (
       <div className="step-0">
         <form onSubmit={(e) => e.preventDefault()}>

@@ -16,7 +16,8 @@ const AdminDashboard = () => {
 
   const [errors, setErrors] = useState({});
   const [users, setUsers] = useState([]);  // Define users state here
- 
+  const [editingUserId, setEditingUserId] = useState(null);
+  const [editData, setEditData] = useState({ email: "", role: "" });
 
 
   const handleInputChange = (e) => {
@@ -48,19 +49,19 @@ const AdminDashboard = () => {
     
      
 
-    //   // If all validations pass, and we're not in Step 1 or 0, proceed to save user data
-    //   if (currentStep === stepsAdmin.length - 1) {
-    //     if (true) {
-    //       alert("admin!");
-    //       console.log("Form data:", formData); // Optionally log the form data
-    //     }
-    //   } else {
-    //     if (currentStep < stepsAdmin.length - 1) {
-    //       setCurrentStep(currentStep + 1); // Move to the next step
-    //       const nextStep = currentStep + 1;
+      // If all validations pass, and we're not in Step 1 or 0, proceed to save user data
+      if (currentStep === stepsAdmin.length - 1) {
+        if (true) {
+          alert("admin!");
+          console.log("Form data:", formData); // Optionally log the form data
+        }
+      // } else {
+      //   if (currentStep < stepsAdmin.length - 1) {
+      //     setCurrentStep(currentStep + 1); // Move to the next step
+      //     const nextStep = currentStep + 1;
 
-    //     }
-    //   }
+      //   }
+      }
     };
 
   return (
@@ -72,13 +73,13 @@ const AdminDashboard = () => {
           {stepsAdmin.slice(0).map((step, index) => (
             <li
               key={index}
-              className={`step ${index +1 === currentStep ? "active" : ""}`}
+              className={`step ${index  === currentStep ? "active" : ""}`}
               onClick={() => {
-               
-                                 
-                    setCurrentStep(index + 1);
-                  
+                const loginResponse =   handleAdminLogin(formData.email, formData.password);
+                if (loginResponse.success) {    
+                    setCurrentStep(index );
                 }
+              }
               }
               style={{
                 cursor:  'pointer' ,

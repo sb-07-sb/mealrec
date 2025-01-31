@@ -1,3 +1,6 @@
+import traceback
+
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pymongo import MongoClient
@@ -148,41 +151,73 @@ def admin_login():
 @app.route('/admin/get_users', methods=['GET'])
 def get_users():
     users = user_profile_collection.find()  # Fetch all users from MongoDB
+    
     users_list = []
     for user in users:
+        # Fetch the corresponding user data from user_data_collection to get fullName
+        user_data = user_data_collection.find_one({'user_id': str(user['_id'])})
+        
+        # Check if user_data is found, and retrieve the fullName (if it exists)
+        full_name = user_data['fullName'] if user_data else 'user'
+        
+        # Append user info with fullName
         users_list.append({
             'id': str(user['_id']),
             'email': user['email'],
-            'role': user['role']
+            'role': user['role'],
+            'fullName': full_name  # Add fullName from user_data_collection
         })
+    
     return jsonify({'success': True, 'users': users_list})
+
 
 @app.route('/admin/get_user_data/<user_id>', methods=['GET'])
 def get_user_data(user_id):
-    # Fetch the user profile from the user_profile_collection
-    user  = user_profile_collection.find_one({"_id": ObjectId(user_id)})
-
-    if not user:
-        return jsonify({'success': False, 'message': 'User not found'}), 404
+    user_data = user_data_collection.find_one({'user_id': user_id})  # Fetch user data by user_id
     
-    # Fetch additional user data from user_data_collection (assuming a 'user_id' field)
-    user_data = user_data_collection.find_one({'user_id': user['_id']})
+    if user_data:
+        # Extract only the 'value' from the 'activityLevel' field and other fields dynamically
+        user_data_filtered = {key: value['value'] if isinstance(value, dict) and 'value' in value else value
+                              for key, value in user_data.items()}
+        # Convert ObjectId to string for '_id'
+        user_data_filtered['_id'] = str(user_data['_id'])
+        
+        return jsonify({'success': True, 'user_data': user_data_filtered})
+    else:
+        return jsonify({'success': False, 'message': 'User not found'}), 404
 
-    if not user_data:
-        return jsonify({'success': False, 'message': 'User data not found'}), 404
 
-    # Combine the user profile data and user data
-    user_details = {
-        'user': {
-            'id': str(user['_id']),
-            'email': user['email'],
-            'role': user['role']
-        },
-        'user_data': user_data  # Add the user data fetched from the user_data_collection
-    }
+@app.route('/admin/update_user_data/<user_id>', methods=['PUT'])
+def update_user_data(user_id):
+    try:
+        # Get data from the request body
+        data = request.get_json()
 
-    return jsonify({'success': True, 'user_details': user_details})
+        if not data:
+            return jsonify({'success': False, 'message': 'No data received'}), 400
 
+        # Filter out any fields with None, empty or invalid values
+        valid_data = {key: value for key, value in data.items() if value not in [None, "", "null", "undefined"]}
+
+        # If there's no valid data to update, return an error
+        if not valid_data:
+            return jsonify({'success': False, 'message': 'No valid fields to update'}), 400
+
+        # Perform the update operation
+        result = user_data_collection.update_one(
+            {'user_id': user_id},  # Search for the user document by user_id
+            {'$set': valid_data}  # Only update the valid fields
+        )
+
+        if result.modified_count > 0:
+            return jsonify({'success': True, 'message': 'User data updated successfully'})
+        else:
+            return jsonify({'success': False, 'message': 'No changes made or user not found'}), 404
+    except Exception as e:
+        # Log the error for debugging
+        print(f"Error: {str(e)}")
+        print(traceback.format_exc())
+        return jsonify({'success': False, 'message': 'Error updating user data'}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)
