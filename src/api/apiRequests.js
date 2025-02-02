@@ -147,24 +147,25 @@ export const fetchUserData = async (userId) => {
   }
 };
 
-  
 export const updateUserData = async (userData) => {
   try {
-      const response = await fetch(`http://localhost:5000/admin/update_user_data/${userData._id}`, { // Update the URL to your Flask API
+      if (!userData.user_id) {
+          return { success: false, message: 'Invalid user ID' };
+      }
+
+      const response = await fetch(`http://localhost:5000/admin/update_user_data/${userData.user_id}`, { 
           method: 'PUT',
-          headers: {
-              'Content-Type': 'application/json', // Make sure to set this header
-          },
-          body: JSON.stringify(userData), // Send the data as JSON
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(userData),
       });
 
       const data = await response.json();
       return data;
   } catch (err) {
+      console.error('Error:', err);
       return { success: false, message: 'Error updating user data' };
   }
 };
-
 
   
   // API Request to delete user

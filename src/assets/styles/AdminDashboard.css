@@ -1,0 +1,144 @@
+/* Main Container */
+.app-container {
+    padding: 20px;
+    background-color: #f8f9fa; /* Light background for the app */
+    font-family: 'Arial', sans-serif;
+}
+
+/* Form Container */
+.form-container {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Form Header */
+.form-header h3 {
+    color: #007bff;
+    font-size: 24px;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+/* Error Message */
+.error-message {
+    color: #dc3545;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+/* Loading Indicator */
+.loading {
+    text-align: center;
+    font-size: 16px;
+    color: #007bff;
+    margin-top: 20px;
+}
+
+/* Table Wrapper */
+.table-wrapper {
+    margin-top: 20px;
+    overflow-x: auto;
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e9ecef;
+    color: #333;
+}
+
+th {
+    background-color: #007bff;
+    color: white;
+    font-weight: 600;
+}
+
+tr:hover {
+    background-color: #f8f9fa; /* Light grey on hover */
+}
+
+/* Clickable Name */
+td[onClick] {
+    color: #007bff;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* Form Group Styling */
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #333;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #333;
+}
+
+input[type="text"]:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+/* Button Styling */
+.submit-btn, .back-btn {
+    padding: 10px 20px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.submit-btn {
+    background-color: #007bff;
+    color: white;
+}
+
+.back-btn {
+    background-color: #6c757d;
+    color: white;
+}
+
+.submit-btn:hover {
+    background-color: #0056b3;
+}
+
+.back-btn:hover {
+    background-color: #5a6268;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .form-container {
+        padding: 15px;
+    }
+
+    th, td {
+        padding: 10px;
+    }
+}

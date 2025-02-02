@@ -41,26 +41,29 @@ export const ManageUsersStep = ({ setCurrentStep }) => {
 
     const handleUpdateUserData = async () => {
         try {
-            // Log the user data to check if it's being passed properly
-            console.log('User Data to Update:', selectedUserData);
-            
-            const updateData = {
-                ...selectedUserData,
-                user_id: selectedUserData.user_id, // Ensure user_id is included
-                _id: selectedUserData._id, // Include _id for proper identification in MongoDB
-            };
+            if (!selectedUserData || !selectedUserData.user_id) {
+                setError('User ID is missing.');
+                return;
+            }
     
-            const response = await updateUserData(updateData);
+            console.log('Updating user with ID:', selectedUserData.user_id);
+    
+            const response = await updateUserData(selectedUserData);
+            console.log('API Response:', response);
+    
             if (response.success) {
                 alert('User data updated successfully!');
             } else {
-                setError(response.message);
+                setError(response.message || 'Failed to update user data.');
             }
         } catch (err) {
-            setError('Error updating user data');
+            console.error('Error updating user data:', err);
+            setError('Network error while updating user data.');
         }
     };
     
+
+
 
     // Function to render form fields dynamically
     const renderInputField = (field, value) => {
@@ -99,9 +102,19 @@ export const ManageUsersStep = ({ setCurrentStep }) => {
                         </form>
 
                         {/* Update Button */}
-                        <button onClick={handleUpdateUserData} className="submit-btn">
+                        <button
+                            onClick={() => {
+                                if (selectedUserData) {
+                                    handleUpdateUserData();
+                                } else {
+                                    setError('No user data selected for update.');
+                                }
+                            }}
+                            className="submit-btn"
+                        >
                             Update
                         </button>
+
 
                         {/* Back Button */}
                         <button onClick={() => setSelectedUserData(null)} className="back-btn">

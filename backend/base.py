@@ -185,38 +185,34 @@ def get_user_data(user_id):
         return jsonify({'success': True, 'user_data': user_data_filtered})
     else:
         return jsonify({'success': False, 'message': 'User not found'}), 404
-
-
 @app.route('/admin/update_user_data/<user_id>', methods=['PUT'])
 def update_user_data(user_id):
     try:
-        # Get data from the request body
+        # Get the request body
         data = request.get_json()
 
         if not data:
             return jsonify({'success': False, 'message': 'No data received'}), 400
 
-        # Filter out any fields with None, empty or invalid values
-        valid_data = {key: value for key, value in data.items() if value not in [None, "", "null", "undefined"]}
+        # Filter out invalid fields and ensure _id is not part of the update
+        valid_data = {key: value for key, value in data.items() if key != '_id' and value not in [None, "", "null", "undefined"]}
 
-        # If there's no valid data to update, return an error
         if not valid_data:
             return jsonify({'success': False, 'message': 'No valid fields to update'}), 400
 
-        # Perform the update operation
+        # Search using `user_id` as a string
         result = user_data_collection.update_one(
-            {'user_id': user_id},  # Search for the user document by user_id
-            {'$set': valid_data}  # Only update the valid fields
+            {'user_id': user_id},  # Correct query: search by `user_id` field
+            {'$set': valid_data}
         )
 
         if result.modified_count > 0:
             return jsonify({'success': True, 'message': 'User data updated successfully'})
         else:
             return jsonify({'success': False, 'message': 'No changes made or user not found'}), 404
+
     except Exception as e:
-        # Log the error for debugging
         print(f"Error: {str(e)}")
-        print(traceback.format_exc())
         return jsonify({'success': False, 'message': 'Error updating user data'}), 500
 
 if __name__ == "__main__":
