@@ -19,7 +19,30 @@ const AdminDashboard = () => {
   const [editingUserId, setEditingUserId] = useState(null);
   const [editData, setEditData] = useState({ email: "", role: "" });
 
-
+  useEffect(() => {
+      const checkSession = async () => {
+        try {
+          const response = await fetch('http://localhost:5000/check-session', {
+            method: 'GET',
+            credentials: 'include',  // Include credentials (cookies) in the request
+          });
+          const data = await response.json();
+  
+          if (response.ok && data.success) {
+            // User is already logged in, skip login and move to the next step
+            setCurrentStep(currentStep + 1);
+          } else {
+            // User is not logged in, show the login step
+            setCurrentStep(1);
+          }
+        } catch (error) {
+          console.error('Error checking session:', error);
+        }
+      };
+  
+      checkSession();
+    }, []);  // Empty dependency array means this runs only once when the component mounts
+  
   const handleInputChange = (e) => {
     const { id, value } = e.target;
     setFormData((prev) => ({

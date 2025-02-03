@@ -3,12 +3,17 @@ import traceback
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from flask import Flask, session, request, redirect, url_for, render_template
+from datetime import timedelta
 from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
 from bson import ObjectId  # Import ObjectId from bson
 
 app = Flask(__name__)
-CORS(app)  # Allow cross-origin requests (e.g., from React)
+CORS(app, supports_credentials=True)  # Allow cross-origin requests (e.g., from React)
+
+app.secret_key = 'voXaxHr9NprGGHTHgTTGTr_5nwiUNtF8'
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30)
 
 # MongoDB Client Setup
 uri =  "mongodb+srv://sbadmin:admin@sb.pxhni.mongodb.net/?retryWrites=true&w=majority&appName=SB"   
@@ -30,9 +35,22 @@ def login():
     user = user_profile_collection.find_one({"email": email})
     
     if user and check_password_hash(user['password'], password):
-        return jsonify({"message": "Login successful"})
+        session['user_id'] = str(user['_id'])
+        session.permanent = True
+        return jsonify({"message": "Login successful", "userId": str(user['_id'])   
+})
     
     return jsonify({"error": "Invalid email or password"}), 401
+
+
+@app.route('/check-session', methods=['GET'])
+def check_session():
+    if 'user_id' in session:
+        # User is logged in
+        return jsonify({"success": True, "userId": session['user_id']}), 200
+    else:
+        # User is not logged in
+        return jsonify({"success": False, "message": "Not logged in"}), 401
 
 @app.route('/signup', methods=['POST'])
 def signup():
@@ -185,6 +203,7 @@ def get_user_data(user_id):
         return jsonify({'success': True, 'user_data': user_data_filtered})
     else:
         return jsonify({'success': False, 'message': 'User not found'}), 404
+
 @app.route('/admin/update_user_data/<user_id>', methods=['PUT'])
 def update_user_data(user_id):
     try:
@@ -209,11 +228,36 @@ def update_user_data(user_id):
         if result.modified_count > 0:
             return jsonify({'success': True, 'message': 'User data updated successfully'})
         else:
-            return jsonify({'success': False, 'message': 'No changes made or user not found'}), 404
+            return jsonify({'success': False, 'message': 'No changes made '}), 404
 
     except Exception as e:
         print(f"Error: {str(e)}")
         return jsonify({'success': False, 'message': 'Error updating user data'}), 500
+
+
+@app.route('/admin/delete_user/<user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    try:
+        # First, try to delete the user data from user_data_collection
+        user_data_result = user_data_collection.delete_one({'user_id': user_id})
+        
+        # If user data doesn't exist (no deletion happened), we can still proceed with deleting the user profile
+        if user_data_result.deleted_count == 0:
+            print(f"User data not found for user_id: {user_id}, skipping deletion from user_data_collection.")
+        
+        # Now, delete the user from user_profile_collection
+        user_profile_result = user_profile_collection.delete_one({'_id': ObjectId(user_id)})
+
+        # Check if the user profile was deleted successfully
+        if user_profile_result.deleted_count == 0:
+            return jsonify({'success': False, 'message': 'User not found in user_profile collection'}), 404
+
+        return jsonify({'success': True, 'message': 'User deleted successfully'})
+
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return jsonify({'success': False, 'message': 'Error deleting user'}), 500
+
 
 if __name__ == "__main__":
     app.run(debug=True)

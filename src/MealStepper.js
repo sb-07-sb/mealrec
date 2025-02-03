@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Select from "react-select/creatable";
 import steps from "./components/stepConfig.js";
 import { validateStep } from "./utils/formValidation.js"; // Import the validation function
 import { handleSignup, handleLogin, handleSaveUserData } from './api/apiRequests.js';
-
+import { fetchUserData } from "./api/apiRequests.js";
 
 import "./assets/styles/MealStepper.css";
 
@@ -49,6 +49,40 @@ const App = () => {
   );
 
   const [errors, setErrors] = useState({});
+  const [isSessionChecked, setIsSessionChecked] = useState(false); // To track if session has been checked
+
+ useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/check-session', {
+          method: 'GET',
+          credentials: 'include',  // Include credentials (cookies) in the request
+        });
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          // User is already logged in, skip login and move to the next step
+          setCurrentStep(currentStep + 1);
+        } else {
+          // User is not logged in, show the login step
+          setCurrentStep(1);
+        }
+      } catch (error) {
+        console.error('Error checking session:', error);
+      } finally {
+        setIsSessionChecked(true); // Mark session as checked
+      }
+    };
+
+    // Get the form data from sessionStorage immediately when the component mounts
+    const storedFormData = JSON.parse(sessionStorage.getItem('formData'));
+    if (storedFormData) {
+      setFormData(storedFormData);
+    }
+
+    // Check the session after retrieving form data
+    checkSession();
+  }, []);  // Empty dependency array means this runs only once when the component mounts
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
@@ -99,6 +133,18 @@ const App = () => {
       if (currentStep === 1) {
         const loginResponse = await handleLogin(formData.email, formData.password);
         if (loginResponse.success) {
+          //   // Fetch user data after successful login
+          //   console.log("User ID after login:", loginResponse.userId);
+
+          // const userDataResponse = await fetchUserData(loginResponse.userId); 
+          // console.log("User Data Response:", userDataResponse.userDetails);
+
+          // if (userDataResponse.success && userDataResponse.userDetails) { // Use userDetails instead of data
+          //     setFormData(prevFormData => ({
+          //         ...prevFormData,
+          //         ...userDataResponse.userDetails, // Merge existing user data into form
+          //     }));
+          // }
           setCurrentStep(currentStep + 1); // Move to user data collection after successful login
         } else {
           alert(loginResponse.message);
@@ -139,7 +185,7 @@ const App = () => {
               className={`step ${index + 1 === currentStep ? "active" : ""}`}
               onClick={() => {
                 // Validate the current step before allowing navigation to another step
-                const isValid = validateStep(currentStep, formData, setErrors);  
+                const isValid = validateStep(currentStep, formData, setErrors);
 
                 if (isValid || currentStep === highestStepReached) {
                   // Allow clicking if step has been reached before
@@ -162,8 +208,7 @@ const App = () => {
           ))}
         </ul>
       </div>
-
-      {/* Main Form */}
+       {/* Main Form */}
       <div className="form-container">
         <div className="form-header">
           <div className="icon">
@@ -185,7 +230,6 @@ const App = () => {
             setCurrentStep,
           })}
         </div>
-
         <button onClick={handleNextStep} className="submit-btn">
           {currentStep < steps.length - 1 ? "Next Step" : "Submit"}
         </button>

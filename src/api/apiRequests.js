@@ -30,11 +30,13 @@ export const handleLogin = async (email, password) => {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password }),
+            credentials: 'include', // Ensure the session cookie is included in the request
+
         });
         // Parse the response to JSON
         const result = await response.json();
         if (response.ok) {
-            return { success: true };
+            return { success: true, userId: result.userId  };
         } else {
             return { success: false, message: result.error };
         }
@@ -168,22 +170,26 @@ export const updateUserData = async (userData) => {
 };
 
   
-  // API Request to delete user
-  export const deleteUser = async (userId) => {
-    try {
-      const response = await fetch(`http://localhost:5000/admin/delete-user/${userId}`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-      });
-      const result = await response.json();
-      if (response.ok) {
-        return { success: true };
-      } else {
-        return { success: false, message: result.error || "Failed to delete user." };
-      }
-    } catch (error) {
-      console.error("Error deleting user:", error);
-      return { success: false, message: "Something went wrong while deleting user." };
+// API Request to delete user
+export const deleteUser = async (userId) => {
+  try {
+    const response = await fetch(`http://localhost:5000/admin/delete_user/${userId}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    const result = await response.json();
+
+    // Check if the response indicates success
+    if (response.ok && result.success) {
+      return { success: true };
+    } else {
+      return { success: false, message: result.message || "Failed to delete user." };
     }
-  };
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    return { success: false, message: "Something went wrong while deleting user." };
+  }
+};
+
   

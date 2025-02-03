@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchUsers, fetchUserData, updateUserData } from '../api/apiRequests';
+import { fetchUsers, fetchUserData, updateUserData, deleteUser } from '../api/apiRequests';
 
 export const ManageUsersStep = ({ setCurrentStep }) => {
     const [users, setUsers] = useState([]);
@@ -19,6 +19,10 @@ export const ManageUsersStep = ({ setCurrentStep }) => {
         };
         fetchData();
     }, []);
+    useEffect(() => {
+        setError(null);
+    }, [selectedUserData]);
+    
 
     // Handle fetching detailed user data when a name is clicked
     const handleFetchUserData = async (userId) => {
@@ -45,12 +49,13 @@ export const ManageUsersStep = ({ setCurrentStep }) => {
                 setError('User ID is missing.');
                 return;
             }
-    
+            // Clear any previous errors before proceeding
+            setError(null);
             console.log('Updating user with ID:', selectedUserData.user_id);
-    
+
             const response = await updateUserData(selectedUserData);
             console.log('API Response:', response);
-    
+
             if (response.success) {
                 alert('User data updated successfully!');
             } else {
@@ -61,8 +66,18 @@ export const ManageUsersStep = ({ setCurrentStep }) => {
             setError('Network error while updating user data.');
         }
     };
-    
 
+    // Function to delete a user
+    const handleDeleteUser = async (userId) => {
+        const response = await deleteUser(userId);
+        if (response.success) {
+            alert('User deleted successfully!');
+            // After deleting, remove the user from the users list
+            setUsers((prevUsers) => prevUsers.filter(user => user.id !== userId));
+        } else {
+            setError(response.message || 'Failed to delete user.');
+        }
+    };
 
 
     // Function to render form fields dynamically
@@ -126,31 +141,61 @@ export const ManageUsersStep = ({ setCurrentStep }) => {
                         {loading && <div className="loading">Loading...</div>}
                         {error && <div className="error">{error}</div>}
 
-                        <div className="table-wrapper">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Email</th>
-                                        <th>Name</th>
-                                        <th>Role</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {users.map(user => (
-                                        <tr key={user._id}>
-                                            <td>{user.email}</td>
-                                            <td
-                                                onClick={() => handleFetchUserData(user.id)}
-                                                style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}
-                                            >
-                                                {user.fullName}
-                                            </td>
-                                            <td>{user.role}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                        <div className="table-wrapper" style={{ overflowX: 'auto', marginTop: '20px' }}>
+    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <thead>
+            <tr>
+                <th style={{ padding: '12px 15px', backgroundColor: '#f4f4f4', textAlign: 'left', fontWeight: 'bold' }}>Email</th>
+                <th style={{ padding: '12px 15px', backgroundColor: '#f4f4f4', textAlign: 'left', fontWeight: 'bold' }}>Name</th>
+                <th style={{ padding: '12px 15px', backgroundColor: '#f4f4f4', textAlign: 'left', fontWeight: 'bold' }}>Role</th>
+                <th style={{ padding: '12px 15px', backgroundColor: '#f4f4f4' }}></th>
+            </tr>
+        </thead>
+        <tbody>
+            {users.map(user => (
+                <tr key={user._id} style={{ borderBottom: '1px solid #ddd' }}>
+                    <td style={{ padding: '12px 15px' }}>{user.email}</td>
+                    <td
+                        onClick={() => handleFetchUserData(user.id)}
+                        style={{
+                            cursor: 'pointer',
+                            color: 'blue',
+                            textDecoration: 'underline',
+                            padding: '12px 15px',
+                            transition: 'color 0.3s',
+                        }}
+                        onMouseEnter={(e) => e.target.style.color = '#0056b3'}
+                        onMouseLeave={(e) => e.target.style.color = 'blue'}
+                    >
+                        {user.fullName}
+                    </td>
+                    <td style={{ padding: '12px 15px' }}>{user.role}</td>
+                    <td style={{ padding: '12px 15px' }}>
+                        <button
+                            onClick={() => handleDeleteUser(user.id)}
+                            className="delete-btn"
+                            style={{
+                                padding: '8px 12px',
+                                backgroundColor: '#f44336',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                fontSize: '14px',
+                                transition: 'background-color 0.3s',
+                            }}
+                            onMouseEnter={(e) => e.target.style.backgroundColor = '#e53935'}
+                            onMouseLeave={(e) => e.target.style.backgroundColor = '#f44336'}
+                        >
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            ))}
+        </tbody>
+    </table>
+</div>
+
                     </>
                 )}
             </div>
