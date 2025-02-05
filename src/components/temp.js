@@ -1,63 +1,68 @@
 import React from "react";
-import "../assets/styles/temp.css"; // Importing styles for the home page
+import "bootstrap/dist/css/bootstrap.min.css";
+import "../assets/styles/temp.css";
 
-const HomePage = () => {
+const Home = () => {
   return (
-    <div className="homepage">
-    <header className="header">
-      <div className="logo">
-        <img src="logo.png" alt="Meal Plan Logo" className="logo-image" />
-        <h1 className="title">Meal Plan Generator</h1>
-      </div>
-      <nav className="navigation">
-        <ul>
-          <li><a href="#intro">Home</a></li>
-          <li><a href="#how-it-works">How It Works</a></li>
-          <li><a href="#start">Get Started</a></li>
-        </ul>
+    <div className="container-fluid p-5 text-center position-relative">
+      <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm d-flex justify-content-between">
+        <a className="navbar-brand fw-bold" href="#">Fitness Assistant</a>
+        <div>
+          <button className="btn btn-outline-primary me-2">Login</button>
+          <button className="btn btn-primary">Get Started</button>
+        </div>
       </nav>
-    </header>
-
-
-      {/* Intro Section */}
-      <section id="intro" className="intro">
-        <h2>Your Personalized Meal Plan Awaits</h2>
-        <p>Get a meal plan tailored to your preferences, goals, and dietary needs. Whether you're looking to lose weight, gain muscle, or maintain your current lifestyle, we've got you covered!</p>
-        <button className="cta-button" onClick={() => window.location.href = "#start"}>Start Your Journey</button>
-      </section>
-
-      {/* How It Works Section */}
-      <section id="how-it-works" className="how-it-works">
-        <h2>How It Works</h2>
-        <div className="steps">
-          <div className="step">
-            <h3>Step 1: Fill Out Your Details</h3>
-            <p>Provide basic information like your age, height, and weight.</p>
+      
+      <header className="my-5 position-relative">
+        <h1 className="display-5 fw-bold">Connect effortlessly with a personalized fitness plan</h1>
+        <p className="lead">Get customized meal recommendations and fitness guidance tailored to your needs.</p>
+        <button className="btn btn-primary me-2">Get Started</button>
+        <button className="btn btn-outline-primary">Learn More</button>
+        <div className="background-lines"></div>
+      </header>
+      
+      <section className="my-5 position-relative">
+        <h2 className="fw-bold">Why Choose Us?</h2>
+        <div className="row mt-4">
+          <div className="col-md-4">
+            <h3>Success Rate</h3>
+            <p>Users see improvement in their health within weeks.</p>
           </div>
-          <div className="step">
-            <h3>Step 2: Select Your Preferences</h3>
-            <p>Choose your dietary restrictions, body type, and health goals.</p>
+          <div className="col-md-4">
+            <h3>Personalized Plans</h3>
+            <p>Customized meal and workout plans to suit your needs.</p>
           </div>
-          <div className="step">
-            <h3>Step 3: Get Your Meal Plan</h3>
-            <p>We will generate a meal plan tailored to your needs and preferences.</p>
+          <div className="col-md-4">
+            <h3>Global Reach</h3>
+            <p>Helping users worldwide achieve their fitness goals.</p>
           </div>
         </div>
+        <div className="background-lines"></div>
       </section>
-
-      {/* Call to Action Section */}
-      <section id="start" className="start">
-        <h2>Ready to Get Started?</h2>
-        <p>Click below to fill out the form and get your personalized meal plan!</p>
-        <button className="cta-button" onClick={() => window.location.href = "#"}>Start Now</button>
+      
+      <section className="my-5 position-relative">
+        <h2 className="fw-bold">How It Works</h2>
+        <p>Sign up, fill in your fitness details, and get personalized recommendations instantly.</p>
+        <div className="row mt-4">
+          <div className="col-md-4">
+            <h3>Step 1</h3>
+            <p>Create your profile with your fitness goals.</p>
+          </div>
+          <div className="col-md-4">
+            <h3>Step 2</h3>
+            <p>Receive meal plans and workout schedules.</p>
+          </div>
+          <div className="col-md-4">
+            <h3>Step 3</h3>
+            <p>Track your progress and adjust as needed.</p>
+          </div>
+        </div>
+        <div className="background-lines"></div>
       </section>
-
-      {/* Footer Section */}
-      <footer className="footer">
-        <p>&copy; 2025 Meal Plan Generator. All Rights Reserved.</p>
-      </footer>
+      
+      <footer className="mt-5 text-muted">&copy; 2025 Fitness Assistant. All Rights Reserved.</footer>
     </div>
   );
 };
 
-export default HomePage;
+export default Home;
