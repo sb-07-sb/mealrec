@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { fetchUsers, fetchUserData, updateUserData, deleteUser } from '../api/apiRequests';
 
+import "../assets/styles/ManageUsersStep.css"
+
 export const ManageUsersStep = ({ setCurrentStep }) => {
     const [users, setUsers] = useState([]);
     const [error, setError] = useState("");
@@ -84,18 +86,22 @@ export const ManageUsersStep = ({ setCurrentStep }) => {
     const renderInputField = (field, value) => {
         return (
             <div className="form-group" key={field}>
-                <label htmlFor={field}>{field.replace(/_/g, ' ')}</label>
+                <label htmlFor={field} className="form-label">
+                    {field.replace(/_/g, ' ')}
+                </label>
                 <input
                     type="text"
                     id={field}
-                    name={field} // Adding the name to allow controlled input
-                    value={value || ''} // Ensure the input is always controlled (empty string fallback)
-                    onChange={handleInputChange} // Handle input change
-                    placeholder={field.replace(/_/g, ' ')} // Display field name as placeholder
+                    name={field}
+                    value={value || ''}
+                    onChange={handleInputChange}
+                    placeholder={field.replace(/_/g, ' ')}
+                    className="form-input"
                 />
             </div>
         );
     };
+    
 
     return (
         <div className="app-container">
@@ -109,7 +115,7 @@ export const ManageUsersStep = ({ setCurrentStep }) => {
 
                         {error && <p className="error-message">{error}</p>}
 
-                        <form className="form">
+                        <form className="form custom-form" >
                             {Object.entries(selectedUserData).map(([field, value]) => {
                                 if (field === '_id' || field === 'user_id') return null; // Skip _id and user_id from form
                                 return renderInputField(field, value);

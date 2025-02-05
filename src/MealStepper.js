@@ -51,7 +51,7 @@ const App = () => {
   const [errors, setErrors] = useState({});
   const [isSessionChecked, setIsSessionChecked] = useState(false); // To track if session has been checked
 
- useEffect(() => {
+  useEffect(() => {
     const checkSession = async () => {
       try {
         const response = await fetch('http://localhost:5000/check-session', {
@@ -63,26 +63,50 @@ const App = () => {
         if (response.ok && data.success) {
           // User is already logged in, skip login and move to the next step
           setCurrentStep(currentStep + 1);
+
+          // Fetch user data and populate the form
+          const userDataResponse = await fetchUserData(data.userId);
+          console.log("Fetched User Data:", userDataResponse);
+          const textInputFields = ["fullName", "age", "height", "currentWeight", "targetWeight"];
+
+          if (userDataResponse.success && userDataResponse.userDetails) {
+            
+
+            const formattedData = { ...userDataResponse.userDetails };
+            const capitalizeFirstLetter = (str) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+            // Dynamically process dropdown fields
+            Object.keys(formattedData).forEach((field) => {
+              if (!textInputFields.includes(field) && formattedData[field]) {
+                formattedData[field] = {
+                  value: formattedData[field],
+                  label: capitalizeFirstLetter(formattedData[field]),
+                };
+              }
+            });
+
+            setFormData(prevFormData => ({
+              ...prevFormData,
+              ...formattedData, // Merge formatted data
+            }));
+          }
         } else {
-          // User is not logged in, show the login step
-          setCurrentStep(1);
+          setCurrentStep(1); // Show login step if no session
         }
       } catch (error) {
-        console.error('Error checking session:', error);
+        console.error("Error checking session:", error);
       } finally {
         setIsSessionChecked(true); // Mark session as checked
       }
+
+      // Restore form data from sessionStorage (if available)
+      const storedFormData = JSON.parse(sessionStorage.getItem("formData"));
+      if (storedFormData) {
+        setFormData(storedFormData);
+      }
     };
 
-    // Get the form data from sessionStorage immediately when the component mounts
-    const storedFormData = JSON.parse(sessionStorage.getItem('formData'));
-    if (storedFormData) {
-      setFormData(storedFormData);
-    }
-
-    // Check the session after retrieving form data
     checkSession();
-  }, []);  // Empty dependency array means this runs only once when the component mounts
+  }, []);
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
@@ -133,18 +157,19 @@ const App = () => {
       if (currentStep === 1) {
         const loginResponse = await handleLogin(formData.email, formData.password);
         if (loginResponse.success) {
+          const userData = loginResponse.userDetails; // Use corrected key
+          console.log(userData)
+          // if (userData) {
+          //   setFormData(userData); // Populate form with user data
+          //   sessionStorage.setItem("formData", JSON.stringify(userData)); 
           //   // Fetch user data after successful login
           //   console.log("User ID after login:", loginResponse.userId);
 
-          // const userDataResponse = await fetchUserData(loginResponse.userId); 
-          // console.log("User Data Response:", userDataResponse.userDetails);
+          const userDataResponse = await fetchUserData(loginResponse.userId);
+          console.log("User Data Response:", userDataResponse.userDetails);
 
-          // if (userDataResponse.success && userDataResponse.userDetails) { // Use userDetails instead of data
-          //     setFormData(prevFormData => ({
-          //         ...prevFormData,
-          //         ...userDataResponse.userDetails, // Merge existing user data into form
-          //     }));
-          // }
+
+
           setCurrentStep(currentStep + 1); // Move to user data collection after successful login
         } else {
           alert(loginResponse.message);
@@ -208,7 +233,7 @@ const App = () => {
           ))}
         </ul>
       </div>
-       {/* Main Form */}
+      {/* Main Form */}
       <div className="form-container">
         <div className="form-header">
           <div className="icon">
