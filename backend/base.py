@@ -158,13 +158,14 @@ def admin_login():
     if user:
         # Check if the user is an admin
         if user['role'] == 'admin' and check_password_hash(user['password'], password):
-            return jsonify({"message": "Admin login successful"})
+            session['user_id'] = str(user['_id'])
+            session.permanent = True
+            return jsonify({"message": "Admin login successful", "userId": str(user['_id'])})
         else:
             return jsonify({"error": "You are not authorized to log in as admin"}), 403
     else:
         return jsonify({"error": "Invalid email or password"}), 401
 
- 
 # Example route in Flask to get users
 @app.route('/admin/get_users', methods=['GET'])
 def get_users():
@@ -257,6 +258,11 @@ def delete_user(user_id):
     except Exception as e:
         print(f"Error: {str(e)}")
         return jsonify({'success': False, 'message': 'Error deleting user'}), 500
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    session.clear()  # Remove session data
+    return jsonify({"message": "Logged out successfully"}), 200
 
 
 if __name__ == "__main__":

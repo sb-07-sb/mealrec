@@ -23,7 +23,7 @@ import HomePage from './components/temp';
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center">
+      <div>
       
 
         <Routes>

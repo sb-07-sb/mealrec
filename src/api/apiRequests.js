@@ -55,11 +55,13 @@ export const handleAdminLogin = async (email, password) => {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password }),
+            credentials: 'include', // Ensure the session cookie is included in the request
+
         });
         // Parse the response to JSON
         const result = await response.json();
         if (response.ok) {
-            return { success: true };
+            return { success: true , userId: result.userId  };
         } else {
             return { success: false, message: result.error };
         }
@@ -67,6 +69,26 @@ export const handleAdminLogin = async (email, password) => {
         console.error("Admin Login error:", error);
         return { success: false, message: "Something went wrong" };
     }
+};
+
+//HandleLogout API request
+export const handleLogout = async () => {
+  try {
+    const response = await fetch("http://localhost:5000/logout", {
+      method: "POST",
+      credentials: "include", // Ensure cookies are included
+    });
+
+    if (response.ok) {
+      sessionStorage.clear(); // Clear stored form data
+      return { success: true };
+    } else {
+      return { success: false, message: "Logout request failed" };
+    }
+  } catch (error) {
+    console.error("Error logging out:", error);
+    return { success: false, message: "An error occurred" }; // Ensure an object is always returned
+  }
 };
 
 

@@ -111,13 +111,13 @@ button {
 }
 
 .update-role-btn {
-    background-color: #4CAF50;
+    background-color: #007bff;
     color: white;
     transition: background-color 0.3s;
 }
 
 .update-role-btn:hover {
-    background-color: #45a049;
+    background-color: #007bff;
 }
 
 .delete-btn {
