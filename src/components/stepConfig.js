@@ -18,7 +18,7 @@ const steps = [
                 placeholder="Enter your email"
                 value={formData.semail}
                 onChange={handleInputChange}
-                className={errors.semail ? "error" : ""}
+                // className={errors.semail ? "error" : ""}
               />
               {errors.semail && <span className="error-message">{errors.semail}</span>}
             </div>
@@ -33,7 +33,7 @@ const steps = [
                 placeholder="Enter your password"
                 value={formData.spassword}
                 onChange={handleInputChange}
-                className={errors.spassword ? "error" : ""}
+                // className={errors.spassword ? "error" : ""}
               />
               {errors.spassword && (
                 <span className="error-message">{errors.spassword}</span>
@@ -67,7 +67,8 @@ const steps = [
                 placeholder="Enter your email"
                 value={formData.email}
                 onChange={handleInputChange}
-                className={errors.email ? "error" : ""}
+                //className={errors.email ? "error" : ""}
+
               />
               {errors.email && <span className="error-message">{errors.email}</span>}
             </div>
@@ -82,7 +83,7 @@ const steps = [
                 placeholder="Enter your password"
                 value={formData.password}
                 onChange={handleInputChange}
-                className={errors.password ? "error" : ""}
+                // className={errors.password ? "error" : ""}
               />
               {errors.password && (
                 <span className="error-message">{errors.password}</span>
@@ -119,7 +120,7 @@ const steps = [
                 placeholder="Enter your full name"
                 value={formData.fullName}
                 onChange={handleInputChange}
-                className={errors.fullName ? "error" : ""}
+                // className={errors.fullName ? "error" : ""}
 
                 required
               />
