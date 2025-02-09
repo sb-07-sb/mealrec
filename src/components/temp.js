@@ -1,68 +1,119 @@
-import React from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "../assets/styles/temp.css";
+import React, { useEffect } from 'react';
+import '../assets/styles/temp.css';
 
-const Home = () => {
+const LandingPage = () => {
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = document.querySelectorAll('.animate-on-scroll');
+      sections.forEach((section) => {
+        const sectionTop = section.getBoundingClientRect().top;
+        const windowHeight = window.innerHeight;
+        if (sectionTop < windowHeight * 0.8) {
+          section.classList.add('animated');
+        }
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <div className="container-fluid p-5 text-center position-relative">
-      <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm d-flex justify-content-between">
-        <a className="navbar-brand fw-bold" href="#">Fitness Assistant</a>
-        <div>
-          <button className="btn btn-outline-primary me-2">Login</button>
-          <button className="btn btn-primary">Get Started</button>
+    <div>
+      <nav className="navbar">
+        <div className="logo">
+          <img src="logo.png" alt="Company Logo" />
+          <span className="company-name">MealPlanPro</span>
         </div>
+        <button 
+          className="cta-button"
+          onClick={() => window.location.href = '/stepper-form'}
+        >
+          Get Started
+        </button>
       </nav>
-      
-      <header className="my-5 position-relative">
-        <h1 className="display-5 fw-bold">Connect effortlessly with a personalized fitness plan</h1>
-        <p className="lead">Get customized meal recommendations and fitness guidance tailored to your needs.</p>
-        <button className="btn btn-primary me-2">Get Started</button>
-        <button className="btn btn-outline-primary">Learn More</button>
-        <div className="background-lines"></div>
-      </header>
-      
-      <section className="my-5 position-relative">
-        <h2 className="fw-bold">Why Choose Us?</h2>
-        <div className="row mt-4">
-          <div className="col-md-4">
-            <h3>Success Rate</h3>
-            <p>Users see improvement in their health within weeks.</p>
-          </div>
-          <div className="col-md-4">
-            <h3>Personalized Plans</h3>
-            <p>Customized meal and workout plans to suit your needs.</p>
-          </div>
-          <div className="col-md-4">
-            <h3>Global Reach</h3>
-            <p>Helping users worldwide achieve their fitness goals.</p>
-          </div>
+
+      <section className="hero animate-on-scroll">
+        <div className="hero-content">
+          <h1>Your Personalized <span>Meal Plan</span> Awaits</h1>
+          <p>Get customized meal recommendations based on your dietary preferences, health conditions, and personal goals.</p>
+          <button 
+            className="cta-button"
+            onClick={() => window.location.href = '/stepper-form'}
+          >
+            Start Now
+          </button>
         </div>
-        <div className="background-lines"></div>
-      </section>
-      
-      <section className="my-5 position-relative">
-        <h2 className="fw-bold">How It Works</h2>
-        <p>Sign up, fill in your fitness details, and get personalized recommendations instantly.</p>
-        <div className="row mt-4">
-          <div className="col-md-4">
-            <h3>Step 1</h3>
-            <p>Create your profile with your fitness goals.</p>
-          </div>
-          <div className="col-md-4">
-            <h3>Step 2</h3>
-            <p>Receive meal plans and workout schedules.</p>
-          </div>
-          <div className="col-md-4">
-            <h3>Step 3</h3>
-            <p>Track your progress and adjust as needed.</p>
-          </div>
+        <div className="hero-image">
+          <img src="meal-plan-hero.jpg" alt="Healthy Meal" />
         </div>
-        <div className="background-lines"></div>
       </section>
-      
-      <footer className="mt-5 text-muted">&copy; 2025 Fitness Assistant. All Rights Reserved.</footer>
+
+      <section className="about animate-on-scroll">
+        <h2 className="section-title">About MealPlanPro</h2>
+        <p>MealPlanPro is your ultimate guide to healthier eating. We create personalized meal plans tailored to your unique needs, whether you're looking to lose weight, manage a health condition, or simply eat better.</p>
+      </section>
+
+      <section className="features animate-on-scroll">
+        <h2 className="section-title">Why Choose MealPlanPro?</h2>
+        <div className="features-grid">
+          {[
+            {
+              title: "Tailored to You",
+              description: "We consider your dietary preferences, health conditions, and personal details to create the perfect meal plan for you."
+            },
+            {
+              title: "Healthy & Delicious",
+              description: "Enjoy a variety of healthy and delicious meals that fit your lifestyle and taste buds."
+            },
+            {
+              title: "Easy to Follow",
+              description: "Our meal plans are simple, easy to follow, and designed to help you achieve your health goals."
+            }
+          ].map((feature, index) => (
+            <div key={index} className="feature-card">
+              <h3>{feature.title}</h3>
+              <p>{feature.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="steps animate-on-scroll">
+        <h2 className="section-title">How It Works</h2>
+        <div className="steps-grid">
+          {[
+            {
+              step: 1,
+              title: "Tell Us About Yourself",
+              description: "Fill out our simple form with your dietary preferences, health conditions, and personal details."
+            },
+            {
+              step: 2,
+              title: "Get Your Plan",
+              description: "We analyze your inputs and create a personalized meal plan just for you."
+            },
+            {
+              step: 3,
+              title: "Start Eating Better",
+              description: "Follow your meal plan and enjoy healthier, more delicious meals every day."
+            }
+          ].map((item, index) => (
+            <div key={index} className="step-card">
+              <div className="step-number">{item.step}</div>
+              <h3>{item.title}</h3>
+              <p>{item.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <footer className="footer">
+        <p>&copy; {new Date().getFullYear()} MealPlanPro. All rights reserved.</p>
+      </footer>
     </div>
   );
 };
 
-export default Home;
+export default LandingPage;
