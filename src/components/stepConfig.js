@@ -1,6 +1,7 @@
 import React from 'react';
 import Select from 'react-select/creatable';
 
+import "../assets/styles/MealStepper.css"
 // Steps configuration: Each step has a title, description, and a content component.
 const steps = [
   {

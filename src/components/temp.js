@@ -5,6 +5,16 @@ const LandingPage = () => {
   useEffect(() => {
     const handleScroll = () => {
       const sections = document.querySelectorAll('.animate-on-scroll');
+      const navbar = document.querySelector('.navbar');
+      
+      // Handle navbar transparency
+      if (window.scrollY > 100) {
+        navbar.classList.add('navbar-scrolled');
+      } else {
+        navbar.classList.remove('navbar-scrolled');
+      }
+      
+      // Handle section animations
       sections.forEach((section) => {
         const sectionTop = section.getBoundingClientRect().top;
         const windowHeight = window.innerHeight;
@@ -22,55 +32,88 @@ const LandingPage = () => {
   return (
     <div>
       <nav className="navbar">
-        <div className="logo">
-          <img src="logo.png" alt="Company Logo" />
-          <span className="company-name">MealPlanPro</span>
+        <div className="nav-content">
+          <div className="logo">
+            <img src="logo.png" alt="Company Logo" />
+            <span className="company-name">MealPlanPro</span>
+          </div>
+          <div className="nav-links">
+            <a href="#about">About</a>
+            <a href="#features">Features</a>
+            <a href="#how-it-works">How It Works</a>
+            <button 
+              className="cta-button"
+              onClick={() => window.location.href = '/stepper-form'}
+            >
+              Get Started
+            </button>
+          </div>
         </div>
-        <button 
-          className="cta-button"
-          onClick={() => window.location.href = '/stepper-form'}
-        >
-          Get Started
-        </button>
       </nav>
 
       <section className="hero animate-on-scroll">
         <div className="hero-content">
           <h1>Your Personalized <span>Meal Plan</span> Awaits</h1>
-          <p>Get customized meal recommendations based on your dietary preferences, health conditions, and personal goals.</p>
-          <button 
-            className="cta-button"
-            onClick={() => window.location.href = '/stepper-form'}
-          >
-            Start Now
-          </button>
+          <br></br>
+          <p>Get customized meal recommendations based on your dietary preferences, health conditions, and personal goals. Our AI-powered system creates the perfect balance of nutrition and taste just for you.</p>
+          <br></br>
+          <div className="hero-buttons">
+            <button 
+              className="cta-button"
+              onClick={() => window.location.href = '/stepper-form'}
+            >
+              Start Now
+            </button>
+            <button className="learn-more-button">
+              Learn More
+            </button>
+          </div>
+          
         </div>
         <div className="hero-image">
           <img src="meal-plan-hero.jpg" alt="Healthy Meal" />
         </div>
       </section>
 
-      <section className="about animate-on-scroll">
+      <section id="about" className="about animate-on-scroll">
         <h2 className="section-title">About MealPlanPro</h2>
-        <p>MealPlanPro is your ultimate guide to healthier eating. We create personalized meal plans tailored to your unique needs, whether you're looking to lose weight, manage a health condition, or simply eat better.</p>
+        <div className="about-content">
+          <p className="about-lead">MealPlanPro is your ultimate guide to healthier eating. We create personalized meal plans tailored to your unique needs, whether you're looking to lose weight, manage a health condition, or simply eat better.</p>
+          <div className="about-grid">
+            <div className="about-item">
+              <h3>Our Mission</h3>
+              <p>To make healthy eating accessible, enjoyable, and sustainable for everyone through personalized nutrition planning and support.</p>
+            </div>
+            <div className="about-item">
+              <h3>Expert-Backed</h3>
+              <p>Our meal plans are developed in collaboration with registered dietitians and nutrition experts to ensure the highest quality recommendations.</p>
+            </div>
+            <div className="about-item">
+              <h3>Personalization</h3>
+              <p>Using advanced algorithms, we consider your unique preferences, restrictions, and goals to create truly personalized meal plans.</p>
+            </div>
+          </div>
+        </div>
       </section>
 
-      <section className="features animate-on-scroll">
+      <section id="features" className="features animate-on-scroll">
         <h2 className="section-title">Why Choose MealPlanPro?</h2>
+        <p className="features-lead">Experience the perfect blend of science-based nutrition and delicious meals tailored just for you.</p>
         <div className="features-grid">
           {[
             {
-              title: "Tailored to You",
-              description: "We consider your dietary preferences, health conditions, and personal details to create the perfect meal plan for you."
+              title: "Smart Meal Planning",
+              description: "Our AI-powered system creates balanced meal plans that perfectly match your dietary needs and preferences, while ensuring variety and nutrition."
             },
             {
-              title: "Healthy & Delicious",
-              description: "Enjoy a variety of healthy and delicious meals that fit your lifestyle and taste buds."
+              title: "Dietary Flexibility",
+              description: "Whether you're vegan, keto, gluten-free, or have specific allergies, we adapt to your needs while maintaining optimal nutrition levels."
             },
             {
-              title: "Easy to Follow",
-              description: "Our meal plans are simple, easy to follow, and designed to help you achieve your health goals."
+              title: "Progress Tracking",
+              description: "Track your journey with detailed progress reports, nutritional insights, and personalized recommendations for better results."
             }
+           
           ].map((feature, index) => (
             <div key={index} className="feature-card">
               <h3>{feature.title}</h3>
@@ -80,24 +123,25 @@ const LandingPage = () => {
         </div>
       </section>
 
-      <section className="steps animate-on-scroll">
+      <section id="how-it-works" className="steps animate-on-scroll">
         <h2 className="section-title">How It Works</h2>
+        <p className="steps-lead">Getting started with MealPlanPro is easy. Follow these simple steps to begin your journey to healthier eating.</p>
         <div className="steps-grid">
           {[
             {
               step: 1,
               title: "Tell Us About Yourself",
-              description: "Fill out our simple form with your dietary preferences, health conditions, and personal details."
+              description: "Fill out our comprehensive questionnaire about your dietary preferences, health conditions, goals, and lifestyle. The more we know, the better we can customize your plan."
             },
             {
               step: 2,
-              title: "Get Your Plan",
-              description: "We analyze your inputs and create a personalized meal plan just for you."
+              title: "Get Your Personalized Plan",
+              description: "Our AI analyzes your information to create a custom meal plan that perfectly matches your needs. Each meal is carefully selected to help you reach your goals."
             },
             {
               step: 3,
-              title: "Start Eating Better",
-              description: "Follow your meal plan and enjoy healthier, more delicious meals every day."
+              title: "Start Your Journey",
+              description: "Access your meal plan, shopping lists, and recipes through our easy-to-use platform. Track your progress, adjust preferences, and enjoy the journey to healthier eating."
             }
           ].map((item, index) => (
             <div key={index} className="step-card">
@@ -109,9 +153,7 @@ const LandingPage = () => {
         </div>
       </section>
 
-      <footer className="footer">
-        <p>&copy; {new Date().getFullYear()} MealPlanPro. All rights reserved.</p>
-      </footer>
+      
     </div>
   );
 };

@@ -4,7 +4,7 @@ import steps from "./components/stepConfig.js";
 import { validateStep } from "./utils/formValidation.js"; // Import the validation function
 import { handleSignup, handleLogin, handleSaveUserData, fetchUserData, handleLogout } from './api/apiRequests.js';
 
-import "./assets/styles/MealStepper.css";
+// import "./assets/styles/MealStepper.css";
 
 const App = () => {
   const [currentStep, setCurrentStep] = useState(1);
