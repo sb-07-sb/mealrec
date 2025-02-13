@@ -161,9 +161,9 @@ const AdminDashboard = () => {
           })}
         </div>
 
-        <button onClick={handleNextStep} className="submit-btn">
+        {/* <button onClick={handleNextStep} className="submit-btn">
           {currentStep < stepsAdmin.length - 1 ? "Next Step" : "Submit"}
-        </button>
+        </button> */}
 
         {/* Short Stepper (Dots with a Dash for current step) */}
         <div className="short-stepper">

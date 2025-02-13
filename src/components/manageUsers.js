@@ -24,7 +24,7 @@ export const ManageUsersStep = ({ setCurrentStep }) => {
     useEffect(() => {
         setError(null);
     }, [selectedUserData]);
-    
+
 
     // Handle fetching detailed user data when a name is clicked
     const handleFetchUserData = async (userId) => {
@@ -85,8 +85,8 @@ export const ManageUsersStep = ({ setCurrentStep }) => {
     // Function to render form fields dynamically
     const renderInputField = (field, value) => {
         return (
-            <div className="form-group" key={field}>
-                <label htmlFor={field} className="form-label">
+            <div className="admin-form-group" key={field}>
+                <label htmlFor={field} className="admin-form-label">
                     {field.replace(/_/g, ' ')}
                 </label>
                 <input
@@ -96,31 +96,37 @@ export const ManageUsersStep = ({ setCurrentStep }) => {
                     value={value || ''}
                     onChange={handleInputChange}
                     placeholder={field.replace(/_/g, ' ')}
-                    className="form-input"
+                    className="admin-form-input"
                 />
             </div>
         );
     };
     
+    
+
 
     return (
-        <div className="app-container">
+        <div className="admin-app-container">
             {/* Main Section */}
-            <div className="form-container">
+            <div className="admin-form-container">
                 {selectedUserData ? (
                     <>
-                        <div className="form-header">
+                        {/* <div className="admin-form-header">
                             <h3>User Information</h3>
-                        </div>
+                        </div> */}
 
-                        {error && <p className="error-message">{error}</p>}
+                        {error && <p className="admin-error-message">{error}</p>}
 
-                        <form className="form custom-form" >
-                            {Object.entries(selectedUserData).map(([field, value]) => {
-                                if (field === '_id' || field === 'user_id') return null; // Skip _id and user_id from form
-                                return renderInputField(field, value);
-                            })}
-                        </form>
+                        <form className="admin-form admin-custom-form">
+    <div className="admin-form-grid">
+        {Object.entries(selectedUserData).map(([field, value]) => {
+            if (field === '_id' || field === 'user_id') return null; // Skip _id and user_id
+            return renderInputField(field, value);
+        })}
+    </div>
+</form>
+
+
 
                         {/* Update Button */}
                         <button
@@ -131,77 +137,75 @@ export const ManageUsersStep = ({ setCurrentStep }) => {
                                     setError('No user data selected for update.');
                                 }
                             }}
-                            className="submit-btn"
+                            className="admin-submit-btn"
                         >
                             Update
                         </button>
 
-
                         {/* Back Button */}
-                        <button onClick={() => setSelectedUserData(null)} className="back-btn">
+                        <button onClick={() => setSelectedUserData(null)} className="admin-back-btn">
                             Back to Users
                         </button>
                     </>
                 ) : (
                     <>
-                        {loading && <div className="loading">Loading...</div>}
-                        {error && <div className="error">{error}</div>}
+                        {loading && <div className="admin-loading">Loading...</div>}
+                        {error && <div className="admin-error">{error}</div>}
 
-                        <div className="table-wrapper" style={{ overflowX: 'auto', marginTop: '20px' }}>
-    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-            <tr>
-                <th style={{ padding: '12px 15px', backgroundColor: '#f4f4f4', textAlign: 'left', fontWeight: 'bold' }}>Email</th>
-                <th style={{ padding: '12px 15px', backgroundColor: '#f4f4f4', textAlign: 'left', fontWeight: 'bold' }}>Name</th>
-                <th style={{ padding: '12px 15px', backgroundColor: '#f4f4f4', textAlign: 'left', fontWeight: 'bold' }}>Role</th>
-                <th style={{ padding: '12px 15px', backgroundColor: '#f4f4f4' }}></th>
-            </tr>
-        </thead>
-        <tbody>
-            {users.map(user => (
-                <tr key={user._id} style={{ borderBottom: '1px solid #ddd' }}>
-                    <td style={{ padding: '12px 15px' }}>{user.email}</td>
-                    <td
-                        onClick={() => handleFetchUserData(user.id)}
-                        style={{
-                            cursor: 'pointer',
-                            color: 'blue',
-                            textDecoration: 'underline',
-                            padding: '12px 15px',
-                            transition: 'color 0.3s',
-                        }}
-                        onMouseEnter={(e) => e.target.style.color = '#0056b3'}
-                        onMouseLeave={(e) => e.target.style.color = 'blue'}
-                    >
-                        {user.fullName}
-                    </td>
-                    <td style={{ padding: '12px 15px' }}>{user.role}</td>
-                    <td style={{ padding: '12px 15px' }}>
-                        <button
-                            onClick={() => handleDeleteUser(user.id)}
-                            className="delete-btn"
-                            style={{
-                                padding: '8px 12px',
-                                backgroundColor: '#f44336',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '4px',
-                                cursor: 'pointer',
-                                fontSize: '14px',
-                                transition: 'background-color 0.3s',
-                            }}
-                            onMouseEnter={(e) => e.target.style.backgroundColor = '#e53935'}
-                            onMouseLeave={(e) => e.target.style.backgroundColor = '#f44336'}
-                        >
-                            Delete
-                        </button>
-                    </td>
-                </tr>
-            ))}
-        </tbody>
-    </table>
-</div>
-
+                        <div className="admin-table-wrapper" style={{ overflowX: 'auto', marginTop: '20px' }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                                <thead>
+                                    <tr>
+                                        <th style={{ padding: '12px 15px', backgroundColor: '#f4f4f4', textAlign: 'left', fontWeight: 'bold' }}>Email</th>
+                                        <th style={{ padding: '12px 15px', backgroundColor: '#f4f4f4', textAlign: 'left', fontWeight: 'bold' }}>Name</th>
+                                        <th style={{ padding: '12px 15px', backgroundColor: '#f4f4f4', textAlign: 'left', fontWeight: 'bold' }}>Role</th>
+                                        <th style={{ padding: '12px 15px', backgroundColor: '#f4f4f4' }}></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {users.map(user => (
+                                        <tr key={user._id} style={{ borderBottom: '1px solid #ddd' }}>
+                                            <td style={{ padding: '12px 15px' }}>{user.email}</td>
+                                            <td
+                                                onClick={() => handleFetchUserData(user.id)}
+                                                style={{
+                                                    cursor: 'pointer',
+                                                    color: 'blue',
+                                                    textDecoration: 'underline',
+                                                    padding: '12px 15px',
+                                                    transition: 'color 0.3s',
+                                                }}
+                                                onMouseEnter={(e) => e.target.style.color = '#0056b3'}
+                                                onMouseLeave={(e) => e.target.style.color = 'blue'}
+                                            >
+                                                {user.fullName}
+                                            </td>
+                                            <td style={{ padding: '12px 15px' }}>{user.role}</td>
+                                            <td style={{ padding: '12px 15px' }}>
+                                                <button
+                                                    onClick={() => handleDeleteUser(user.id)}
+                                                    className="admin-delete-btn"
+                                                    style={{
+                                                        padding: '8px 12px',
+                                                        backgroundColor: '#f44336',
+                                                        color: 'white',
+                                                        border: 'none',
+                                                        borderRadius: '4px',
+                                                        cursor: 'pointer',
+                                                        fontSize: '14px',
+                                                        transition: 'background-color 0.3s',
+                                                    }}
+                                                    onMouseEnter={(e) => e.target.style.backgroundColor = '#e53935'}
+                                                    onMouseLeave={(e) => e.target.style.backgroundColor = '#f44336'}
+                                                >
+                                                    Delete
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </>
                 )}
             </div>

@@ -21,6 +21,8 @@ import AdminPanel from './components/adminPanel';
 import Home from './components/temp';
 
 function App() {
+
+
   return (
     <Router>
       <div>
@@ -28,7 +30,7 @@ function App() {
 
         <Routes>
           {/* Route for Home (MealPlanStepper) */}
-          <Route path="/" element={<MealPlanStepper />} />
+          <Route path="/home" element={<MealPlanStepper />} />
           <Route path="/temp" element={<Home />} />
 
           {/* Route for Admin Login */}
