@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { fetchUsers, updateUserRole, deleteUser } from '../api/apiRequests';  // Importing the API functions
 import  { ManageUsersStep } from './manageUsers';  // Import the ManageUsersStep component
-
+// import "../assets/styles/ManageUsersStep.css"
 
 // Steps configuration: Each step has a title, description, and a content component.
 const stepsAdmin = [

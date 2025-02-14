@@ -31,7 +31,7 @@ function App() {
         <Routes>
           {/* Route for Home (MealPlanStepper) */}
           <Route path="/home" element={<MealPlanStepper />} />
-          <Route path="/temp" element={<Home />} />
+          <Route path="/" element={<Home />} />
 
           {/* Route for Admin Login */}
           <Route path="/admin-login" element={<AdminDashboard />} />

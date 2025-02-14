@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import '../assets/styles/temp.css';
+import heroImage from "../assets/images/hero.png";
 
 const LandingPage = () => {
   useEffect(() => {
@@ -34,8 +35,8 @@ const LandingPage = () => {
       <nav className="navbar">
         <div className="nav-content">
           <div className="logo">
-            <img src="logo.png" alt="Company Logo" />
-            <span className="company-name">MealPlanPro</span>
+            {/* <img src="logo.png" alt="Company Logo" /> */}
+            <span className="company-name">NutriSync</span>
           </div>
           <div className="nav-links">
             <a href="#about">About</a>
@@ -43,7 +44,7 @@ const LandingPage = () => {
             <a href="#how-it-works">How It Works</a>
             <button 
               className="cta-button"
-              onClick={() => window.location.href = '/stepper-form'}
+              onClick={() => window.location.href = '/home'}
             >
               Get Started
             </button>
@@ -60,7 +61,7 @@ const LandingPage = () => {
           <div className="hero-buttons">
             <button 
               className="cta-button"
-              onClick={() => window.location.href = '/stepper-form'}
+              onClick={() => window.location.href = '/home'}
             >
               Start Now
             </button>
@@ -71,14 +72,14 @@ const LandingPage = () => {
           
         </div>
         <div className="hero-image">
-          <img src="meal-plan-hero.jpg" alt="Healthy Meal" />
+          <img src={heroImage} alt="Healthy Meal" />
         </div>
       </section>
 
       <section id="about" className="about animate-on-scroll">
-        <h2 className="section-title">About MealPlanPro</h2>
+        <h2 className="section-title">About NutriSync</h2>
         <div className="about-content">
-          <p className="about-lead">MealPlanPro is your ultimate guide to healthier eating. We create personalized meal plans tailored to your unique needs, whether you're looking to lose weight, manage a health condition, or simply eat better.</p>
+          <p className="about-lead">NutriSync is your ultimate guide to healthier eating. We create personalized meal plans tailored to your unique needs, whether you're looking to lose weight, manage a health condition, or simply eat better.</p>
           <div className="about-grid">
             <div className="about-item">
               <h3>Our Mission</h3>
@@ -97,7 +98,7 @@ const LandingPage = () => {
       </section>
 
       <section id="features" className="features animate-on-scroll">
-        <h2 className="section-title">Why Choose MealPlanPro?</h2>
+        <h2 className="section-title">Why Choose NutriSync?</h2>
         <p className="features-lead">Experience the perfect blend of science-based nutrition and delicious meals tailored just for you.</p>
         <div className="features-grid">
           {[
@@ -125,7 +126,7 @@ const LandingPage = () => {
 
       <section id="how-it-works" className="steps animate-on-scroll">
         <h2 className="section-title">How It Works</h2>
-        <p className="steps-lead">Getting started with MealPlanPro is easy. Follow these simple steps to begin your journey to healthier eating.</p>
+        <p className="steps-lead">Getting started with NutriSync is easy. Follow these simple steps to begin your journey to healthier eating.</p>
         <div className="steps-grid">
           {[
             {

@@ -183,15 +183,23 @@ body {
   flex: 1;
   max-width: 600px;
   position: relative;
+  display: flex; /* Ensures it takes only necessary space */
+  align-items: center; /* Centers vertically */
+  justify-content: center;
+  overflow: hidden; /* Prevents unnecessary spacing */
+  margin: 0; /* Removes any default margins */
+  padding: 0;
+  margin-left: 15vh;
 }
 
 .hero-image img {
   width: 100%;
-  height: auto;
-  border-radius: 1.5rem;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-  transition: transform 0.3s ease;
+  height: 70vh;
+  display: block; /* Removes any extra spacing below the image */
+  margin: 0;
+  padding: 0;
 }
+
 
 .hero-image:hover img {
   transform: translateY(-10px);

@@ -3,7 +3,7 @@ import Select from "react-select/creatable";
 import stepsAdmin from "./components/stepsAdminConfig.js";  // Import stepsAdmin from the new configuration file
 import { validateStep } from "./utils/formValidation.js"; // Import the validation function
 import { handleAdminLogin, handleNextStep, fetchUsers, handleLogout } from './api/apiRequests.js';  // Import the login function (for admin login)
-// import "./assets/styles/AdminDashboard.css";
+import "./assets/styles/ManageUsersStep.css";
 
 const AdminDashboard = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -115,6 +115,7 @@ const AdminDashboard = () => {
             <li
               key={index}
               className={`step ${index === currentStep ? "active" : ""}`}
+              
               onClick={() => {
                 const loginResponse = handleAdminLogin(formData.email, formData.password);
                 if (loginResponse.success) {
@@ -152,7 +153,7 @@ const AdminDashboard = () => {
           <p>{stepsAdmin[currentStep].description}</p>
         </div>
 
-        <div className="form">
+        <div className="admin-form">
           {stepsAdmin[currentStep].content({
             formData,
             handleInputChange,
@@ -161,9 +162,9 @@ const AdminDashboard = () => {
           })}
         </div>
 
-        {/* <button onClick={handleNextStep} className="submit-btn">
+        <button onClick={handleNextStep} className="submit-btn">
           {currentStep < stepsAdmin.length - 1 ? "Next Step" : "Submit"}
-        </button> */}
+        </button> 
 
         {/* Short Stepper (Dots with a Dash for current step) */}
         <div className="short-stepper">
