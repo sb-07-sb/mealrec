@@ -11,7 +11,7 @@ app = Flask(__name__)
 CORS(app)  # Allow cross-origin requests (e.g., from React)
 
 # MongoDB Client Setup
-uri =  "mongodb+srv://sbadmin:admin@sb.pxhni.mongodb.net/?retryWrites=true&w=majority&appName=SB"   
+uri =  os.getenv('MONGODB_URL')   
 client = MongoClient(uri)
 
 db = client["meal-plan"]
