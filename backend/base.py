@@ -1,5 +1,7 @@
 import traceback
 
+import os
+from dotenv import load_dotenv
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -9,6 +11,8 @@ from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
 from bson import ObjectId  # Import ObjectId from bson
 
+load_dotenv()
+
 app = Flask(__name__)
 CORS(app, supports_credentials=True)  # Allow cross-origin requests (e.g., from React)
 
@@ -16,7 +20,7 @@ app.secret_key = 'voXaxHr9NprGGHTHgTTGTr_5nwiUNtF8'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30)
 
 # MongoDB Client Setup
-uri =  "mongodb+srv://sbadmin:admin@sb.pxhni.mongodb.net/?retryWrites=true&w=majority&appName=SB"   
+uri =  os.getenv('MONGODB_URL')  
 client = MongoClient(uri)
 
 db = client["meal-plan"]

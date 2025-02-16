@@ -208,7 +208,7 @@ const App = () => {
 
       {/*Left Sidebar */}
       <div className="sidebar">
-        <h4 className="title">Untitled UI</h4>
+        <h4 className="title">NutriSync</h4>
         <ul className="steps">
           {steps.slice(1).map((step, index) => (
             <li
