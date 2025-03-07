@@ -1,0 +1,11 @@
+requests
+python-dotenv
+pinecone
+numpy
+sentence-transformers
+pandas
+langchain-community
+faiss-cpu
+langchain-google-genai
+google-generativeai
+flask
