@@ -1,0 +1,326 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Main container */
+.stepper-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f8f9fc;
+    width: 100%;
+    padding: 0;
+}
+
+/* Stepper layout */
+.stepper-content {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    background: white;
+}
+
+/* Sidebar */
+.stepper-sidebar {
+    width: 350px;
+    background: #f8f9fc;
+    padding: 30px;
+    border-right: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;  /* Centering content */
+    height: 100vh;
+}
+
+/* Sidebar Header */
+.sidebar-header h1 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #111827;
+    text-align: left;
+}
+
+.sidebar-header p {
+    font-size: 14px;
+    color: #6b7280;
+    margin-top: 5px;
+    text-align: left;
+}
+
+/* Step items */
+.steps-container {
+    margin-top: 20px;
+    padding-left: 10px;
+}
+
+.step-item {
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding: 15px 0;
+}
+
+.step-item:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    left: 15px;
+    top: 45px;
+    width: 2px;
+    height: 40px;
+    background: #d1d5db;
+}
+
+.step-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #d1d5db;
+    color: white;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    font-size: 14px;
+}
+
+.step-text h2 {
+    font-size: 14px;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+/* Active Step */
+.step-item.active .step-circle {
+    background: #2563eb;
+}
+
+.step-item.active .step-text h2 {
+    color: #2563eb;
+    font-weight: bold;
+}
+
+/* Form section */
+.stepper-form {
+    flex: 1;
+    padding: 40px;
+    width: 100%;
+    max-width: 100vh;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centering content */
+    height: 100vh;
+}
+
+/* Form header */
+.form-header {
+    display: flex;
+    flex-direction: column; /* Move text below the icon */
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.icon-container {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #f8f9fc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px; /* Spacing between icon and text */
+}
+
+.user-icon {
+    width: 24px;
+    height: 24px;
+    color: #2563eb;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    max-width: 100vh; /* Prevents it from stretching */
+    position: relative; /* Helps align the button dynamically */
+
+}
+
+
+/* Form Title */
+.form-header h2 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #111827;
+}
+
+.form-description {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 20px;
+}
+
+/* Form inputs */
+.form-row {
+    display: flex;
+    gap: 15px;
+    /* flex-wrap: wrap; Prevents overflow issues */
+    justify-content: center;
+
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+    width: 100%;
+    max-width: 39vh;
+    justify-content: space-between;
+    transition: max-width 0.3s ease-in-out; /* Smooth transition */
+
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group select {
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #111827;
+    background: white;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+    max-width: 100%; /* Prevents overflow beyond .form-group */
+
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #2563eb;
+}
+
+/* Select Dropdown */
+.select-container {
+    position: relative;
+}
+
+.select-container select {
+    appearance: none;
+    width: 100%;
+    cursor: pointer;
+    width: 100%;
+    max-width: 100%; /* Prevents overflow beyond .form-group */
+
+}
+
+.select-arrow {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.select-arrow svg {
+    width: 14px;
+    height: 14px;
+    color: #374151;
+}
+
+/* Buttons */
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.btn-back {
+    background: none;
+    color: #6b7280;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.btn-next {
+    background: #2563eb;
+    color: white;
+    padding: 10px 20px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-next:hover {
+    background: #1d4ed8;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .stepper-content {
+        flex-direction: column;
+    }
+    
+    .stepper-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #e5e7eb;
+        padding: 20px;
+        height: auto; /* Adjust for small screens */
+    }
+    
+    .stepper-form {
+        padding: 20px;
+        height: auto;
+    }
+    
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .form-header {
+        align-items: flex-start; /* Keep text left-aligned */
+    }
+
+    .form-group {
+        max-width: 100%; /* Allow full width when stacked */
+    }
+}
+
+@media (max-width: 480px) {
+    .stepper-form {
+        padding: 15px;
+    }
+    
+    .form-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .icon-container {
+        margin-bottom: 10px;
+    }
+     
+    .form-group {
+        max-width: 100%; /* Allow full width when stacked */
+    }
+}
+
+
+

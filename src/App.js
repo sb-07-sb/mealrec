@@ -19,6 +19,7 @@ import MealPlanStepper from './MealStepper'; // Your existing Meal Plan Stepper 
 import AdminDashboard from './adminDashboard'; // Your Admin Login component
 import AdminPanel from './components/adminPanel';
 import Home from './components/temp';
+import StepperForm from './StepperForm';
 
 function App() {
 
@@ -30,13 +31,14 @@ function App() {
 
         <Routes>
           {/* Route for Home (MealPlanStepper) */}
-          <Route path="/home" element={<MealPlanStepper />} />
-          <Route path="/" element={<Home />} />
+          {/* <Route path="/home" element={<MealPlanStepper />} />
+          <Route path="/" element={<Home />} /> */}
 
           {/* Route for Admin Login */}
-          <Route path="/admin-login" element={<AdminDashboard />} />
-          <Route path="/admin-p" element={<AdminPanel />} />
-
+          {/* <Route path="/admin-login" element={<AdminDashboard />} />
+          <Route path="/admin-p" element={<AdminPanel />} /> */}
+          <Route path="/" element={<StepperForm />}
+          />
         </Routes>
       </div>
     </Router>

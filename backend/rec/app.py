@@ -1,13 +1,13 @@
-
 import os
 from dotenv import load_dotenv
 from langchain.vectorstores import Pinecone as LangChainPinecone
 from langchain.embeddings import HuggingFaceEmbeddings
 from pinecone import Pinecone
-from main import generate_meal_plan  # Import the function from llm.py
+# from main import generate_meal_plan  # Import the function from llm.py
 from flask import Flask, request, jsonify
-from recipe_embeddings import save_to_pinecone
-from recipe_proc import fetch_api_data  # Import the fetch_api_data function
+from pinecone_embeddings import format_and_push_to_pinecone
+from recipes_fetch import fetch_api_data  # Import the fetch_api_data function
+from recommendations import generate_meal_plan
 import json
 
 # Load environment variables
@@ -19,13 +19,14 @@ gemini_api_key = os.getenv('GOOGLE_API_KEY')
 
 # Initialize Pinecone
 pc = Pinecone(api_key=os.getenv('PINECONE_API_KEY'))
-index_name = "recipes-index"
+index_name = "recipes-fin"
 
 # Load the embedding model (same as used for storing data)
 embed_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
 # Connect Pinecone to LangChain
 vectorstore = LangChainPinecone(pc.Index(index_name), embed_model, text_key="text")
+
 
 @app.route('/save_to_pinecone', methods=['POST'])
 def save_recipes():
@@ -37,29 +38,44 @@ def save_recipes():
             return jsonify({"error": "No recipes fetched or found."}), 404
 
         # Save fetched recipes to Pinecone
-        save_to_pinecone(recipes)
+        format_and_push_to_pinecone(recipes)
         
         return jsonify({"message": f"Successfully saved {len(recipes)} recipes to Pinecone."}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
 
-@app.route('/generate_meal_plan', methods=['POST'])
-def generate_meal_plan_route():
-    # Parse JSON request body
+@app.route('/generate-meal-plan', methods=['POST'])
+def generate_meal_plan_api():
     data = request.get_json()
 
-    # Extract the values from the request
-    user_allergens = set(data.get('allergens', []))  # Default to empty list if not provided
-    user_dislikes = set(data.get('dislikes', []))  # Default to empty list if not provided
-    query = data.get('query', '')  # Default to empty string if not provided
+     # Extract parameters and ensure they match the function's expected format
+    user_allergens = set(data.get('user_allergens', []))  # Default to empty list if not provided
+    user_dislikes = set(data.get('user_dislikes', []))  # Default to empty list if not provided 
 
-    # Generate the meal plan
-    meal_plan = generate_meal_plan(vectorstore, user_allergens, user_dislikes, query)
+    query = data.get("query", "")
+    user_likes = data.get("user_likes", "")
+    user_pref = data.get("user_pref", "")
+    size = data.get("size", "").lower()  # Convert to lowercase
+    protein_option = data.get("protein_option", "")
+    protein_category = data.get("protein_category", "").lower()  # Convert to lowercase
+    meal_types = set(data.get("meal_types", []))  # Convert list to set
 
-    # Print the generated meal plan to the console for debugging
-    print("Generated Meal Plan:", meal_plan)
 
-    # Check if the meal_plan is empty or malformed
+    # Call the function
+    meal_plan, final_docs = generate_meal_plan(
+        vectorstore,
+        user_allergens,
+        user_dislikes,
+        query,
+        user_likes,
+        user_pref,
+        size,
+        protein_option,
+        protein_category,
+        meal_types
+    )
+   # Check if the meal_plan is empty or malformed
     if not meal_plan:
         return jsonify({"error": "Meal plan generation failed, no data returned"}), 400
 
@@ -97,6 +113,8 @@ def clean_meal_plan_string(meal_plan: str) -> str:
     cleaned_plan = cleaned_plan.replace("\n", "").replace("\\", "")
 
     return cleaned_plan
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)

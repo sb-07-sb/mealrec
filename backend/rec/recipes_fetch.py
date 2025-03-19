@@ -8,7 +8,7 @@ def fetch_api_data():
     """
     Fetches recipe data directly from the API and processes it for Pinecone.
     """
-    api_url = 'https://apis.delicut.ae/api/v1/recipes/fetch-all-weekly'
+    api_url = 'https://apis.delicut.ae/api/v1/recipes/fetch-all-weekly?week=incoming'
 
     try:
         response = requests.get(api_url)
@@ -41,6 +41,9 @@ def fetch_api_data():
                     for variant in recipe.get("variants", []):
                         filtered_variant = {
                             "protein_category": variant.get("protein_category"),
+                            "protein_option": variant.get("protein_option"),
+                            "size": variant.get("size"),
+                            "variant_ingredients": variant.get("variant_ingredients", []),
                             "kcal": variant.get("kcal"),
                             "fat": variant.get("fat"),
                             "carb": variant.get("carb"),
@@ -57,3 +60,6 @@ def fetch_api_data():
     except requests.exceptions.RequestException as e:
         print(f"Error fetching API: {str(e)}")
         return []
+
+recipes = fetch_api_data()
+print(recipes)
