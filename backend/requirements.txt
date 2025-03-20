@@ -3,3 +3,5 @@ pymongo
 flask-cors 
 bcrypt
 python-dotenv
+
+'mongodb+srv://sbadmin:sbadmin@sb.pxhni.mongodb.net/?retryWrites=true&w=majority&appName=SB'
