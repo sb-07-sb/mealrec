@@ -431,3 +431,32 @@ body {
 .tag-input::placeholder {
     color: #9ca3af;
 }
+
+.form-group .error {
+    position: absolute;
+    top: 0; /* Position at the top of the input field */
+    right: 0; /* Position at the right of the input field */
+    background: white; /* White background to overlap the border */
+    color: red; /* Red text for the error message */
+    font-size: 12px; /* Smaller font size for error messages */
+    padding: 0 4px; /* Padding for the error message */
+    transform: translateY(-50%); /* Move the error message up by 50% of its height */
+    z-index: 1; /* Ensure the error message appears above the border */
+}
+
+/* Pseudo-element for the error message */
+.form-group input.error-border::after,
+.form-group select.error-border::after {
+    content: "Required*"; /* Error message text */
+    position: absolute;
+    top: 0; /* Position at the top of the input field */
+    right: 0; /* Position at the right of the input field */
+    background: white; /* White background to overlap the border */
+    color: red; /* Red text for the error message */
+    font-size: 12px; /* Smaller font size for error messages */
+    padding: 0 4px; /* Padding for the error message */
+    transform: translateY(-50%); /* Move the error message up by 50% of its height */
+    z-index: 1; /* Ensure the error message appears above the border */
+    border: 1px solid red; /* Optional: Add a red border for emphasis */
+    border-radius: 4px; /* Rounded corners for the error message */
+}

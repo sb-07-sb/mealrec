@@ -1,7 +1,7 @@
 // PersonalInfoForm.js
 import React from 'react';
 
-const PersonalInfoForm = ({ formData, handleInputChange, prevStep, nextStep, currentStep }) => {
+const PersonalInfoForm = ({ formData, handleInputChange, prevStep, nextStep, currentStep, errors }) => {
     return (
         <div className="form-container">
             <div className="form-header">
@@ -24,7 +24,11 @@ const PersonalInfoForm = ({ formData, handleInputChange, prevStep, nextStep, cur
                         value={formData.firstName}
                         onChange={handleInputChange}
                         placeholder="Özgün"
+                        className={errors.firstName ? "error-border" : ""}
+
                     />
+                    {errors.firstName && <span className="error">Required*</span>}
+
                 </div>
                 <div className="form-group">
                     <label>Last Name</label>
@@ -60,7 +64,6 @@ const PersonalInfoForm = ({ formData, handleInputChange, prevStep, nextStep, cur
                         placeholder="ozgunacik@hotmail.com"
                     />
                 </div>
-
             </div>
 
 

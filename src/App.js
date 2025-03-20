@@ -20,6 +20,7 @@ import AdminDashboard from './adminDashboard'; // Your Admin Login component
 import AdminPanel from './components/adminPanel';
 import Home from './components/temp';
 import StepperForm from './StepperForm';
+import LoginForm from './components/LoginForm';
 
 function App() {
 
@@ -37,7 +38,9 @@ function App() {
           {/* Route for Admin Login */}
           {/* <Route path="/admin-login" element={<AdminDashboard />} />
           <Route path="/admin-p" element={<AdminPanel />} /> */}
-          <Route path="/" element={<StepperForm />}
+          <Route path="/" element={<StepperForm />} />
+          <Route path="/l" element={<LoginForm />}
+
           />
         </Routes>
       </div>
