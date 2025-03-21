@@ -1,122 +1,167 @@
-// import React, { useState } from 'react';
-// import '../assets/styles/LoginForm.css';
+import React, { useState } from 'react';
+import styles from '../assets/styles/LoginForm.module.css';
+import { registerUser, loginUser } from '../api/auth'; // Import service functions
 
-// const LoginForm = () => {
-//     const [formData, setFormData] = useState({
-//         email: '',
-//         password: '',
-//     });
+const LoginForm = () => {
+  const [isRegister, setIsRegister] = useState(false); // Toggle between Login and Register
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+  const [errors, setErrors] = useState({});
 
-//     const [errors, setErrors] = useState({});
-//     const [showPassword, setShowPassword] = useState(false);
+  const toggleForm = () => {
+    setIsRegister(!isRegister);
+    setErrors({}); // Clear errors when toggling forms
+    setFormData({ email: '', password: '', confirmPassword: '' }); // Reset form data
+  };
 
-//     const handleInputChange = (e) => {
-//         const { name, value } = e.target;
-//         setFormData({ ...formData, [name]: value });
-//     };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+    // Clear error for the field being edited
+    setErrors({
+      ...errors,
+      [name]: '',
+    });
+  };
 
-//     const handleSubmit = (e) => {
-//         e.preventDefault();
-//         const validationErrors = validateForm(formData);
-//         if (Object.keys(validationErrors).length === 0) {
-//             // Handle form submission (e.g., API call)
-//             console.log('Form submitted successfully:', formData);
-//         } else {
-//             setErrors(validationErrors);
-//         }
-//     };
+  const validateForm = () => {
+    const newErrors = {};
 
-//     const validateForm = (data) => {
-//         const errors = {};
-//         if (!data.email) {
-//             errors.email = 'Email is required';
-//         } else if (!/\S+@\S+\.\S+/.test(data.email)) {
-//             errors.email = 'Email address is invalid';
-//         }
-//         if (!data.password) {
-//             errors.password = 'Password is required';
-//         }
-//         return errors;
-//     };
+    // Common validations for both forms
+    if (!formData.email) {
+      newErrors.email = 'Required*';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Invalid email';
+    }
 
-//     const togglePasswordVisibility = () => {
-//         setShowPassword(!showPassword);
-//     };
+    if (!formData.password) {
+      newErrors.password = 'Required*';
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
+    }
 
-//     return (
-//         <div className="login-container">
-//             <div className="login-content">
-//                 <div className="login-sidebar">
-//                     <div className="sidebar-header">
-//                         <h1>Welcome Back!</h1>
-//                         <p>Login to your account to continue.</p>
-//                     </div>
-//                     <div className="sidebar-illustration">
-//                         <img src="/images/login-illustration.svg" alt="Login Illustration" />
-//                     </div>
-//                     <div className="sidebar-footer">
-//                         <p>Don't have an account? <a href="/signup">Sign up</a></p>
-//                     </div>
-//                 </div>
-//                 <div className="login-form">
-//                     <form onSubmit={handleSubmit}>
-//                         <div className="form-group">
-//                             <label htmlFor="email">Email</label>
-//                             <input
-//                                 type="email"
-//                                 id="email"
-//                                 name="email"
-//                                 value={formData.email}
-//                                 onChange={handleInputChange}
-//                                 className={errors.email ? 'error' : ''}
-//                                 placeholder="Enter your email"
-//                             />
-//                             {errors.email && <span className="error-message">{errors.email}</span>}
-//                         </div>
-//                         <div className="form-group password-group">
-//                             <label htmlFor="password">Password</label>
-//                             <div className="password-input-container">
-//                                 <input
-//                                     type={showPassword ? 'text' : 'password'}
-//                                     id="password"
-//                                     name="password"
-//                                     value={formData.password}
-//                                     onChange={handleInputChange}
-//                                     className={errors.password ? 'error' : ''}
-//                                     placeholder="Enter your password"
-//                                 />
-//                                 <button
-//                                     type="button"
-//                                     className="password-toggle"
-//                                     onClick={togglePasswordVisibility}
-//                                 >
-//                                     {/* {showPassword ? <PasswordHiddenIcon /> : <PasswordVisibleIcon />} */}
-//                                 </button>
-//                             </div>
-//                             {errors.password && <span className="error-message">{errors.password}</span>}
-//                         </div>
-//                         <div className="form-options">
-//                             <a href="/forgot-password" className="forgot-password">
-//                                 Forgot Password?
-//                             </a>
-//                         </div>
-//                         <div className="form-actions">
-//                             <button type="submit" className="btn-login">
-//                                 Login
-//                             </button>
-//                         </div>
-//                         <div className="social-login">
-//                             <p>Or login with:</p>
-//                             <button type="button" className="btn-google">
-//                                 {/* <GoogleIcon /> */}
-//                                 <span>Login with Google</span>
-//                             </button>
-//                         </div>
-//                     </form>
-//                 </div>
-//             </div>
-//         </div>
-//     );
-// };
+    // Additional validations for the Register form
+    if (isRegister) {
+      if (!formData.confirmPassword) {
+        newErrors.confirmPassword = 'Required*';
+      } else if (formData.confirmPassword !== formData.password) {
+        newErrors.confirmPassword = 'Passwords do not match';
+      }
+    }
 
-// export default LoginForm;
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; // Return true if no errors
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (validateForm()) {
+      try {
+        if (isRegister) {
+          // Handle registration
+          const response = await registerUser(formData.email, formData.password);
+          alert(response.message); // Show success message
+          toggleForm(); // Switch to login form after successful registration
+        } else {
+          // Handle login
+          const response = await loginUser(formData.email, formData.password);
+          alert(response.message); // Show success message
+          console.log('Logged in user ID:', response.user_id);
+          // Redirect or update state as needed
+        }
+      } catch (error) {
+        alert(error.message); // Show error message
+      }
+    } else {
+      console.log('Form has errors');
+    }
+  };
+
+  return (
+    <div className={styles.stepperContainer}>
+      <div className={styles.stepperContent}>
+        <div className={styles.stepperSidebar}>
+          <div className={styles.sidebarHeader}>
+            <h1>{isRegister ? 'Create Account' : 'Welcome Back'}</h1>
+            <p>{isRegister ? 'Register to get started' : 'Please login to continue'}</p>
+          </div>
+        </div>
+        <div className={styles.stepperForm}>
+          <div className={styles.formHeader}>
+            <div className={styles.iconContainer}>
+              <svg className={styles.userIcon} viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+              </svg>
+            </div>
+            <h2>{isRegister ? 'Register' : 'Login'}</h2>
+          </div>
+          <form className={styles.formContainer} onSubmit={handleSubmit}>
+            <div className={styles.formGroup}>
+              <div className={styles.labelContainer}>
+                <label htmlFor="email">Email</label>
+                {errors.email && <span className={styles.error}>{errors.email}</span>}
+              </div>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Enter your email"
+                value={formData.email}
+                onChange={handleChange}
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <div className={styles.labelContainer}>
+                <label htmlFor="password">Password</label>
+                {errors.password && <span className={styles.error}>{errors.password}</span>}
+              </div>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter your password"
+                value={formData.password}
+                onChange={handleChange}
+              />
+            </div>
+            {isRegister && (
+              <div className={styles.formGroup}>
+                <div className={styles.labelContainer}>
+                  <label htmlFor="confirmPassword">Confirm Password</label>
+                  {errors.confirmPassword && (
+                    <span className={styles.error}>{errors.confirmPassword}</span>
+                  )}
+                </div>
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  placeholder="Confirm your password"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                />
+              </div>
+            )}
+            <div className={styles.formActions}>
+              <button type="button" className={styles.btnBack} onClick={toggleForm}>
+                {isRegister ? 'Back to Login' : 'Register'}
+              </button>
+              <button type="submit" className={styles.btnNext}>
+                {isRegister ? 'Sign Up' : 'Login'}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default LoginForm;

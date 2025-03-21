@@ -32,10 +32,11 @@ def register():
     # Hash password
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
-    # Insert into login collection
+     # Insert into login collection with role
     user_id = login_collection.insert_one({
         'email': email,
-        'password': hashed_password
+        'password': hashed_password,
+        'role': 'user'  # Add role field
     }).inserted_id
 
     return jsonify({'message': 'User registered successfully', 'user_id': str(user_id)}), 201

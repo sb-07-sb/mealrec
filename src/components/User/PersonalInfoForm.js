@@ -25,7 +25,6 @@ const PersonalInfoForm = ({ formData, handleInputChange, prevStep, nextStep, cur
                         onChange={handleInputChange}
                         placeholder="Özgün"
                         className={errors.firstName ? "error-border" : ""}
-
                     />
                     {errors.firstName && <span className="error">Required*</span>}
 
@@ -66,7 +65,6 @@ const PersonalInfoForm = ({ formData, handleInputChange, prevStep, nextStep, cur
                 </div>
             </div>
 
-
             <div className="form-row">
                 <div className="form-group">
                     <label>City</label>
@@ -100,7 +98,6 @@ const PersonalInfoForm = ({ formData, handleInputChange, prevStep, nextStep, cur
                     </div>
                 </div>
             </div>
-
 
             <div className="form-actions">
                 {currentStep > 1 && (
