@@ -7,7 +7,9 @@ const MealTypeSelectionForm = ({
     meal_types,
     setFormData,
     prevStep,
-    nextStep
+    nextStep,
+    errors, // Pass errors as a prop
+    setErrors
 }) => {
     // Predefined options
     const sizeOptions = ['large', 'standard'];
@@ -21,6 +23,11 @@ const MealTypeSelectionForm = ({
             ...prev,
             [fieldName]: value
         }));
+
+        // Clear the error for the field being edited
+        if (errors[fieldName]) {
+            setErrors((prevErrors) => ({ ...prevErrors, [fieldName]: '' }));
+        }
     };
 
     // Handle selection of meal types from the dropdown
@@ -31,6 +38,10 @@ const MealTypeSelectionForm = ({
                 ...prev,
                 meal_types: [...prev.meal_types, selectedMealType]
             }));
+        }
+        // Clear the error for meal_types
+        if (errors.meal_types) {
+            setErrors((prevErrors) => ({ ...prevErrors, meal_types: '' }));
         }
         e.target.value = ''; // Reset the dropdown after selection
     };
@@ -53,12 +64,16 @@ const MealTypeSelectionForm = ({
 
             {/* Size Field */}
             <div className="form-group tag-field-group">
-                <label>Size</label>
+                <div className="label-container">
+                    <label>Size</label>
+                    {errors.size && <span className="error">{errors.size}</span>}
+                </div>
                 <div className="tags-field-container">
                     <div className="select-container">
                         <select
                             value={size}
                             onChange={(e) => handleDropdownChange('size', e.target.value)}
+                            className={errors.size ? "error-border" : ""}
                         >
                             {sizeOptions.map((option) => (
                                 <option key={option} value={option}>
@@ -78,11 +93,15 @@ const MealTypeSelectionForm = ({
             {/* Protein Option and Protein Category Fields */}
             <div className="form-row">
                 <div className="form-group">
-                    <label>Protein Option</label>
+                    <div className="label-container">
+                        <label>Protein Option</label>
+                        {errors.protein_option && <span className="error">{errors.protein_option}</span>}
+                    </div>
                     <div className="select-container">
                         <select
                             value={protein_option}
                             onChange={(e) => handleDropdownChange('protein_option', e.target.value)}
+                            className={errors.protein_option ? "error-border" : ""}
                         >
                             <option value="" disabled>Select an option</option>
                             {proteinOptions.map((option) => (
@@ -99,11 +118,15 @@ const MealTypeSelectionForm = ({
                     </div>
                 </div>
                 <div className="form-group">
-                    <label>Protein Category</label>
+                    <div className="label-container">
+                        <label>Protein Category</label>
+                        {errors.protein_category && <span className="error">{errors.protein_category}</span>}
+                    </div>
                     <div className="select-container">
                         <select
                             value={protein_category}
                             onChange={(e) => handleDropdownChange('protein_category', e.target.value)}
+                            className={errors.protein_category ? "error-border" : ""}
                         >
                             {proteinCategoryOptions.map((option) => (
                                 <option key={option} value={option}>
@@ -122,7 +145,10 @@ const MealTypeSelectionForm = ({
 
             {/* Meal Types Field */}
             <div className="form-group tag-field-group">
-                <label>Meal Types</label>
+                <div className="label-container">
+                    <label>Meal Types</label>
+                    {errors.meal_types && <span className="error">{errors.meal_types}</span>}
+                </div>
                 <div className="tags-field-container">
                     {/* Display selected meal types as tags */}
                     <div className="tags-display">
@@ -139,7 +165,7 @@ const MealTypeSelectionForm = ({
                     <div className="select-container">
                         <select
                             onChange={handleMealTypeSelect}
-                            className="tag-input"
+                            className={`tag-input ${errors.meal_types ? "error-border" : ""}`}
                         >
                             <option value="" disabled>Select a meal type</option>
                             {mealTypeOptions

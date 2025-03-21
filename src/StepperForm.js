@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
 import './assets/styles/StepperForm.css';
 import PersonalInfoForm from './components/User/PersonalInfoForm';
 import RestrictionsForm from './components/User/RestrictionsForm';
@@ -6,8 +7,11 @@ import MealPreferencesForm from './components/User/MealPreferencesForm';
 import MealTypeSelectionForm from './components/User/MealTypeSelectionForm';
 import StepIndicator from './components/User/StepIndicator';
 import { validateStep } from './utils/validation';
+import { getUserFormData } from './api/auth';
 
 const StepperForm = () => {
+    const navigate = useNavigate(); // Hook for navigation
+
     const [currentStep, setCurrentStep] = useState(1);
     const [formData, setFormData] = useState({
         firstName: '',
@@ -48,18 +52,40 @@ const StepperForm = () => {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
+        setErrors((prevErrors) => ({ ...prevErrors, [name]: '' })); // Clear the error for the field being edited
     };
 
     const TOTAL_STEPS = 4; // Adjust this based on your total steps
 
-    // const nextStep = () => {
-    //     if (currentStep < TOTAL_STEPS) {
-    //         setCurrentStep(currentStep + 1);
-    //     } else {
-    //         // Handle form submission or completion
-    //         handleFormSubmit();
-    //     }
-    // };
+    // Check user role on component mount
+    useEffect(() => {
+        const userRole = localStorage.getItem('role');
+        const token = localStorage.getItem('token');
+
+        // Redirect to login if not authenticated
+        if (!token) {
+            navigate('/login', { replace: true }); // Replace history entry
+            return;
+        }
+
+        // Redirect to admin dashboard if the user is an admin
+        if (userRole === 'admin') {
+            navigate('/admin', { replace: true }); // Replace history entry
+            return;
+        }
+
+        const fetchUserFormData = async () => {
+            const user_id = localStorage.getItem('user_id');
+            if (!user_id) return;
+
+            const response = await getUserFormData(user_id);
+            if (response.data) {
+                setFormData(response.data);
+            }
+        };
+
+        fetchUserFormData();
+    }, []);
 
     const nextStep = () => {
         const { isValid, errors: validationErrors } = validateStep(currentStep, formData);
@@ -125,15 +151,24 @@ const StepperForm = () => {
         return <StepIndicator currentStep={currentStep} />;
     };
 
+
     const handleFormSubmit = async () => {
         try {
+            // Retrieve user_id from local storage (or update with your preferred state management method)
+            const user_id = localStorage.getItem('user_id');
+
+            if (!user_id) {
+                alert('User not logged in. Please log in first.');
+                return;
+            }
+
             const response = await fetch('http://localhost:5000/save-form', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    user_id: 'USER_ID_FROM_LOGIN', // Replace with the actual user ID after login
+                    user_id, // Dynamically use the stored user_id
                     ...formData,
                 }),
             });
@@ -141,10 +176,12 @@ const StepperForm = () => {
             if (response.ok) {
                 alert('Form submitted successfully!');
             } else {
-                alert('Failed to submit form.');
+                const errorData = await response.json();
+                alert(`Failed to submit form: ${errorData.error}`);
             }
         } catch (error) {
             console.error('Error submitting form:', error);
+            alert('An error occurred while submitting the form.');
         }
     };
 
@@ -176,6 +213,9 @@ const StepperForm = () => {
                         prevStep={prevStep}
                         nextStep={nextStep}
                         setFormData={setFormData} // Pass setFormData
+                        errors={errors} // Pass errors as a prop
+                        setErrors={setErrors}
+
                     />
                 );
             case 3:
@@ -192,6 +232,9 @@ const StepperForm = () => {
                         prevStep={prevStep}
                         nextStep={nextStep}
                         setFormData={setFormData}
+                        errors={errors} // Pass errors as a prop
+                        setErrors={setErrors}
+
                     />
                 );
             case 4:

@@ -1,4 +1,3 @@
-// PersonalInfoForm.js
 import React from 'react';
 
 const PersonalInfoForm = ({ formData, handleInputChange, prevStep, nextStep, currentStep, errors }) => {
@@ -17,7 +16,10 @@ const PersonalInfoForm = ({ formData, handleInputChange, prevStep, nextStep, cur
 
             <div className="form-row">
                 <div className="form-group">
-                    <label>First Name</label>
+                    <div className="label-container">
+                        <label>First Name</label>
+                        {errors.firstName && <span className="error">{errors.firstName}</span>}
+                    </div>
                     <input
                         type="text"
                         name="firstName"
@@ -26,64 +28,80 @@ const PersonalInfoForm = ({ formData, handleInputChange, prevStep, nextStep, cur
                         placeholder="Özgün"
                         className={errors.firstName ? "error-border" : ""}
                     />
-                    {errors.firstName && <span className="error">Required*</span>}
-
                 </div>
                 <div className="form-group">
-                    <label>Last Name</label>
+                    <div className="label-container">
+                        <label>Last Name</label>
+                        {errors.lastName && <span className="error">{errors.lastName}</span>}
+                    </div>
                     <input
                         type="text"
                         name="lastName"
                         value={formData.lastName}
                         onChange={handleInputChange}
                         placeholder="Açık"
+                        className={errors.lastName ? "error-border" : ""}
                     />
                 </div>
             </div>
             <div className="form-row">
-
                 <div className="form-group">
-                    <label>Phone Number</label>
+                    <div className="label-container">
+                        <label>Phone Number</label>
+                        {errors.phoneNumber && <span className="error">{errors.phoneNumber}</span>}
+                    </div>
                     <input
                         type="tel"
                         name="phoneNumber"
                         value={formData.phoneNumber}
                         onChange={handleInputChange}
                         placeholder="+9 000 000 0000"
+                        className={errors.phoneNumber ? "error-border" : ""}
                     />
                 </div>
-
                 <div className="form-group">
-                    <label>E-mail Address</label>
+                    <div className="label-container">
+                        <label>E-mail Address</label>
+                        {errors.email && <span className="error">{errors.email}</span>}
+                    </div>
                     <input
                         type="email"
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
                         placeholder="ozgunacik@hotmail.com"
+                        className={errors.email ? "error-border" : ""}
                     />
                 </div>
             </div>
-
             <div className="form-row">
                 <div className="form-group">
-                    <label>City</label>
+                    <div className="label-container">
+                        <label>City</label>
+                        {errors.city && <span className="error">{errors.city}</span>}
+                    </div>
                     <input
                         type="text"
                         name="city"
                         value={formData.city}
                         onChange={handleInputChange}
                         placeholder="Antalya"
+                        className={errors.city ? "error-border" : ""}
                     />
                 </div>
                 <div className="form-group">
-                    <label>Country</label>
+                    <div className="label-container">
+                        <label>Country</label>
+                        {errors.country && <span className="error">{errors.country}</span>}
+                    </div>
                     <div className="select-container">
                         <select
                             name="country"
                             value={formData.country}
                             onChange={handleInputChange}
+                            className={errors.country ? "error-border" : ""}
                         >
+                            <option value="">Select Country</option>
                             <option>Turkey</option>
                             <option>United States</option>
                             <option>United Kingdom</option>
@@ -112,4 +130,4 @@ const PersonalInfoForm = ({ formData, handleInputChange, prevStep, nextStep, cur
     );
 };
 
-export default PersonalInfoForm; // Ensure default export
+export default PersonalInfoForm;

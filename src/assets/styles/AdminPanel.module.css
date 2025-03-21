@@ -1,0 +1,54 @@
+.adminContainer {
+    padding: 20px;
+    background-color: #f8f9fc;
+    min-height: 100vh;
+    font-family: 'Poppins', sans-serif;
+}
+
+.adminHeader {
+    font-size: 24px;
+    font-weight: bold;
+    color: #111827;
+    margin-bottom: 20px;
+}
+
+.userList {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.userCard {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.userEmail {
+    font-size: 18px;
+    font-weight: bold;
+    color: #2563eb;
+    margin-bottom: 10px;
+}
+
+.userDetails {
+    margin-top: 10px;
+}
+
+.userDetails h3 {
+    font-size: 16px;
+    font-weight: bold;
+    color: #111827;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+.userDetails p {
+    font-size: 14px;
+    color: #374151;
+    margin-bottom: 5px;
+} 
+
+
+/*  */
