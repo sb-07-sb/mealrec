@@ -72,12 +72,12 @@ def save_form():
         return jsonify({'error': 'User ID is required'}), 400
 
     try:
-        user_id = ObjectId(user_id)
+        user_id_obj = ObjectId(user_id)
     except Exception:
         return jsonify({'error': 'Invalid User ID format'}), 400
 
     # Check if the user exists in the login collection
-    if not login_collection.find_one({'_id': user_id}):
+    if not login_collection.find_one({'_id': user_id_obj}):
         return jsonify({'error': 'User not found'}), 404
 
     # Update form data if it exists, otherwise insert a new document
@@ -132,6 +132,7 @@ def get_all_users():
                 user_data.append({
                     '_id': user_id,  # Use the string version of user_id
                     'email': user['email'],
+                    'role': user['role'],
                     **form_data  # Spread the form data into the user object
                 })
             else:
@@ -139,9 +140,9 @@ def get_all_users():
                 user_data.append({
                     '_id': user_id,  # Use the string version of user_id
                     'email': user['email'],
+                    'role': user['role'],
                     'firstName': '',
                     'lastName': '',
-                    'phoneNumber': '',
                     'city': '',
                     'country': '',
                     'user_pref': [],

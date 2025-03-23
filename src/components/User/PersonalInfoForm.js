@@ -44,36 +44,7 @@ const PersonalInfoForm = ({ formData, handleInputChange, prevStep, nextStep, cur
                     />
                 </div>
             </div>
-            <div className="form-row">
-                <div className="form-group">
-                    <div className="label-container">
-                        <label>Phone Number</label>
-                        {errors.phoneNumber && <span className="error">{errors.phoneNumber}</span>}
-                    </div>
-                    <input
-                        type="tel"
-                        name="phoneNumber"
-                        value={formData.phoneNumber}
-                        onChange={handleInputChange}
-                        placeholder="+9 000 000 0000"
-                        className={errors.phoneNumber ? "error-border" : ""}
-                    />
-                </div>
-                <div className="form-group">
-                    <div className="label-container">
-                        <label>E-mail Address</label>
-                        {errors.email && <span className="error">{errors.email}</span>}
-                    </div>
-                    <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        placeholder="ozgunacik@hotmail.com"
-                        className={errors.email ? "error-border" : ""}
-                    />
-                </div>
-            </div>
+            
             <div className="form-row">
                 <div className="form-group">
                     <div className="label-container">

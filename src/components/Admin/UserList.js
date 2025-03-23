@@ -22,6 +22,17 @@ const UserList = ({ onUserSelect }) => {
         fetchUsers();
     }, []);
 
+    const UserListHeader = () => {
+        return (
+            <div className={styles.userListHeader}>
+                <div className={styles.headerName}>Name</div>
+                <div className={styles.headerEmail}>Email</div>
+                <div className={styles.headerRole}>Role</div>
+                <div className={styles.headerAction}>Action</div>
+            </div>
+        );
+    };
+
     const toggleUserDetails = (userId) => {
         if (expandedUser === userId) {
             setExpandedUser(null);
@@ -42,7 +53,7 @@ const UserList = ({ onUserSelect }) => {
         // For now, we'll just update the UI
         setUsers(users.filter(user => user._id !== userId));
         setDeleteConfirmation(null);
-        
+
         // If the deleted user was expanded, collapse it
         if (expandedUser === userId) {
             setExpandedUser(null);
@@ -57,6 +68,10 @@ const UserList = ({ onUserSelect }) => {
     return (
         <div className={styles.pageWrapper}>
             <div className={styles.userListContainer}>
+
+                {/* Add the header row */}
+                {/* <UserListHeader /> */}
+
                 {users.map((user) => (
                     <div key={user._id} className={styles.userCard}>
                         <div className={styles.userCardHeader} onClick={() => toggleUserDetails(user._id)}>
@@ -75,17 +90,17 @@ const UserList = ({ onUserSelect }) => {
                                 <div className={styles.userRole}>
                                     <span className={styles.roleTag}>{user.role || "User"}</span>
                                 </div>
-                                
+
                                 {deleteConfirmation === user._id ? (
                                     <div className={styles.deleteConfirmation} onClick={(e) => e.stopPropagation()}>
                                         <span>Delete user?</span>
-                                        <button 
+                                        <button
                                             className={`${styles.confirmButton} ${styles.confirmYes}`}
                                             onClick={(e) => confirmDelete(user._id, e)}
                                         >
                                             Yes
                                         </button>
-                                        <button 
+                                        <button
                                             className={`${styles.confirmButton} ${styles.confirmNo}`}
                                             onClick={cancelDelete}
                                         >
@@ -94,17 +109,17 @@ const UserList = ({ onUserSelect }) => {
                                     </div>
                                 ) : (
                                     <div className={styles.actionButtons}>
-                                        <button 
-                                            className={styles.deleteButton} 
+                                        <button
+                                            className={styles.deleteButton}
                                             onClick={(e) => handleDeleteClick(user._id, e)}
                                             aria-label="Delete user"
                                         >
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-                                                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                                                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
                                             </svg>
                                         </button>
-                                        <button 
-                                            className={styles.viewDetailsButton} 
+                                        <button
+                                            className={styles.viewDetailsButton}
                                             aria-label={expandedUser === user._id ? "Hide details" : "View details"}
                                         >
                                             {expandedUser === user._id ? "Hide Details" : "View Details"}
@@ -113,18 +128,18 @@ const UserList = ({ onUserSelect }) => {
                                 )}
                             </div>
                         </div>
-                        
+
                         {expandedUser === user._id && (
                             <div className={styles.userDetails}>
                                 <div className={styles.detailsGrid}>
-                                    <div className={styles.detailsSection}>
+                                    {/* <div className={styles.detailsSection}>
                                         <h3>Personal Information</h3>
                                         <p><strong>Name:</strong> {user.firstName} {user.lastName}</p>
                                         <p><strong>Email:</strong> {user.email}</p>
                                         <p><strong>Role:</strong> {user.role}</p>
                                         <p><strong>City:</strong> {user.city}</p>
                                         <p><strong>Country:</strong> {user.country}</p>
-                                    </div>
+                                    </div> */}
 
                                     <div className={styles.detailsSection}>
                                         <h3>Meal Preferences</h3>

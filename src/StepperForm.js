@@ -16,9 +16,7 @@ const StepperForm = () => {
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
-        phoneNumber: '',
         country: 'Turkey',
-        email: '',
         city: '',
         allergenTags: [], // For allergen tags
         dislikeTags: [],  // For dislike tags
@@ -73,14 +71,19 @@ const StepperForm = () => {
             navigate('/admin', { replace: true }); // Replace history entry
             return;
         }
-
         const fetchUserFormData = async () => {
             const user_id = localStorage.getItem('user_id');
             if (!user_id) return;
-
+        
             const response = await getUserFormData(user_id);
             if (response.data) {
-                setFormData(response.data);
+                // Merge API response with default values
+                setFormData((prev) => ({
+                    ...prev, // Keep existing default values
+                    ...response.data, // Overwrite with API response
+                    user_pref: response.data.user_pref || prev.user_pref, // Fallback to default if undefined
+                    user_likes: response.data.user_likes || prev.user_likes, // Fallback to default if undefined
+                }));
             }
         };
 

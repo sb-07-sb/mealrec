@@ -1,54 +1,171 @@
+/* src/assets/styles/AdminPanel.module.css */
 .adminContainer {
-    padding: 20px;
-    background-color: #f8f9fc;
+    display: flex;
     min-height: 100vh;
+    background-color: #f8f9fc;
     font-family: 'Poppins', sans-serif;
 }
 
-.adminHeader {
-    font-size: 24px;
-    font-weight: bold;
-    color: #111827;
-    margin-bottom: 20px;
-}
-
-.userList {
+.stepperSidebar {
+    width: 400px;
+    background: #f8f9fc;
+    padding: 30px;
+    border-right: 1px solid #e5e7eb;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    justify-content: center;
+    height: 100vh;
 }
 
-.userCard {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.userEmail {
+.sidebarHeader h1 {
     font-size: 18px;
     font-weight: bold;
-    color: #2563eb;
-    margin-bottom: 10px;
-}
-
-.userDetails {
-    margin-top: 10px;
-}
-
-.userDetails h3 {
-    font-size: 16px;
-    font-weight: bold;
     color: #111827;
-    margin-top: 15px;
-    margin-bottom: 10px;
+    text-align: left;
 }
 
-.userDetails p {
+.sidebarHeader p {
     font-size: 14px;
-    color: #374151;
-    margin-bottom: 5px;
-} 
+    color: #6b7280;
+    margin-top: 5px;
+    text-align: left;
+}
 
+.stepsContainer {
+    margin-top: 20px;
+    padding-left: 10px;
+}
 
-/*  */
+.stepItem {
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding: 15px 0;
+    cursor: pointer; /* Make steps clickable */
+}
+
+.stepItem:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    left: 15px;
+    top: 45px;
+    width: 2px;
+    height: 40px;
+    background: #d1d5db;
+}
+
+.stepCircle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #d1d5db;
+    color: white;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    font-size: 14px;
+}
+
+.stepText h2 {
+    font-size: 14px;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.stepItem.active .stepCircle {
+    background: #2563eb;
+}
+
+.stepItem.active .stepText h2 {
+    color: #2563eb;
+    font-weight: bold;
+}
+
+.adminMainContent {
+    flex: 1;
+    padding: 20px;
+    background-color: white;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .adminContainer {
+        flex-direction: column;
+    }
+
+    .stepperSidebar {
+        width: 100%;
+        height: auto;
+        padding: 20px;
+        border-right: none;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .stepsContainer {
+        margin-top: 10px;
+    }
+
+    .stepItem {
+        padding: 10px 0;
+    }
+
+    .stepItem:not(:last-child)::after {
+        top: 35px;
+        height: 30px;
+    }
+
+    .stepCircle {
+        width: 25px;
+        height: 25px;
+        font-size: 12px;
+        margin-right: 10px;
+    }
+
+    .stepText h2 {
+        font-size: 12px;
+    }
+
+    .adminMainContent {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .stepperSidebar {
+        padding: 15px;
+    }
+
+    .sidebarHeader h1 {
+        font-size: 16px;
+    }
+
+    .sidebarHeader p {
+        font-size: 12px;
+    }
+
+    .stepItem {
+        padding: 8px 0;
+    }
+
+    .stepItem:not(:last-child)::after {
+        top: 30px;
+        height: 25px;
+    }
+
+    .stepCircle {
+        width: 20px;
+        height: 20px;
+        font-size: 10px;
+        margin-right: 8px;
+    }
+
+    .stepText h2 {
+        font-size: 10px;
+    }
+
+    .adminMainContent {
+        padding: 10px;
+    }
+}

@@ -1,86 +1,90 @@
-import React, { useState } from 'react';
-import { fetchUserData } from '../api/apiRequests'; // Assuming fetchUserData is imported from api.js
+// src/components/AdminPanel.js
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import styles from '../assets/styles/AdminPanel.module.css';
+import { getUserFormData } from '../api/auth';
+import UserList from './Admin/UserList';
 
 const AdminPanel = () => {
-  const [selectedUserData, setSelectedUserData] = useState(null);
-  const [error, setError] = useState(null);
+    const navigate = useNavigate();
+    const [currentStep, setCurrentStep] = useState(1); // 1: User List, 2: User Form, 3: Save
+    const [selectedUser, setSelectedUser] = useState(null); // Selected user data
+    const [formData, setFormData] = useState({}); // Editable form data
+    const [errors, setErrors] = useState({}); // Form validation errors
 
-  // Assuming that this function is properly triggered elsewhere to fetch the user data.
-  const handleFetchUserData = async (userId) => {
-    try {
-      const response = await fetchUserData(userId);
-      if (response.success) {
-        setSelectedUserData(response.userDetails); // Set the fetched user details to state
-      } else {
-        setError(response.message);
-      }
-    } catch (err) {
-      setError('Error fetching user data');
-    }
-  };
+    // Check if the user is an admin
+    useEffect(() => {
+        const userRole = localStorage.getItem('role');
+        if (userRole !== 'admin') {
+            navigate('/'); // Redirect non-admin users
+        }
+    }, [navigate]);
 
-  const renderInputField = (field, value) => {
+    // Handle user selection
+    const handleUserSelect = async (userId) => {
+        try {
+            const data = await getUserFormData(userId);
+            setSelectedUser(data);
+            setFormData(data); // Set form data for editing
+            // setCurrentStep(2); // Move to Step 2
+        } catch (error) {
+            console.error('Error fetching user form data:', error);
+        }
+    };
+
+    // Handle step click
+    const handleStepClick = (step) => {
+        setCurrentStep(step);
+    };
+
     return (
-      <div className="form-group" key={field}>
-        <label htmlFor={field}>
-          {field.replace(/([A-Z])/g, ' $1').toUpperCase()}
-        </label>
-        <input
-          type="text"
-          id={field}
-          name={field}
-          value={value}
-          placeholder={field.replace(/([A-Z])/g, ' $1').toUpperCase()}
-          readOnly
-        />
-      </div>
-    );
-  };
+        <div className={styles.adminContainer}>
+            {/* Sidebar */}
+            <div className={styles.stepperSidebar}>
+                <div className={styles.sidebarHeader}>
+                    <h1>Admin Panel</h1>
+                    <p>Manage user data and preferences</p>
+                </div>
+                <div className={styles.stepsContainer}>
+                    <div className={`${styles.stepItem} ${currentStep === 1 ? styles.active : ''}`} onClick={() => handleStepClick(1)}>
+                        <div className={styles.stepCircle}>1</div>
+                        <div className={styles.stepText}>
+                            <h2>User List</h2>
+                        </div>
+                    </div>
+                    <div className={`${styles.stepItem} ${currentStep === 2 ? styles.active : ''}`} onClick={() => handleStepClick(2)}>
+                        <div className={styles.stepCircle}>2</div>
+                        <div className={styles.stepText}>
+                            <h2>User Form</h2>
+                        </div>
+                    </div>
+                    <div className={`${styles.stepItem} ${currentStep === 3 ? styles.active : ''}`} onClick={() => handleStepClick(3)}>
+                        <div className={styles.stepCircle}>3</div>
+                        <div className={styles.stepText}>
+                            <h2>Save</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-  return (
-    <div className="app-container">
-      {/* Sidebar */}
-      <div className="sidebar">
-        <div className="title">Admin Panel</div>
-        <ul className="steps">
-          <li className="step active">
-            <span className="checkmark">&#10003;</span>
-            <p>View User Information</p>
-          </li>
-        </ul>
-      </div>
-
-      {/* Form Section */}
-      <div className="form-container">
-        <div className="form-header">
-          <h3>User Information</h3>
+            {/* Main Content */}
+            <div className={styles.adminMainContent}>
+                {currentStep === 1 && <UserList onUserSelect={handleUserSelect} />}
+                {currentStep === 2 && (
+                    <div>
+                        <h1>Edit User</h1>
+                        {/* Add form fields for editing user data */}
+                    </div>
+                )}
+                {currentStep === 3 && (
+                    <div>
+                        <h1>Save Changes</h1>
+                        {/* Add save confirmation or additional steps */}
+                    </div>
+                )}
+            </div>
         </div>
-
-        {error && <p className="error-message">{error}</p>}
-
-        {/* Example Trigger: Button to Fetch User Data */}
-        <button
-          onClick={() => handleFetchUserData('679875ed1b8f6eb2d58cc4ea')} // Example user ID
-          className="submit-btn"
-        >
-          Fetch User Data
-        </button>
-
-        {/* If user data is available, show the form */}
-        {selectedUserData ? (
-          <form className="form">
-            {Object.entries(selectedUserData).map(([field, value]) => {
-              // Skip _id and user_id, as these should not be editable
-              if (field === '_id' || field === 'user_id') return null;
-              return renderInputField(field, value);
-            })}
-          </form>
-        ) : (
-          <p>No user data available. Click on the "Fetch User Data" button.</p>
-        )}
-      </div>
-    </div>
-  );
+    );
 };
 
 export default AdminPanel;
