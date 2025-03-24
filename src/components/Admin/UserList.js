@@ -1,15 +1,20 @@
-// src/components/Admin/UserList.js
 import React, { useEffect, useState } from 'react';
-import { fetchAllUsers } from '../../api/auth';
+import { fetchAllUsers, deleteUser } from '../../api/auth';
 import styles from '../../assets/styles/UserList.module.css';
-import { deleteUser } from '../../api/auth';
+import { 
+    Trash2, 
+    UserCircle, 
+    BookUser, 
+    Settings, 
+    AlertTriangle 
+} from 'lucide-react';
 
-const UserList = ({ onUserSelect }) => {
+const UserList = () => {
     const [users, setUsers] = useState([]);
     const [expandedUser, setExpandedUser] = useState(null);
     const [deleteConfirmation, setDeleteConfirmation] = useState(null);
+    const [activeTab, setActiveTab] = useState('profile');
 
-    // Fetch users on component mount
     useEffect(() => {
         const fetchUsers = async () => {
             try {
@@ -19,168 +24,220 @@ const UserList = ({ onUserSelect }) => {
                 console.error('Error fetching users:', error);
             }
         };
-
         fetchUsers();
     }, []);
 
-    const UserListHeader = () => {
+    const toggleUserDetails = (userId) => {
+        setExpandedUser(expandedUser === userId ? null : userId);
+    };
+
+    const handleDelete = async (userId) => {
+        try {
+            await deleteUser(userId);
+            setUsers(users.filter(user => user._id !== userId));
+            if (expandedUser === userId) setExpandedUser(null);
+        } catch (error) {
+            console.error("Delete failed", error);
+        }
+    };
+
+    const renderUserAvatar = (user, size = 'medium') => {
+        const avatarClasses = {
+            medium: styles.userAvatar,
+            large: styles.userAvatarLarge
+        };
+
         return (
-            <div className={styles.userListHeader}>
-                <div className={styles.headerName}>Name</div>
-                <div className={styles.headerEmail}>Email</div>
-                <div className={styles.headerRole}>Role</div>
-                <div className={styles.headerAction}>Action</div>
+            <div className={avatarClasses[size]}>
+                {user.firstName.charAt(0)}{user.lastName.charAt(0)}
             </div>
         );
     };
 
-    const toggleUserDetails = (userId) => {
-        if (expandedUser === userId) {
-            setExpandedUser(null);
-        } else {
-            setExpandedUser(userId);
-            if (onUserSelect) onUserSelect(userId);
-        }
-    };
-
-    const handleDeleteClick = (userId, e) => {
-        e.stopPropagation();
-        setDeleteConfirmation(userId);
-    };
-
-    const confirmDelete = async (userId, e) => {
-        e.stopPropagation();
-        try {
-            const result = await deleteUser(userId);
-
-            if (result.message) {
-                setUsers(users.filter(user => user._id !== userId));
-                setDeleteConfirmation(null);
-
-                if (expandedUser === userId) {
-                    setExpandedUser(null);
-                }
-            } else {
-                console.error("Error:", result.error);
-            }
-        } catch (error) {
-            console.error("Request failed", error);
-        }
-        setUsers(users.filter(user => user._id !== userId));
-        setDeleteConfirmation(null);
-
-        // If the deleted user was expanded, collapse it
-        if (expandedUser === userId) {
-            setExpandedUser(null);
-        }
-    };
-
-    const cancelDelete = (e) => {
-        e.stopPropagation();
-        setDeleteConfirmation(null);
+    const renderTabIcon = (tab) => {
+        const iconMap = {
+            'profile': <UserCircle size={18} />,
+            'preferences': <BookUser size={18} />,
+            'restrictions': <AlertTriangle size={18} />
+        };
+        return iconMap[tab];
     };
 
     return (
-        <div className={styles.pageWrapper}>
-            <div className={styles.userListContainer}>
-
-                {/* Add the header row */}
-                {/* <UserListHeader /> */}
-
-                {users.map((user) => (
-                    <div key={user._id} className={styles.userCard}>
-                        <div className={styles.userCardHeader} onClick={() => toggleUserDetails(user._id)}>
-                            <div className={styles.userInfo}>
-                                <div className={styles.userAvatar}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
-                                    </svg>
-                                </div>
-                                <div className={styles.userMainInfo}>
-                                    <div className={styles.userName}>{user.firstName} {user.lastName}</div>
-                                    <div className={styles.userEmail}>{user.email}</div>
+        <div className={styles.adminPanel}>
+            {/* User List Section */}
+            <div className={styles.userListSection}>
+                <div className={styles.sectionHeader}>
+                    <h2 className={styles.sectionTitle}>User Management</h2>
+                    <div className={styles.sectionStats}>
+                        <span>Total Users: {users.length}</span>
+                    </div>
+                </div>
+                <div className={styles.userListContainer}>
+                    <div className={styles.userListHeader}>
+                        <div className={styles.headerName}>User</div>
+                        <div className={styles.headerRole}>Role</div>
+                        <div className={styles.headerActions}>Actions</div>
+                    </div>
+                    <div className={styles.userListScrollable}>
+                        {users.map(user => (
+                            <div key={user._id} className={styles.userCard}>
+                                <div 
+                                    className={`${styles.userCardContent} ${expandedUser === user._id ? styles.activeCard : ''}`} 
+                                    onClick={() => toggleUserDetails(user._id)}
+                                >
+                                    <div className={styles.userMainInfo}>
+                                        {renderUserAvatar(user)}
+                                        <div className={styles.userTextInfo}>
+                                            <span className={styles.userName}>
+                                                {user.firstName} {user.lastName}
+                                            </span>
+                                            <span className={styles.userEmail}>{user.email}</span>
+                                        </div>
+                                    </div>
+                                    <div className={styles.userRole}>{user.role}</div>
+                                    <div className={styles.userActions}>
+                                        {deleteConfirmation === user._id ? (
+                                            <div className={styles.deleteConfirmation}>
+                                                <button 
+                                                    className={styles.confirmButton}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleDelete(user._id);
+                                                    }}
+                                                >
+                                                    Confirm
+                                                </button>
+                                                <button 
+                                                    className={styles.cancelButton}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setDeleteConfirmation(null);
+                                                    }}
+                                                >
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <button 
+                                                className={styles.deleteButton}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setDeleteConfirmation(user._id);
+                                                }}
+                                            >
+                                                <Trash2 size={16} /> Delete
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
-                            <div className={styles.userActions}>
-                                <div className={styles.userRole}>
-                                    <span className={styles.roleTag}>{user.role || "User"}</span>
-                                </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
 
-                                {deleteConfirmation === user._id ? (
-                                    <div className={styles.deleteConfirmation} onClick={(e) => e.stopPropagation()}>
-                                        <span>Delete user?</span>
-                                        <button
-                                            className={`${styles.confirmButton} ${styles.confirmYes}`}
-                                            onClick={(e) => confirmDelete(user._id, e)}
-                                        >
-                                            Yes
-                                        </button>
-                                        <button
-                                            className={`${styles.confirmButton} ${styles.confirmNo}`}
-                                            onClick={cancelDelete}
-                                        >
-                                            No
-                                        </button>
+            {/* User Details Section */}
+            {expandedUser && (
+                <div className={styles.userDetailsSection}>
+                    {users.filter(user => user._id === expandedUser).map(user => (
+                        <div key={user._id}>
+                            <div className={styles.userDetailsHeader}>
+                                {renderUserAvatar(user, 'large')}
+                                <div>
+                                    <h3 className={styles.userName}>{user.firstName} {user.lastName}</h3>
+                                    <p className={styles.userEmail}>{user.email}</p>
+                                </div>
+                            </div>
+
+                            <div className={styles.tabs}>
+                                {['profile', 'preferences', 'restrictions'].map(tab => (
+                                    <button 
+                                        key={tab}
+                                        className={`${styles.tab} ${activeTab === tab ? styles.activeTab : ''}`}
+                                        onClick={() => setActiveTab(tab)}
+                                    >
+                                        {renderTabIcon(tab)}
+                                        <span>{tab.charAt(0).toUpperCase() + tab.slice(1)}</span>
+                                    </button>
+                                ))}
+                            </div>
+
+                            <div className={styles.tabContent}>
+                                {activeTab === 'profile' && (
+                                    <div className={styles.detailsCard}>
+                                        <h4>Personal Information</h4>
+                                        <div className={styles.detailRow}>
+                                            <span>Name:</span>
+                                            <span>{user.firstName} {user.lastName}</span>
+                                        </div>
+                                        <div className={styles.detailRow}>
+                                            <span>Email:</span>
+                                            <span>{user.email}</span>
+                                        </div>
+                                        <div className={styles.detailRow}>
+                                            <span>Role:</span>
+                                            <span>{user.role}</span>
+                                        </div>
                                     </div>
-                                ) : (
-                                    <div className={styles.actionButtons}>
-                                        <button
-                                            className={styles.deleteButton}
-                                            onClick={(e) => handleDeleteClick(user._id, e)}
-                                            aria-label="Delete user"
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-                                                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
-                                            </svg>
-                                        </button>
-                                        <button
-                                            className={styles.viewDetailsButton}
-                                            aria-label={expandedUser === user._id ? "Hide details" : "View details"}
-                                        >
-                                            {expandedUser === user._id ? "Hide Details" : "View Details"}
-                                        </button>
+                                )}
+
+                                {activeTab === 'preferences' && (
+                                    <div className={styles.detailsCard}>
+                                        <h4>Meal Preferences</h4>
+                                        <div className={styles.detailRow}>
+                                            <span>Preferred Dishes:</span>
+                                            <div className={styles.tags}>
+                                                {user.user_pref?.length ? (
+                                                    user.user_pref.map((pref, i) => (
+                                                        <span key={i} className={styles.tag}>{pref}</span>
+                                                    ))
+                                                ) : <span className={styles.mutedText}>None specified</span>}
+                                            </div>
+                                        </div>
+                                        <div className={styles.detailRow}>
+                                            <span>Preferred Cuisines:</span>
+                                            <div className={styles.tags}>
+                                                {user.user_likes?.length ? (
+                                                    user.user_likes.map((like, i) => (
+                                                        <span key={i} className={styles.tag}>{like}</span>
+                                                    ))
+                                                ) : <span className={styles.mutedText}>None specified</span>}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {activeTab === 'restrictions' && (
+                                    <div className={styles.detailsCard}>
+                                        <h4>Dietary Restrictions</h4>
+                                        <div className={styles.detailRow}>
+                                            <span>Allergens:</span>
+                                            <div className={styles.tags}>
+                                                {user.allergenTags?.length ? (
+                                                    user.allergenTags.map((allergen, i) => (
+                                                        <span key={i} className={`${styles.tag} ${styles.warningTag}`}>{allergen}</span>
+                                                    ))
+                                                ) : <span className={styles.mutedText}>None specified</span>}
+                                            </div>
+                                        </div>
+                                        <div className={styles.detailRow}>
+                                            <span>Dislikes:</span>
+                                            <div className={styles.tags}>
+                                                {user.dislikeTags?.length ? (
+                                                    user.dislikeTags.map((dislike, i) => (
+                                                        <span key={i} className={`${styles.tag} ${styles.secondaryTag}`}>{dislike}</span>
+                                                    ))
+                                                ) : <span className={styles.mutedText}>None specified</span>}
+                                            </div>
+                                        </div>
                                     </div>
                                 )}
                             </div>
                         </div>
-
-                        {expandedUser === user._id && (
-                            <div className={styles.userDetails}>
-                                <div className={styles.detailsGrid}>
-                                    {/* <div className={styles.detailsSection}>
-                                        <h3>Personal Information</h3>
-                                        <p><strong>Name:</strong> {user.firstName} {user.lastName}</p>
-                                        <p><strong>Email:</strong> {user.email}</p>
-                                        <p><strong>Role:</strong> {user.role}</p>
-                                        <p><strong>City:</strong> {user.city}</p>
-                                        <p><strong>Country:</strong> {user.country}</p>
-                                    </div> */}
-
-                                    <div className={styles.detailsSection}>
-                                        <h3>Meal Preferences</h3>
-                                        <p><strong>Preferred Dishes:</strong> {user.user_pref?.join(', ') || 'None specified'}</p>
-                                        <p><strong>Preferred Cuisines:</strong> {user.user_likes?.join(', ') || 'None specified'}</p>
-                                    </div>
-
-                                    <div className={styles.detailsSection}>
-                                        <h3>Meal Type Selection</h3>
-                                        <p><strong>Size:</strong> {user.size || 'Not specified'}</p>
-                                        <p><strong>Protein Option:</strong> {user.protein_option || 'Not specified'}</p>
-                                        <p><strong>Protein Category:</strong> {user.protein_category || 'Not specified'}</p>
-                                        <p><strong>Meal Types:</strong> {user.meal_types?.join(', ') || 'None specified'}</p>
-                                    </div>
-
-                                    <div className={styles.detailsSection}>
-                                        <h3>Restrictions</h3>
-                                        <p><strong>Allergens:</strong> {user.allergenTags?.join(', ') || 'None specified'}</p>
-                                        <p><strong>Dislikes:</strong> {user.dislikeTags?.join(', ') || 'None specified'}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                ))}
-            </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 };
