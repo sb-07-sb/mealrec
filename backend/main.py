@@ -5,6 +5,8 @@ from flask_cors import CORS
 from pymongo import MongoClient
 import bcrypt
 from bson import ObjectId
+from admin_recipes import fetch_recipe_details
+import time
 
 load_dotenv()
 
@@ -159,5 +161,42 @@ def get_all_users():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
+# Define a route for the Flask API to get recipe details
+@app.route('/api/recipes', methods=['GET'])
+def get_recipes():
+    recipes = fetch_recipe_details()
+    
+    if isinstance(recipes, list):
+        return jsonify(recipes)  # Return the list of recipes as JSON
+    else:
+        return jsonify({"error": recipes})  # Return the error message if something went wrong
+
+
+@app.route('/delete_user/<user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    try:
+        # Convert user_id to ObjectId
+        object_id = ObjectId(user_id)
+
+        # Delete from login_collection
+        login_result = login_collection.delete_one({"_id": object_id})
+
+        # Delete from form_collection using the string version of user_id
+        form_result = form_collection.delete_many({"user_id": user_id})
+
+        if login_result.deleted_count == 0:
+            return jsonify({"error": "User not found in login_collection"}), 404
+
+        return jsonify({
+            "message": "User deleted successfully",
+            "login_deleted": login_result.deleted_count,
+            "form_deleted": form_result.deleted_count
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+    
 if __name__ == '__main__':
     app.run(debug=True)

@@ -3,5 +3,5 @@ pymongo
 flask-cors 
 bcrypt
 python-dotenv
-
-'mongodb+srv://<username>:<db_password>@sb.pxhni.mongodb.net/?retryWrites=true&w=majority&appName=SB'
+requests
+pandas

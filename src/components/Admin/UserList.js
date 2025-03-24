@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetchAllUsers } from '../../api/auth';
 import styles from '../../assets/styles/UserList.module.css';
+import { deleteUser } from '../../api/auth';
 
 const UserList = ({ onUserSelect }) => {
     const [users, setUsers] = useState([]);
@@ -49,8 +50,22 @@ const UserList = ({ onUserSelect }) => {
 
     const confirmDelete = async (userId, e) => {
         e.stopPropagation();
-        // Here you would call your API to delete the user
-        // For now, we'll just update the UI
+        try {
+            const result = await deleteUser(userId);
+
+            if (result.message) {
+                setUsers(users.filter(user => user._id !== userId));
+                setDeleteConfirmation(null);
+
+                if (expandedUser === userId) {
+                    setExpandedUser(null);
+                }
+            } else {
+                console.error("Error:", result.error);
+            }
+        } catch (error) {
+            console.error("Request failed", error);
+        }
         setUsers(users.filter(user => user._id !== userId));
         setDeleteConfirmation(null);
 

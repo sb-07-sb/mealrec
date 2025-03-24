@@ -1,4 +1,4 @@
-/* src/assets/styles/AdminPanel.module.css */
+/* Main Container */
 .adminContainer {
     display: flex;
     min-height: 100vh;
@@ -6,6 +6,7 @@
     font-family: 'Poppins', sans-serif;
 }
 
+/* Stepper Sidebar */
 .stepperSidebar {
     width: 400px;
     background: #f8f9fc;
@@ -13,10 +14,13 @@
     border-right: 1px solid #e5e7eb;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    height: 100vh;
+    justify-content: center;  /* Center content vertically */
+    height: 100vh;  /* Full screen height */
+    position: sticky;  /* Ensure it sticks when scrolling */
+    top: 0;  /* Keep it at the top */
 }
 
+/* Sidebar Header */
 .sidebarHeader h1 {
     font-size: 18px;
     font-weight: bold;
@@ -31,11 +35,13 @@
     text-align: left;
 }
 
+/* Step Container for the Steps */
 .stepsContainer {
     margin-top: 20px;
     padding-left: 10px;
 }
 
+/* Individual Step Item */
 .stepItem {
     display: flex;
     align-items: center;
@@ -44,6 +50,7 @@
     cursor: pointer; /* Make steps clickable */
 }
 
+/* Line Between Steps */
 .stepItem:not(:last-child)::after {
     content: "";
     position: absolute;
@@ -54,6 +61,7 @@
     background: #d1d5db;
 }
 
+/* Step Circle */
 .stepCircle {
     width: 30px;
     height: 30px;
@@ -68,12 +76,14 @@
     font-size: 14px;
 }
 
+/* Step Text */
 .stepText h2 {
     font-size: 14px;
     color: #6b7280;
     font-weight: 500;
 }
 
+/* Active Step Style */
 .stepItem.active .stepCircle {
     background: #2563eb;
 }
@@ -83,10 +93,12 @@
     font-weight: bold;
 }
 
+/* Main Content Area */
 .adminMainContent {
     flex: 1;
     padding: 20px;
     background-color: white;
+    overflow-y: auto; /* Allow scrolling if the content overflows */
 }
 
 /* Responsive Styles */

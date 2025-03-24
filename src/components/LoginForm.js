@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../assets/styles/LoginForm.module.css';
-import { registerUser, loginUser } from '../api/auth';
+import { registerUser, loginUser, getUserFormData } from '../api/auth';
 
 const LoginForm = () => {
     const [isRegister, setIsRegister] = useState(false);
@@ -73,12 +73,31 @@ const LoginForm = () => {
                     localStorage.setItem('token', response.token);
                     localStorage.setItem('role', response.role);
                     localStorage.setItem('user_id', response.user_id);
-    
+
+                    // Use getUserFormData to fetch form data
+                    const formDataJson = await getUserFormData(response.user_id);
+                    console.log('Form Data Response:', formDataJson); // Debugging line
+
+                    // Debugging: Log role and form data
+                    console.log('User Role:', response.role); // Debugging line
+                    console.log('Form Data:', formDataJson.data); // Debugging line
+
+
+                    // Set a flag in local storage if form data exists
+                    if (formDataJson.data && Object.keys(formDataJson.data).length > 0) {
+                        localStorage.setItem('formSubmitted', 'true');
+                    } else {
+                        localStorage.setItem('formSubmitted', 'false');
+                    }
+
                     // Redirect based on role after successful login
                     if (response.role === 'admin') {
                         navigate('/admin', { replace: true }); // Replace history entry
-                    } else {
-                        navigate('/', { replace: true }); // Replace history entry
+                    } else if (formDataJson.data && Object.keys(formDataJson.data).length > 0) {
+                        navigate('/test', { replace: true }); // Navigate to another page if form data exists
+                    }
+                    else {
+                        navigate('/user', { replace: true }); // Replace history entry
                     }
                 }
             } catch (error) {

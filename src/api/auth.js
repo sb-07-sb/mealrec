@@ -48,3 +48,39 @@ export const fetchAllUsers = async () => {
     });
     return response.json();
 };
+
+
+export const fetchAllRecipesAdmin = async () => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/recipes`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                // Add authorization header if needed
+                // 'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+        });
+
+        // Check if the response is OK (status code 200)
+        if (!response.ok) {
+            throw new Error(`Error fetching recipes: ${response.status}`);
+        }
+
+        // Parse and return the JSON response
+        return await response.json();
+    } catch (error) {
+        console.error('An error occurred while fetching recipes:', error);
+        return { error: error.message };  // Return an error message
+    }
+};
+
+export const deleteUser = async (userId) => {
+    const response = await fetch(`${API_BASE_URL}/delete_user/${userId}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+
+    return response.json();
+};
