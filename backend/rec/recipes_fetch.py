@@ -8,8 +8,8 @@ def fetch_api_data():
     """
     Fetches recipe data directly from the API and processes it for Pinecone.
     """
-    # api_url = 'https://apis.delicut.ae/api/v1/recipes/fetch-all-weekly?week=incoming'
-    api_url = 'https://apis.delicut.ae/api/v1/recipes/fetch-all-weekly'
+    api_url = 'https://apis.delicut.ae/api/v1/recipes/fetch-all-weekly?week=incoming'
+    # api_url = 'https://apis.delicut.ae/api/v1/recipes/fetch-all-weekly'
 
     try:
         response = requests.get(api_url)
