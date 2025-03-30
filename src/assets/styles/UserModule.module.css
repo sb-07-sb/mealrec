@@ -1,7 +1,9 @@
-.adminContainer {
+/* Main Container */
+.userContainer {
     display: flex;
     height: 100vh;
     background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* Sidebar Styles */
@@ -65,11 +67,6 @@
 
 .activeNavItem .navIcon {
     color: #0d6efd;
-}
-
-.activeNavItem .navArrow {
-    opacity: 1;
-    transform: translateX(2px);
 }
 
 .navIcon {
@@ -147,7 +144,7 @@
     font-weight: 600;
 }
 
-.mainContent > div:not(.topBar) {
+.contentContainer {
     padding: 20px;
     overflow-y: auto;
     flex: 1;
@@ -165,23 +162,8 @@
 }
 
 /* Responsive Styles */
-@media screen and (max-width: 1024px) {
-    .searchContainer {
-        width: 200px;
-    }
-    
-    .userManagementContainer {
-        flex-direction: column;
-    }
-    
-    .userListSection {
-        margin-right: 0;
-        margin-bottom: 15px;
-    }
-}
-
 @media screen and (max-width: 768px) {
-    .adminContainer {
+    .userContainer {
         position: relative;
     }
     
@@ -206,14 +188,6 @@
     .searchContainer {
         width: 150px;
     }
-    
-    .userManagementContainer {
-        flex-direction: column;
-    }
-    
-    .userDetailsContainer {
-        padding: 15px;
-    }
 }
 
 @media screen and (max-width: 480px) {
@@ -225,35 +199,7 @@
         padding: 0 15px;
     }
     
-    .mainContent > div:not(.topBar) {
+    .contentContainer {
         padding: 15px;
-    }
-    
-    .userRow {
-        flex-direction: column;
-        padding: 15px 0;
-    }
-    
-    .emailColumn, .roleColumn, .idColumn {
-        padding: 5px 0;
-    }
-    
-    .detailRow {
-        flex-direction: column;
-    }
-    
-    .detailLabel, .detailValue {
-        flex: none;
-    }
-    
-    .header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .actions {
-        margin-top: 10px;
-        width: 100%;
-        justify-content: space-between;
     }
 }

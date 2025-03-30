@@ -1,80 +1,81 @@
-// import React, { useEffect, useState } from 'react';
-// import { useNavigate } from 'react-router-dom';
-// import styles from '../assets/styles/AdminPanel.module.css';
-// import { fetchAllUsers, getUserFormData } from '../api/auth';
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../assets/styles/AdminPanel.module.css';
-import UserList from './Admin/UserList'; // Import the UserList component
+import UserList from './Admin/UserList';
 import AdminRecipes from './Admin/AdminRecipes';
+import { Users, BookOpen, ChevronRight, Menu, X } from 'lucide-react';
 
 const AdminPanel = () => {
     const navigate = useNavigate();
-    const [currentStep, setCurrentStep] = useState(1); // 1: User List, 2: Step 2, 3: Step 3
+    const [currentStep, setCurrentStep] = useState(1);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     // Check if the user is an admin
     const userRole = localStorage.getItem('role');
     if (userRole !== 'admin') {
-        navigate('/'); // Redirect non-admin users
+        navigate('/');
     }
 
-    // Handle step navigation
-    const handleNextStep = () => {
-        if (currentStep < 3) {
-            setCurrentStep(currentStep + 1);
-        }
+    const toggleSidebar = () => {
+        setSidebarOpen(!sidebarOpen);
     };
 
-    const handlePreviousStep = () => {
-        if (currentStep > 1) {
-            setCurrentStep(currentStep - 1);
+    const handleNavItemClick = (step) => {
+        setCurrentStep(step);
+        // Close sidebar on mobile after navigation
+        if (window.innerWidth <= 768) {
+            setSidebarOpen(false);
         }
     };
 
     return (
         <div className={styles.adminContainer}>
-            {/* Stepper Sidebar */}
-            <div className={styles.stepperSidebar}>
-                <div className={styles.sidebarHeader}>
-                    <h1>Admin Panel</h1>
-                    <p>Manage users and their details</p>
+            {/* Sidebar Navigation */}
+            <div className={`${styles.sidebar} ${sidebarOpen ? styles.open : ''}`}>
+                <div className={styles.logoContainer}>
+                    <h2 className={styles.appLogo}>FoodApp</h2>
                 </div>
-                <div className={styles.stepsContainer}>
-                    <div className={`${styles.stepItem} ${currentStep === 1 ? styles.active : ''}`} onClick={() => setCurrentStep(1)}>
-                        <div className={styles.stepCircle}>1</div>
-                        <div className={styles.stepText}>
-                            <h2>User List</h2>
-                        </div>
-                    </div>
-                    <div className={`${styles.stepItem} ${currentStep === 2 ? styles.active : ''}`} onClick={() => setCurrentStep(2)}>
-                        <div className={styles.stepCircle}>2</div>
-                        <div className={styles.stepText}>
-                            <h2>Recipes List</h2>
-                        </div>
-                    </div>
-                    <div className={`${styles.stepItem} ${currentStep === 3 ? styles.active : ''}`} onClick={() => setCurrentStep(3)}>
-                        <div className={styles.stepCircle}>3</div>
-                        <div className={styles.stepText}>
-                            <h2>Step 3</h2>
-                        </div>
-                    </div>
+                
+                <div className={styles.navSection}>
+                    <ul className={styles.navList}>
+                        <li 
+                            className={`${styles.navItem} ${currentStep === 1 ? styles.activeNavItem : ''}`} 
+                            onClick={() => handleNavItemClick(1)}
+                        >
+                            <Users size={18} className={styles.navIcon} />
+                            <span className={styles.navText}>User Management</span>
+                            <ChevronRight size={16} className={styles.navArrow} />
+                        </li>
+                        <li 
+                            className={`${styles.navItem} ${currentStep === 2 ? styles.activeNavItem : ''}`} 
+                            onClick={() => handleNavItemClick(2)}
+                        >
+                            <BookOpen size={18} className={styles.navIcon} />
+                            <span className={styles.navText}>Recipe List</span>
+                            <ChevronRight size={16} className={styles.navArrow} />
+                        </li>
+                    </ul>
                 </div>
             </div>
 
-             {/* Main Content */}
-             <div className={styles.adminMainContent}>
-                {currentStep === 1 && (
-                    <UserList
-                        onUserSelect={(userId) => {
-                            console.log('Selected User ID:', userId);
-                        }}
-                    />
-                )}
+            {/* Main Content Area */}
+            <div className={styles.mainContent}>
+                <div className={styles.topBar}>
+                    <button className={styles.menuToggle} onClick={toggleSidebar}>
+                        {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
+                    </button>
+                    <div className={styles.searchContainer}>
+                        <input type="text" placeholder="Search..." className={styles.searchInput} />
+                    </div>
+                    <div className={styles.userMenu}>
+                        <span className={styles.userAvatar}>A</span>
+                    </div>
+                </div>
+                
+                {currentStep === 1 && <UserList />}
                 {currentStep === 2 && <AdminRecipes />}
             </div>
         </div>
-          
     );
 };
 
