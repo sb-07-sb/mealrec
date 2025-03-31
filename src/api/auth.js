@@ -29,7 +29,14 @@ export const getUserFormData = async (userId) => {
             'Content-Type': 'application/json',
         },
     });
-    return response.json();
+    if (!response.ok) {
+        throw new Error('Failed to fetch user data');
+    }
+    
+    const data = await response.json(); // This is where we extract the JSON
+    return data;
+
+
 };
 
 

@@ -1,21 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { fetchAllUsers, deleteUser } from '../../api/auth';
 import styles from '../../assets/styles/UserList.module.css';
-import { 
-  Search, 
-  Filter,
-  Plus,
-  ChevronRight,
-  ArrowLeft
-} from 'lucide-react';
+import UserListSection from './UserListSection';
+import UserDetailsSection from './UserDetailsSection';
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [editingUser, setEditingUser] = useState(null);
   const [activeTab, setActiveTab] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [showingDetails, setShowingDetails] = useState(false);
+  const [newTag, setNewTag] = useState('');
+  const [newCuisine, setNewCuisine] = useState('');
   const usersPerPage = 5;
 
   useEffect(() => {
@@ -32,7 +30,7 @@ const UserList = () => {
 
   const handleUserSelect = (user) => {
     setSelectedUser(user);
-    // On mobile, switch to details view when a user is selected
+    setEditingUser(null);
     if (window.innerWidth <= 768) {
       setShowingDetails(true);
     }
@@ -55,7 +53,45 @@ const UserList = () => {
     }
   };
 
-  // Filter users based on active tab and search term
+  const startEditing = () => {
+    setEditingUser({ ...selectedUser });
+  };
+
+  const cancelEditing = () => {
+    setEditingUser(null);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditingUser(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const saveChanges = async () => {
+    try {
+      // await updateUser(editingUser._id, editingUser);
+      setEditingUser(null);
+    } catch (error) {
+      console.error("Update failed", error);
+    }
+  };
+
+  const updateTags = (field, value, action) => {
+    if (!editingUser || !value || typeof value !== 'string' || !value.trim()) return;
+
+    setEditingUser(prev => ({
+      ...prev,
+      [field]: action === 'add' 
+        ? [...(prev[field] || []), value.trim()] 
+        : prev[field].filter(tag => tag !== value)
+    }));
+
+    if (field === 'allergenTags') setNewTag('');
+    if (field === 'user_likes') setNewCuisine('');
+  };
+
   const filteredUsers = users.filter(user => {
     const matchesSearch = 
       user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -69,212 +105,46 @@ const UserList = () => {
     return matchesSearch;
   });
 
-  // Pagination
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
   const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
 
-  // Check if we need to reset pagination when filter changes
-  useEffect(() => {
-    if (indexOfFirstUser >= filteredUsers.length && currentPage > 1) {
-      setCurrentPage(1);
-    }
-  }, [filteredUsers.length, indexOfFirstUser, currentPage]);
-
-  // Handle window resize to reset mobile view when screen size changes
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth > 768 && showingDetails) {
-        setShowingDetails(false);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [showingDetails]);
-
   return (
     <div className={`${styles.userManagementContainer} ${showingDetails ? styles.showingDetails : ''}`}>
-      <div className={styles.userListSection}>
-        <div className={styles.header}>
-          <h2>Users</h2>
-          <div className={styles.actions}>
-            <button className={styles.filterButton}>
-              Filter <ChevronRight size={16} />
-            </button>
-            <button className={styles.addUserButton}>
-              + Add User
-            </button>
-          </div>
-        </div>
-
-        <div className={styles.tabsContainer}>
-          <div 
-            className={`${styles.tab} ${activeTab === 'all' ? styles.activeTab : ''}`}
-            onClick={() => setActiveTab('all')}
-          >
-            All Users
-          </div>
-          <div 
-            className={`${styles.tab} ${activeTab === 'admins' ? styles.activeTab : ''}`}
-            onClick={() => setActiveTab('admins')}
-          >
-            Admins ({users.filter(u => u.role === 'admin').length})
-          </div>
-          <div 
-            className={`${styles.tab} ${activeTab === 'users' ? styles.activeTab : ''}`}
-            onClick={() => setActiveTab('users')}
-          >
-            Users ({users.filter(u => u.role === 'user').length})
-          </div>
-        </div>
-
-        <div className={styles.listHeader}>
-          <div className={styles.emailColumn}>EMAIL</div>
-          <div className={styles.roleColumn}>ROLE</div>
-          <div className={styles.idColumn}>ID</div>
-        </div>
-
-        <div className={styles.usersList}>
-          {currentUsers.map(user => (
-            <div 
-              key={user._id} 
-              className={`${styles.userRow} ${selectedUser && selectedUser._id === user._id ? styles.selectedRow : ''}`}
-              onClick={() => handleUserSelect(user)}
-            >
-              <div className={styles.emailColumn}>
-                <div className={styles.userInitial}>
-                  {user.email ? user.email.charAt(0).toUpperCase() : 'U'}
-                </div>
-                <span className={styles.emailText}>{user.email}</span>
-              </div>
-              <div className={`${styles.roleColumn} ${styles[user.role || 'user']}`}>
-                <span className={styles.roleBadge}>{user.role || 'User'}</span>
-              </div>
-              <div className={styles.idColumn}>{user._id?.substring(0, 6) || 'N/A'}</div>
-            </div>
-          ))}
-        </div>
-
-        <div className={styles.pagination}>
-          <span className={styles.pageInfo}>
-            Showing {indexOfFirstUser + 1}-{Math.min(indexOfLastUser, filteredUsers.length)} of {filteredUsers.length} users
-          </span>
-          <div className={styles.pageButtons}>
-            {Array.from({ length: Math.min(totalPages, 3) }, (_, i) => (
-              <button 
-                key={i + 1} 
-                className={`${styles.pageButton} ${currentPage === i + 1 ? styles.activePage : ''}`}
-                onClick={() => setCurrentPage(i + 1)}
-              >
-                {i + 1}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
+      <UserListSection
+        users={currentUsers}
+        selectedUser={selectedUser}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        handleUserSelect={handleUserSelect}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        totalPages={totalPages}
+        indexOfFirstUser={indexOfFirstUser}
+        indexOfLastUser={indexOfLastUser}
+        filteredUsers={filteredUsers}
+      />
+      
       {selectedUser && (
-        <div className={styles.userDetailsContainer}>
-          <button className={styles.backButton} onClick={handleBackToList}>
-            <ArrowLeft size={16} /> Back to list
-          </button>
-          
-          <div className={styles.userDetailsContent}>
-            <h3>User Details</h3>
-            
-            <div className={styles.detailsSection}>
-              <h4 className={styles.sectionTitle}>BASIC INFORMATION</h4>
-              <div className={styles.detailRow}>
-                <div className={styles.detailLabel}>User ID</div>
-                <div className={styles.detailValue}>{selectedUser._id}</div>
-              </div>
-              <div className={styles.detailRow}>
-                <div className={styles.detailLabel}>Email</div>
-                <div className={styles.detailValue}>{selectedUser.email}</div>
-              </div>
-              <div className={styles.detailRow}>
-                <div className={styles.detailLabel}>Role</div>
-                <div className={styles.detailValue}>
-                  <span className={`${styles.roleBadge} ${styles[selectedUser.role || 'user']}`}>
-                    {selectedUser.role || 'User'}
-                  </span>
-                </div>
-              </div>
-              <div className={styles.detailRow}>
-                <div className={styles.detailLabel}>First Name</div>
-                <div className={styles.detailValue}>{selectedUser.firstName || '-'}</div>
-              </div>
-              <div className={styles.detailRow}>
-                <div className={styles.detailLabel}>Last Name</div>
-                <div className={styles.detailValue}>{selectedUser.lastName || '-'}</div>
-              </div>
-              <div className={styles.detailRow}>
-                <div className={styles.detailLabel}>City</div>
-                <div className={styles.detailValue}>{selectedUser.city || '-'}</div>
-              </div>
-              <div className={styles.detailRow}>
-                <div className={styles.detailLabel}>Country</div>
-                <div className={styles.detailValue}>{selectedUser.country || '-'}</div>
-              </div>
-            </div>
-            
-            <div className={styles.detailsSection}>
-              <h4 className={styles.sectionTitle}>FOOD PREFERENCES</h4>
-              <div className={styles.detailRow}>
-                <div className={styles.detailLabel}>Size</div>
-                <div className={styles.detailValue}>{selectedUser.size || '-'}</div>
-              </div>
-              <div className={styles.detailRow}>
-                <div className={styles.detailLabel}>Protein Option</div>
-                <div className={styles.detailValue}>{selectedUser.proteinOption || '-'}</div>
-              </div>
-              <div className={styles.detailRow}>
-                <div className={styles.detailLabel}>Meal Types</div>
-                <div className={styles.detailValue}>{selectedUser.mealTypes || '-'}</div>
-              </div>
-              <div className={styles.detailRow}>
-                <div className={styles.detailLabel}>Preferred Foods</div>
-                <div className={styles.detailValue}>{selectedUser.user_pref?.join(', ') || '-'}</div>
-              </div>
-            </div>
-            
-            <div className={styles.detailsSection}>
-              <h4 className={styles.sectionTitle}>DIETARY RESTRICTIONS</h4>
-              <div className={styles.tagContainer}>
-                {selectedUser.allergenTags && selectedUser.allergenTags.length > 0 ? 
-                  selectedUser.allergenTags.map((tag, index) => (
-                    <span key={index} className={styles.restrictionTag}>{tag}</span>
-                  )) :
-                  <span className={styles.noRestrictions}>No restrictions specified</span>
-                }
-              </div>
-            </div>
-            
-            <div className={styles.detailsSection}>
-              <h4 className={styles.sectionTitle}>CUISINE PREFERENCES</h4>
-              <div className={styles.cuisineContainer}>
-                {selectedUser.user_likes && selectedUser.user_likes.length > 0 ? 
-                  selectedUser.user_likes.map((cuisine, index) => (
-                    <span key={index} className={styles.cuisineTag}>{cuisine}</span>
-                  )) :
-                  <span className={styles.noCuisines}>No cuisine preferences specified</span>
-                }
-              </div>
-            </div>
-            
-            <div className={styles.userActions}>
-              <button className={styles.editButton}>Edit User</button>
-              <button 
-                className={styles.deleteButton}
-                onClick={() => handleDeleteUser(selectedUser._id)}
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
+        <UserDetailsSection
+          selectedUser={selectedUser}
+          editingUser={editingUser}
+          handleBackToList={handleBackToList}
+          startEditing={startEditing}
+          cancelEditing={cancelEditing}
+          saveChanges={saveChanges}
+          handleDeleteUser={handleDeleteUser}
+          handleInputChange={handleInputChange}
+          newTag={newTag}
+          setNewTag={setNewTag}
+          addTag={() => updateTags('allergenTags', newTag, 'add')}
+          removeTag={(tag) => updateTags('allergenTags', tag, 'remove')}
+          newCuisine={newCuisine}
+          setNewCuisine={setNewCuisine}
+          addCuisine={() => updateTags('user_likes', newCuisine, 'add')}
+          removeCuisine={(cuisine) => updateTags('user_likes', cuisine, 'remove')}
+        />
       )}
     </div>
   );

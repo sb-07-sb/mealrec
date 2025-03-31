@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from './assets/styles/UserModule.module.css'; // Separate CSS file
+import styles from './assets/styles/UserModule.module.css';
 import { User, Utensils, ChevronRight, Menu, X } from 'lucide-react';
 import ProfileView from './components/User/ProfileView';
 
@@ -25,7 +25,7 @@ const UserModule = () => {
             {/* Sidebar Navigation */}
             <div className={`${styles.sidebar} ${sidebarOpen ? styles.open : ''}`}>
                 <div className={styles.logoContainer}>
-                    <h2 className={styles.appLogo}>FoodApp</h2>
+                    <h2 className={styles.appLogo}>NutriSync</h2>
                 </div>
                 
                 <div className={styles.navSection}>
@@ -68,7 +68,6 @@ const UserModule = () => {
                 
                 <div className={styles.contentContainer}>
                     {currentStep === 1 && <ProfileView />}
-                    {/* {currentStep === 2 && <MealPlanView />} */}
                 </div>
             </div>
         </div>

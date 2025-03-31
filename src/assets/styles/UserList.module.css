@@ -1,9 +1,4 @@
 /* UserList.module.css */
-/* body {
-  font-family: 'Instrument Sans';
-} */
-
-
 .userManagementContainer {
   display: flex;
   width: 100%;
@@ -39,7 +34,8 @@
   gap: 10px;
 }
 
-.filterButton, .addUserButton {
+.filterButton, .addUserButton, .editButton, .deleteButton, .saveButton, .cancelButton 
+{
   padding: 6px 12px;
   border-radius: 4px;
   font-size: 14px;
@@ -66,10 +62,10 @@
   display: flex;
   border-bottom: 1px solid #e9ecef;
   margin-bottom: 15px;
-  overflow-x: hidden; /* Changed from auto */
+  overflow-x: hidden;
 }
 .tabsContainer::-webkit-scrollbar {
-  display: none;  /* Chrome/Safari/Opera */
+  display: none;
 }
 
 .tab {
@@ -239,7 +235,24 @@
   flex-grow: 1;
 }
 
-/* Custom scrollbar for user details */
+.detailsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.detailsHeader h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.detailsActions {
+  display: flex;
+  gap: 10px;
+}
 .userDetailsContent::-webkit-scrollbar {
   width: 4px;
 }
@@ -297,10 +310,45 @@
   word-break: break-word;
 }
 
+.editableInput {
+  flex: 2;
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
 .tagContainer, .cuisineContainer {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  align-items: center;
+}
+
+.tagInputContainer {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.tagInput {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.addTagButton {
+  padding: 6px 12px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 14px;
 }
 
 .restrictionTag {
@@ -311,12 +359,44 @@
   font-size: 13px;
 }
 
+.editableTag {
+  padding: 4px 10px 4px 12px;
+  border-radius: 20px;
+  background-color: #ffecef;
+  color: #dc3545;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .cuisineTag {
   padding: 4px 10px;
   border-radius: 20px;
   background-color: #f0f4ff;
   color: #007bff;
   font-size: 13px;
+}
+
+.editableCuisineTag {
+  padding: 4px 10px 4px 12px;
+  border-radius: 20px;
+  background-color: #f0f4ff;
+  color: #007bff;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.removeTagButton {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
 }
 
 .noRestrictions, .noCuisines {
@@ -332,13 +412,7 @@
   flex-wrap: wrap;
 }
 
-.editButton, .deleteButton {
-  padding: 8px 16px;
-  border-radius: 4px;
-  font-size: 14px;
-  cursor: pointer;
-  font-weight: 500;
-}
+
 
 .editButton {
   background-color: #fff;
@@ -350,6 +424,24 @@
   background-color: #fff;
   color: #dc3545;
   border: 1px solid #dc3545;
+}
+
+.saveButton {
+  background-color: #fff;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.cancelButton {
+  background-color: #fff;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.editControls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
 /* Mobile back button - hidden by default */
@@ -459,8 +551,9 @@
     width: 100%;
   }
 
-  .editButton, .deleteButton {
+  .editButton, .deleteButton, .saveButton, .cancelButton {
     width: 100%;
     text-align: center;
+    justify-content: center;
   }
 }
