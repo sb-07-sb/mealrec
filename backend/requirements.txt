@@ -5,3 +5,8 @@ bcrypt
 python-dotenv
 requests
 pandas
+langchain-community
+pinecone
+langchain-google-genai
+google-generativeai
+sentence-transformers

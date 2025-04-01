@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchAllUsers, deleteUser } from '../../api/auth';
+import { fetchAllUsers, handleSave, deleteUser } from '../../api/auth';
 import styles from '../../assets/styles/UserList.module.css';
 import UserListSection from './UserListSection';
 import UserDetailsSection from './UserDetailsSection';
@@ -12,19 +12,22 @@ const UserList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [showingDetails, setShowingDetails] = useState(false);
-  const [newTag, setNewTag] = useState('');
-  const [newCuisine, setNewCuisine] = useState('');
+  const [newTagInput, setNewTagInput] = useState('');
+  const [tagField, setTagField] = useState('');
+    const [editMode, setEditMode] = useState(false);
+  
   const usersPerPage = 5;
 
+  const fetchUsers = async () => {
+    try {
+      const data = await fetchAllUsers();
+      setUsers(data);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
+
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const data = await fetchAllUsers();
-        setUsers(data);
-      } catch (error) {
-        console.error('Error fetching users:', error);
-      }
-    };
     fetchUsers();
   }, []);
 
@@ -61,47 +64,67 @@ const UserList = () => {
     setEditingUser(null);
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setEditingUser(prev => ({
+  const handleInputChange = (name, value) => {
+    setEditingUser((prev) => ({
       ...prev,
       [name]: value
     }));
   };
 
   const saveChanges = async () => {
+    if (!editingUser || !editingUser._id) {
+      console.error("Editing user is missing or _id is not defined");
+      return;
+    }
+  
+    // Remove the _id field from the editingUser before updating
+    const { _id, ...updatedUserData } = editingUser;
+  
     try {
-      // await updateUser(editingUser._id, editingUser);
-      setEditingUser(null);
+      // Make API call to save the changes, excluding the _id field from the payload
+      const updatedUser = await handleSave(_id, updatedUserData); // Pass only the updated data without _id
+  
+      // Update the user list with the modified user
+      setUsers(prevUsers =>
+        prevUsers.map(user =>
+          user._id === updatedUser._id ? updatedUser : user
+        )
+      );
+      setSelectedUser(updatedUser); // Set selected user to the updated user
+      setEditMode(false);
+
+      window.location.reload();
+
+
     } catch (error) {
-      console.error("Update failed", error);
+      console.error("Error saving user changes:", error);
     }
   };
+  
 
-  const updateTags = (field, value, action) => {
+  const handleTagAction = (action, field, value) => {
     if (!editingUser || !value || typeof value !== 'string' || !value.trim()) return;
 
     setEditingUser(prev => ({
       ...prev,
-      [field]: action === 'add' 
-        ? [...(prev[field] || []), value.trim()] 
+      [field]: action === 'add'
+        ? [...(prev[field] || []), value.trim()]
         : prev[field].filter(tag => tag !== value)
     }));
 
-    if (field === 'allergenTags') setNewTag('');
-    if (field === 'user_likes') setNewCuisine('');
+    setNewTagInput('');
   };
 
   const filteredUsers = users.filter(user => {
-    const matchesSearch = 
+    const matchesSearch =
       user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (user.firstName && user.firstName.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (user.lastName && user.lastName.toLowerCase().includes(searchTerm.toLowerCase()));
-    
+
     if (activeTab === 'all') return matchesSearch;
     if (activeTab === 'admins') return user.role === 'admin' && matchesSearch;
     if (activeTab === 'users') return user.role === 'user' && matchesSearch;
-    
+
     return matchesSearch;
   });
 
@@ -133,17 +156,14 @@ const UserList = () => {
           handleBackToList={handleBackToList}
           startEditing={startEditing}
           cancelEditing={cancelEditing}
-          saveChanges={saveChanges}
+          saveChanges={saveChanges} // Now calling the updated saveChanges function
           handleDeleteUser={handleDeleteUser}
           handleInputChange={handleInputChange}
-          newTag={newTag}
-          setNewTag={setNewTag}
-          addTag={() => updateTags('allergenTags', newTag, 'add')}
-          removeTag={(tag) => updateTags('allergenTags', tag, 'remove')}
-          newCuisine={newCuisine}
-          setNewCuisine={setNewCuisine}
-          addCuisine={() => updateTags('user_likes', newCuisine, 'add')}
-          removeCuisine={(cuisine) => updateTags('user_likes', cuisine, 'remove')}
+          newTagInput={newTagInput}
+          setNewTagInput={setNewTagInput}
+          tagField={tagField}
+          setTagField={setTagField}
+          handleTagAction={handleTagAction}
         />
       )}
     </div>

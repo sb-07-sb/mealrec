@@ -145,12 +145,10 @@ def get_all_users():
                     'role': user['role'],
                     'firstName': '',
                     'lastName': '',
-                    'city': '',
-                    'country': '',
                     'user_pref': [],
                     'user_likes': [],
                     'size': '',
-                    'protein_option': '',
+                    'spice_level': '',
                     'protein_category': '',
                     'meal_types': [],
                     'allergenTags': [],
@@ -197,6 +195,47 @@ def delete_user(user_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
+@app.route('/update-profile', methods=['POST'])
+def update_profile():
+    try:
+        data = request.json
+        if not data or 'user_id' not in data:
+            return jsonify({'error': 'User ID is required'}), 400
+        
+        user_id = data.get('user_id')
+        if not user_id:
+            return jsonify({'error': 'User ID is required'}), 400
+
+        try:
+            user_id_obj = ObjectId(user_id)
+        except Exception as e:
+            print("Invalid User ID:", str(e))  # Debugging line
+            return jsonify({'error': 'Invalid User ID format'}), 400
+
+        # Check if the user exists
+        if not login_collection.find_one({'_id': user_id_obj}):
+            return jsonify({'error': 'User not found'}), 404
+
+        # Update profile data
+        result = form_collection.update_one(
+            {'user_id': user_id},
+            {'$set': data},
+            upsert=True
+        )
+
+        if result.modified_count > 0:
+            return jsonify({'message': 'Profile updated successfully'}), 200
+        else:
+            return jsonify({'message': 'No changes made to the profile'}), 200
+
+    except Exception as e:
+        # In case of an error, return a JSON error response
+        print("Error:", str(e))
+        return jsonify({'error': 'Something went wrong'}), 500
+
+
+
+
     
 if __name__ == '__main__':
     app.run(debug=True)

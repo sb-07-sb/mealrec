@@ -91,3 +91,26 @@ export const deleteUser = async (userId) => {
 
     return response.json();
 };
+
+export const handleSave = async (userId, formData) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/update-profile`, { 
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                user_id: userId,
+                ...formData
+            }),
+        });
+
+        const textResponse = await response.text(); // Read response as text
+        console.log("Raw Response:", textResponse); // Log raw response
+
+        return JSON.parse(textResponse); // Parse JSON manually
+    } catch (error) {
+        console.error('Error saving profile:', error);
+        throw error;
+    }
+};

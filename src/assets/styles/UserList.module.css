@@ -34,8 +34,7 @@
   gap: 10px;
 }
 
-.filterButton, .addUserButton, .editButton, .deleteButton, .saveButton, .cancelButton 
-{
+.filterButton, .addUserButton, .editButton, .deleteButton, .saveButton, .cancelButton {
   padding: 6px 12px;
   border-radius: 4px;
   font-size: 14px;
@@ -271,13 +270,6 @@
   background: #555;
 }
 
-.userDetailsContent h3 {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 20px;
-  color: #333;
-}
-
 .detailsSection {
   margin-bottom: 25px;
 }
@@ -294,12 +286,17 @@
 .detailRow {
   display: flex;
   margin-bottom: 12px;
+  align-items: flex-start; /* Ensure consistent alignment */
+
 }
+
 
 .detailLabel {
   flex: 1;
   font-size: 14px;
   color: #6c757d;
+  padding-top: 6px; /* Match input field padding */
+
 }
 
 .detailValue {
@@ -319,25 +316,58 @@
   font-family: inherit;
 }
 
+/* Modified Tag Fields - Fixed height with vertical scroll */
 .tagContainer, .cuisineContainer {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   align-items: center;
+  margin-top: 8px;
+  max-height: 32px; /* Fixed height for single line */
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
+  padding-right: 4px; /* Space for scrollbar */
 }
+
+.tagContainer::-webkit-scrollbar,
+.cuisineContainer::-webkit-scrollbar {
+  width: 2px; /* Thinner scrollbar */
+}
+
+
+.tagContainer::-webkit-scrollbar-track,
+.cuisineContainer::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Light grey track */
+  border-radius: 4px;
+}
+
+.tagContainer::-webkit-scrollbar-thumb,
+.cuisineContainer::-webkit-scrollbar-thumb {
+  background: #888; /* Darker grey thumb */
+  border-radius: 4px;
+}
+
+.tagContainer::-webkit-scrollbar-thumb:hover,
+.cuisineContainer::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Darker on hover */
+}
+
+/* Rest of your existing CSS remains the same */
 
 .tagInputContainer {
   display: flex;
   gap: 8px;
   width: 100%;
   margin-bottom: 8px;
+  
 }
 
 .tagInput {
   flex: 1;
-  padding: 6px 10px;
+  padding: 3px 8px;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 3px;
   font-size: 14px;
 }
 
@@ -346,47 +376,34 @@
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 4px;
-  color: #007bff;
+  color: #495057;
   cursor: pointer;
   font-size: 14px;
+  transition: background-color 0.2s;
 }
 
-.restrictionTag {
-  padding: 4px 10px;
-  border-radius: 20px;
-  background-color: #ffecef;
-  color: #dc3545;
-  font-size: 13px;
+.addTagButton:hover {
+  background-color: #f1f1f1;
 }
 
-.editableTag {
-  padding: 4px 10px 4px 12px;
-  border-radius: 20px;
-  background-color: #ffecef;
-  color: #dc3545;
-  font-size: 13px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.cuisineTag {
-  padding: 4px 10px;
-  border-radius: 20px;
-  background-color: #f0f4ff;
-  color: #007bff;
-  font-size: 13px;
-}
-
+/* Grey color scheme for tags */
+.restrictionTag,
+.editableTag,
+.cuisineTag,
 .editableCuisineTag {
-  padding: 4px 10px 4px 12px;
-  border-radius: 20px;
-  background-color: #f0f4ff;
-  color: #007bff;
+  padding: 4px 10px;
+  border-radius: 5px;
+  background-color: #e9ecef;
+  color: #495057;
   font-size: 13px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 4px;
+  flex-shrink: 0;
+}
+
+.editableTag,
+.editableCuisineTag {
+  padding-right: 6px;
 }
 
 .removeTagButton {
@@ -397,6 +414,11 @@
   padding: 0;
   display: flex;
   align-items: center;
+  margin-left: 4px;
+}
+
+.removeTagButton:hover {
+  color: #dc3545;
 }
 
 .noRestrictions, .noCuisines {
@@ -412,8 +434,6 @@
   flex-wrap: wrap;
 }
 
-
-
 .editButton {
   background-color: #fff;
   border: 1px solid #007bff;
@@ -427,24 +447,17 @@
 }
 
 .saveButton {
-  background-color: #fff;
-  color: #333;
-  border: 1px solid #ddd;
+  background-color: #007bff;
+  color: white;
+  border: 1px solid #007bff;
 }
 
 .cancelButton {
   background-color: #fff;
-  color: #333;
+  color: #495057;
   border: 1px solid #ddd;
 }
 
-.editControls {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-/* Mobile back button - hidden by default */
 .backButton {
   display: none;
   align-items: center;
@@ -509,7 +522,6 @@
     align-items: flex-start;
   }
 
-  /* Mobile specific styles for showing/hiding user list/details */
   .userManagementContainer.showingDetails .userListSection {
     display: none;
   }
@@ -536,6 +548,7 @@
     flex-direction: column;
     gap: 5px;
     margin-bottom: 15px;
+
   }
 
   .detailLabel, .detailValue {

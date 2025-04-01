@@ -50,22 +50,23 @@ def generate_meal_plan_api():
     data = request.get_json()
 
      # Extract parameters and ensure they match the function's expected format
-    user_allergens = set(data.get('user_allergens', []))  # Default to empty list if not provided
+    user_pref = data.get("user_pref", "")
+    user_likes = data.get("user_likes", "")
+    size = data.get("size", "").lower()  # Convert to lowercase
+    protein_category = data.get("protein_category", "").lower()  # Convert to lowercase
+    protein_option = ""
+    meal_types = set(data.get("meal_types", []))  # Convert list to set
+    num_days = 7
+    user_avoid_ingredients = set(data.get('user_avoid_ingredients', []))  # Default to empty list if not provided
     user_dislikes = set(data.get('user_dislikes', []))  # Default to empty list if not provided 
 
     query = data.get("query", "")
-    user_likes = data.get("user_likes", "")
-    user_pref = data.get("user_pref", "")
-    size = data.get("size", "").lower()  # Convert to lowercase
-    protein_option = data.get("protein_option", "")
-    protein_category = data.get("protein_category", "").lower()  # Convert to lowercase
-    meal_types = set(data.get("meal_types", []))  # Convert list to set
 
 
     # Call the function
     meal_plan, final_docs = generate_meal_plan(
         vectorstore,
-        user_allergens,
+        user_avoid_ingredients,
         user_dislikes,
         query,
         user_likes,
@@ -73,7 +74,8 @@ def generate_meal_plan_api():
         size,
         protein_option,
         protein_category,
-        meal_types
+        meal_types,
+        num_days
     )
    # Check if the meal_plan is empty or malformed
     if not meal_plan:
