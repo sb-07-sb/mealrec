@@ -1,23 +1,29 @@
 import os
 from dotenv import load_dotenv
-from flask import Flask, request, jsonify
+from flask import Blueprint, Flask, request, jsonify
 from flask_cors import CORS
 from pymongo import MongoClient
 import bcrypt
 from bson import ObjectId
 from admin_recipes import fetch_recipe_details
 import time
+from rec import recommendation_bp
+from datetime import datetime
 
 load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
 
+# Register the blueprint with a URL prefix
+app.register_blueprint(recommendation_bp, url_prefix='/recommendation')
+
 # MongoDB connection
 client = MongoClient(os.getenv('MONGODB_URL'))
 db = client['meal-recommendation']
 login_collection = db['user-login']
 form_collection = db['user-data']
+meal_plans_collection = db['meal-plan']
 
 # User Registration
 @app.route('/register', methods=['POST'])
@@ -234,8 +240,50 @@ def update_profile():
         return jsonify({'error': 'Something went wrong'}), 500
 
 
+@app.route('/save_meal_plan', methods=['POST'])
+def save_meal_plan():
+    try:
+        data = request.json  
+        
+        if not data or 'mealPlan' not in data or 'user_id' not in data:
+            return jsonify({"error": "Invalid request. 'user_id' and 'mealPlan' are required"}), 400
 
+        meal_plan_entry = {
+            "mealPlan": data["mealPlan"],
+            "created_at": datetime.utcnow()
+        }
+
+        # Update if user_id exists, else insert a new record (upsert=True)
+        result = meal_plans_collection.update_one(
+            {"user_id": data["user_id"]},  # Filter by user_id
+            {"$set": meal_plan_entry},  # Update meal plan & timestamp
+            upsert=True
+        )
+        
+        return jsonify({
+            "message": "Meal plan saved successfully",
+            "updated": result.matched_count > 0  # True if an existing document was updated
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
     
+
+@app.route('/get_meal_plan/<user_id>', methods=['GET'])
+def get_meal_plan(user_id):
+    try:
+        meal_plan_entry = meal_plans_collection.find_one({"user_id": user_id})
+        
+        if not meal_plan_entry:
+            return jsonify({"message": "No meal plan found"}), 404
+
+        return jsonify({
+            "mealPlan": meal_plan_entry["mealPlan"]
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == '__main__':
     app.run(debug=True)

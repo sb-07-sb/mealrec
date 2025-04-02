@@ -32,7 +32,7 @@ export const getUserFormData = async (userId) => {
     if (!response.ok) {
         throw new Error('Failed to fetch user data');
     }
-    
+
     const data = await response.json(); // This is where we extract the JSON
     return data;
 
@@ -94,7 +94,7 @@ export const deleteUser = async (userId) => {
 
 export const handleSave = async (userId, formData) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/update-profile`, { 
+        const response = await fetch(`${API_BASE_URL}/update-profile`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -112,5 +112,35 @@ export const handleSave = async (userId, formData) => {
     } catch (error) {
         console.error('Error saving profile:', error);
         throw error;
+    }
+};
+
+
+export const generateMealPlan = async (requestBody) => {
+    const response = await fetch(`${API_BASE_URL}/recommendation/generate-meal-plan`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to generate meal plan');
+    }
+
+    return await response.json();
+};
+
+export const getMealPlan = async (userId) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/get_meal_plan/${userId}`);
+        if (!response.ok) throw new Error("Failed to fetch meal plan");
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching meal plan:", error);
+        return { mealPlan: null };
     }
 };

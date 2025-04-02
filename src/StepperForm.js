@@ -254,6 +254,8 @@ const StepperForm = () => {
                         prevStep={prevStep}
                         nextStep={nextStep}
                         handleFormSubmit={handleFormSubmit} // Pass handleFormSubmit
+                        errors={errors} // Pass errors as a prop
+                        setErrors={setErrors}
 
                     />
                 );

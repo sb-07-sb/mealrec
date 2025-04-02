@@ -6,7 +6,7 @@ python-dotenv
 requests
 pandas
 langchain-community
-pinecone
+pinecone==5.4.2
 langchain-google-genai
 google-generativeai
 sentence-transformers

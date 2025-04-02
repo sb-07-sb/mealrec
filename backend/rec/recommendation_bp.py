@@ -4,16 +4,22 @@ from langchain.vectorstores import Pinecone as LangChainPinecone
 from langchain.embeddings import HuggingFaceEmbeddings
 from pinecone import Pinecone
 # from main import generate_meal_plan  # Import the function from llm.py
-from flask import Flask, request, jsonify
-from pinecone_embeddings import format_and_push_to_pinecone
-from recipes_fetch import fetch_api_data  # Import the fetch_api_data function
-from recommendations import generate_meal_plan
+from flask import Blueprint, Flask, request, jsonify
+from .pinecone_embeddings import format_and_push_to_pinecone
+from .recipes_fetch import fetch_api_data  # Import the fetch_api_data function
+from .recommendations import generate_meal_plan
 import json
+
+
+
+# Initialize blueprint
+recommendation_bp = Blueprint('recommendation', __name__)
+
 
 # Load environment variables
 load_dotenv(override=True)
 
-app = Flask(__name__)
+# app = Flask(__name__)
 
 gemini_api_key = os.getenv('GOOGLE_API_KEY')
 
@@ -28,7 +34,7 @@ embed_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM
 vectorstore = LangChainPinecone(pc.Index(index_name), embed_model, text_key="text")
 
 
-@app.route('/save_to_pinecone', methods=['POST'])
+@recommendation_bp.route('/save_to_pinecone', methods=['POST'])
 def save_recipes():
     try:
         # Fetch recipes directly by calling fetch_api_data()
@@ -45,7 +51,7 @@ def save_recipes():
         return jsonify({"error": str(e)}), 500
     
 
-@app.route('/generate-meal-plan', methods=['POST'])
+@recommendation_bp.route('/generate-meal-plan', methods=['POST'])
 def generate_meal_plan_api():
     data = request.get_json()
 
@@ -98,7 +104,7 @@ def generate_meal_plan_api():
         # Log the exact error
         print("JSONDecodeError:", e)
         return jsonify({"error": "Failed to decode the meal plan response", "details": str(e)}), 500
-
+    
     # Return the parsed meal plan
     return jsonify({"meal_plan": meal_plan_json})
 
@@ -118,5 +124,5 @@ def clean_meal_plan_string(meal_plan: str) -> str:
 
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
+# if __name__ == "__main__":
+#     app.run(debug=True)

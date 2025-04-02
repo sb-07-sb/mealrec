@@ -1,47 +1,69 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './assets/styles/UserModule.module.css';
-import { User, Utensils, ChevronRight, Menu, X } from 'lucide-react';
+import { User, Utensils, ChevronRight } from 'lucide-react';
 import ProfileView from './components/User/ProfileView';
+import ProfileWithMealPlan from './components/MealPlan/ProfileWithMealPlan';
+import { getUserFormData, generateMealPlan } from './api/auth'; // Ensure this function exists in your API
 
 const UserModule = () => {
     const navigate = useNavigate();
     const [currentStep, setCurrentStep] = useState(1);
-    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [profileData, setProfileData] = useState(null);
+    const [mealPlan, setMealPlan] = useState(null);
+    const [loadingProfile, setLoadingProfile] = useState(true);
+    const userId = localStorage.getItem('user_id');
 
-    const toggleSidebar = () => {
-        setSidebarOpen(!sidebarOpen);
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const response = await getUserFormData(userId);
+                if (response && response.data) {
+                    setProfileData(response.data);
+                } else {
+                    throw new Error('No profile data received.');
+                }
+            } catch (error) {
+                console.error('Error fetching profile:', error);
+            } finally {
+                setLoadingProfile(false);
+            }
+        };
+        fetchProfile();
+    }, [userId]);
+
+    const handleGeneratePlan = async () => {
+        try {
+            if (!profileData) {
+                console.error("Profile data is required to generate a meal plan.");
+                return;
+            }
+            const response = await generateMealPlan(userId); // API call to generate meal plan
+            setMealPlan(response.data);
+            setCurrentStep(2); // Move to Meal Plan Step
+        } catch (error) {
+            console.error("Error generating meal plan:", error);
+        }
     };
 
     const handleNavItemClick = (step) => {
         setCurrentStep(step);
-        if (window.innerWidth <= 768) {
-            setSidebarOpen(false);
-        }
     };
 
     return (
         <div className={styles.userContainer}>
-            {/* Sidebar Navigation */}
-            <div className={`${styles.sidebar} ${sidebarOpen ? styles.open : ''}`}>
+            <div className={styles.sidebar}>
                 <div className={styles.logoContainer}>
                     <h2 className={styles.appLogo}>NutriSync</h2>
                 </div>
-                
                 <div className={styles.navSection}>
                     <ul className={styles.navList}>
-                        <li 
-                            className={`${styles.navItem} ${currentStep === 1 ? styles.activeNavItem : ''}`} 
-                            onClick={() => handleNavItemClick(1)}
-                        >
+                        <li className={`${styles.navItem} ${currentStep === 1 ? styles.activeNavItem : ''}`} onClick={() => handleNavItemClick(1)}>
                             <User size={18} className={styles.navIcon} />
                             <span className={styles.navText}>My Profile</span>
                             <ChevronRight size={16} className={styles.navArrow} />
                         </li>
-                        <li 
-                            className={`${styles.navItem} ${currentStep === 2 ? styles.activeNavItem : ''}`} 
-                            onClick={() => handleNavItemClick(2)}
-                        >
+                        <li className={`${styles.navItem} ${currentStep === 2 ? styles.activeNavItem : ''}`} onClick={() => handleNavItemClick(2)}>
                             <Utensils size={18} className={styles.navIcon} />
                             <span className={styles.navText}>Meal Plan</span>
                             <ChevronRight size={16} className={styles.navArrow} />
@@ -50,25 +72,31 @@ const UserModule = () => {
                 </div>
             </div>
 
-            {/* Main Content Area */}
             <div className={styles.mainContent}>
-                <div className={styles.topBar}>
-                    <button className={styles.menuToggle} onClick={toggleSidebar}>
-                        {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
-                    </button>
-                    <div className={styles.searchContainer}>
-                        <input type="text" placeholder="Search..." className={styles.searchInput} />
-                    </div>
-                    <div className={styles.userMenu}>
-                        <span className={styles.userAvatar}>
-                            {localStorage.getItem('firstName')?.charAt(0) || 'U'}
-                        </span>
-                    </div>
-                </div>
-                
-                <div className={styles.contentContainer}>
-                    {currentStep === 1 && <ProfileView />}
-                </div>
+                {loadingProfile ? (
+                    <p>Loading profile...</p>
+                ) : (
+                    <>
+                        {currentStep === 1 && (
+                            <ProfileView 
+                                profileData={profileData} 
+                                setProfileData={setProfileData} 
+                                onGeneratePlan={() => setCurrentStep(2)}  // Pass function to button
+                            />
+                        )}
+                        {currentStep === 2 && (
+                            <ProfileWithMealPlan 
+                                profileData={profileData} 
+                                mealPlan={mealPlan} 
+                                setMealPlan={setMealPlan} 
+                                onBack={() => setCurrentStep(1)}
+                                currentStep={currentStep} 
+
+                                
+                            />
+                        )}
+                    </>
+                )}
             </div>
         </div>
     );

@@ -19,10 +19,10 @@ export const validateStep = (step, formData) => {
             if (!formData.protein_category) errors.protein_category = 'Required*';
             if (formData.meal_types.length === 0) errors.meal_types = 'Required*';
             break;
-        // case 4:
-        //     if (formData.allergenTags.length === 0) errors.allergenTags = 'At least one allergen tag is required';
-        //     if (formData.dislikeTags.length === 0) errors.dislikeTags = 'At least one dislike tag is required';
-        //     break;
+        case 4:
+            if (formData.allergenTags.length === 0) errors.allergenTags = 'Required*';
+            if (formData.dislikeTags.length === 0) errors.dislikeTags = 'Required*';
+            break;
         default:
             break;
     }

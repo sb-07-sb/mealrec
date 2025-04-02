@@ -16,7 +16,11 @@ const ProfileView = ({ onGeneratePlan }) => {
         const response = await getUserFormData(userId);
         if (response && response.data) {
           setProfileData(response.data);
-          setFormData(response.data); // Initialize form data with fetched data
+          
+          // ✅ Only update formData if it's different (prevents infinite loop)
+          if (JSON.stringify(response.data) !== JSON.stringify(formData)) {
+            setFormData(response.data);
+          }
         } else {
           throw new Error('No data received from API');
         }
@@ -27,8 +31,11 @@ const ProfileView = ({ onGeneratePlan }) => {
         setLoading(false);
       }
     };
+
     fetchProfile();
   }, [userId]);
+
+
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -71,10 +78,7 @@ const ProfileView = ({ onGeneratePlan }) => {
             >
               {editMode ? 'Cancel' : 'Edit Profile'}
             </button>
-            <button
-              className={styles.primaryButton}
-              onClick={onGeneratePlan}
-            >
+            <button className={styles.primaryButton} onClick={onGeneratePlan}>
               Generate Meal Plan
             </button>
           </div>
@@ -84,84 +88,84 @@ const ProfileView = ({ onGeneratePlan }) => {
         <div className={styles.scrollableContent}>
           <div className={styles.detailsSection}>
             <h4 className={styles.sectionTitle}>BASIC INFORMATION</h4>
-            <DetailRow 
-              label="First Name" 
-              value={editMode ? formData.firstName : profileData.firstName} 
-              editMode={editMode} 
+            <DetailRow
+              label="First Name"
+              value={editMode ? formData.firstName : profileData.firstName}
+              editMode={editMode}
               onChange={(value) => handleInputChange('firstName', value)}
             />
-            <DetailRow 
-              label="Last Name" 
-              value={editMode ? formData.lastName : profileData.lastName} 
-              editMode={editMode} 
+            <DetailRow
+              label="Last Name"
+              value={editMode ? formData.lastName : profileData.lastName}
+              editMode={editMode}
               onChange={(value) => handleInputChange('lastName', value)}
             />
           </div>
 
           <div className={styles.detailsSection}>
             <h4 className={styles.sectionTitle}>DIET PREFERENCES</h4>
-            <DetailRow 
-              label="Meal Size" 
-              value={editMode ? formData.size : profileData.size} 
-              editMode={editMode} 
-              isDropdown={true} 
-              options={['extra_small', 'small', 'medium', 'large', 'extra_large']} 
+            <DetailRow
+              label="Meal Size"
+              value={editMode ? formData.size : profileData.size}
+              editMode={editMode}
+              isDropdown={true}
+              options={['extra_small', 'small', 'medium', 'large', 'extra_large']}
               onChange={(value) => handleInputChange('size', value)}
             />
-            <DetailRow 
-              label="Spice Level" 
-              value={editMode ? formData.spice_level : profileData.spice_level} 
-              editMode={editMode} 
-              isDropdown={true} 
-              options={['low', 'medium', 'high']} 
+            <DetailRow
+              label="Spice Level"
+              value={editMode ? formData.spice_level : profileData.spice_level}
+              editMode={editMode}
+              isDropdown={true}
+              options={['low', 'medium', 'high']}
               onChange={(value) => handleInputChange('spice_level', value)}
             />
-            <DetailRow 
-              label="Protein Category" 
-              value={editMode ? formData.protein_category : profileData.protein_category} 
-              editMode={editMode} 
-              isDropdown={true} 
-              options={['low', 'balance', 'high']} 
+            <DetailRow
+              label="Protein Category"
+              value={editMode ? formData.protein_category : profileData.protein_category}
+              editMode={editMode}
+              isDropdown={true}
+              options={['low', 'balance', 'high']}
               onChange={(value) => handleInputChange('protein_category', value)}
             />
-            <TagGroup 
-              label="Meal Types" 
-              tags={editMode ? formData.meal_types || [] : profileData.meal_types || []} 
-              editMode={editMode} 
+            <TagGroup
+              label="Meal Types"
+              tags={editMode ? formData.meal_types || [] : profileData.meal_types || []}
+              editMode={editMode}
               onTagsChange={(tags) => handleTagChange('meal_types', tags)}
             />
           </div>
 
           <div className={styles.detailsSection}>
             <h4 className={styles.sectionTitle}>FOOD PREFERENCES</h4>
-            <TagGroup 
-              label="Preferred Cuisines" 
-              tags={editMode ? formData.user_pref || [] : profileData.user_pref || []} 
-              editMode={editMode} 
+            <TagGroup
+              label="Preferred Cuisines"
+              tags={editMode ? formData.user_pref || [] : profileData.user_pref || []}
+              editMode={editMode}
               onTagsChange={(tags) => handleTagChange('user_pref', tags)}
             />
-            <TagGroup 
-              label="Preferred Dishes" 
-              tags={editMode ? formData.user_likes || [] : profileData.user_likes || []} 
-              editMode={editMode} 
+            <TagGroup
+              label="Preferred Dishes"
+              tags={editMode ? formData.user_likes || [] : profileData.user_likes || []}
+              editMode={editMode}
               onTagsChange={(tags) => handleTagChange('user_likes', tags)}
             />
           </div>
 
           <div className={styles.detailsSection}>
             <h4 className={styles.sectionTitle}>DIETARY RESTRICTIONS</h4>
-            <TagGroup 
-              label="Allergens" 
-              tags={editMode ? formData.allergenTags || [] : profileData.allergenTags || []} 
-              editMode={editMode} 
-              tagStyle="restriction" 
+            <TagGroup
+              label="Allergens"
+              tags={editMode ? formData.allergenTags || [] : profileData.allergenTags || []}
+              editMode={editMode}
+              tagStyle="restriction"
               onTagsChange={(tags) => handleTagChange('allergenTags', tags)}
             />
-            <TagGroup 
-              label="Dislikes" 
-              tags={editMode ? formData.dislikeTags || [] : profileData.dislikeTags || []} 
-              editMode={editMode} 
-              tagStyle="restriction" 
+            <TagGroup
+              label="Dislikes"
+              tags={editMode ? formData.dislikeTags || [] : profileData.dislikeTags || []}
+              editMode={editMode}
+              tagStyle="restriction"
               onTagsChange={(tags) => handleTagChange('dislikeTags', tags)}
             />
           </div>
@@ -202,9 +206,9 @@ const DetailRow = ({ label, value, editMode, isDropdown = false, options = [], o
       <div className={styles.detailValue}>
         {editMode ? (
           isDropdown ? (
-            <select 
-              className={styles.editInput} 
-              value={value || ''} 
+            <select
+              className={styles.editInput}
+              value={value || ''}
               onChange={handleChange}
             >
               {options.map((option, index) => (
@@ -238,19 +242,19 @@ const TagGroup = ({ label, tags, editMode, tagStyle = 'default', onTagsChange })
     setTagList(tags || []);
   }, [tags]);
 
-  useEffect(() => {
-    onTagsChange && onTagsChange(tagList);
-  }, [tagList, onTagsChange]);
-
   const handleAddTag = () => {
     if (newTag.trim() && !tagList.includes(newTag.trim())) {
-      setTagList([...tagList, newTag.trim()]);
+      const updatedTags = [...tagList, newTag.trim()];
+      setTagList(updatedTags);
       setNewTag('');
+      onTagsChange(updatedTags); // ✅ Manually trigger update
     }
   };
 
   const handleRemoveTag = (tagToRemove) => {
-    setTagList(tagList.filter(tag => tag !== tagToRemove));
+    const updatedTags = tagList.filter(tag => tag !== tagToRemove);
+    setTagList(updatedTags);
+    onTagsChange(updatedTags); // ✅ Manually trigger update
   };
 
   return (
@@ -301,5 +305,83 @@ const TagGroup = ({ label, tags, editMode, tagStyle = 'default', onTagsChange })
     </div>
   );
 };
+
+
+// const TagGroup = ({ label, tags, editMode, tagStyle = 'default', onTagsChange }) => {
+//   const [newTag, setNewTag] = useState('');
+//   const [tagList, setTagList] = useState(tags || []);
+//   const isFirstRender = React.useRef(true);
+
+//   useEffect(() => {
+//     setTagList(tags || []);
+//   }, [tags]);
+
+//   // useEffect(() => {
+//   //   if (isFirstRender.current) {
+//   //     isFirstRender.current = false; // Prevent triggering on initial render
+//   //     return;
+//   //   }
+//   //   onTagsChange && onTagsChange(tagList);
+//   // }, [tagList, onTagsChange]);
+
+//   const handleAddTag = () => {
+//     if (newTag.trim() && !tagList.includes(newTag.trim())) {
+//       setTagList([...tagList, newTag.trim()]);
+//       setNewTag('');
+//     }
+//   };
+
+//   const handleRemoveTag = (tagToRemove) => {
+//     setTagList(tagList.filter(tag => tag !== tagToRemove));
+//   };
+
+//   return (
+//     <div className={styles.tagGroup}>
+//       <div className={styles.detailRow}>
+//         <div className={styles.detailLabel}>{label}</div>
+//         <div className={styles.detailValue}>
+//           {editMode && (
+//             <div className={styles.tagInputContainer}>
+//               <input
+//                 type="text"
+//                 value={newTag}
+//                 onChange={(e) => setNewTag(e.target.value)}
+//                 onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}
+//                 placeholder="Add new..."
+//                 className={styles.tagInput}
+//               />
+//               <button
+//                 className={styles.addTagButton}
+//                 onClick={handleAddTag}
+//                 disabled={!newTag.trim()}
+//               >
+//                 Add
+//               </button>
+//             </div>
+//           )}
+//         </div>
+//       </div>
+//       <div className={`${styles.tagContainer} ${styles[tagStyle]}`}>
+//         {tagList.length > 0 ? (
+//           tagList.map((tag, index) => (
+//             <span key={index} className={styles.tag}>
+//               {tag}
+//               {editMode && (
+//                 <button
+//                   className={styles.tagRemove}
+//                   onClick={() => handleRemoveTag(tag)}
+//                 >
+//                   &times;
+//                 </button>
+//               )}
+//             </span>
+//           ))
+//         ) : (
+//           <span className={styles.noTags}> -</span>
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
 
 export default ProfileView;
