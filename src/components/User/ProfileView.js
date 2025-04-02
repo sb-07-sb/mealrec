@@ -16,7 +16,7 @@ const ProfileView = ({ onGeneratePlan }) => {
         const response = await getUserFormData(userId);
         if (response && response.data) {
           setProfileData(response.data);
-          
+
           // ✅ Only update formData if it's different (prevents infinite loop)
           if (JSON.stringify(response.data) !== JSON.stringify(formData)) {
             setFormData(response.data);
@@ -34,8 +34,6 @@ const ProfileView = ({ onGeneratePlan }) => {
 
     fetchProfile();
   }, [userId]);
-
-
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -66,11 +64,33 @@ const ProfileView = ({ onGeneratePlan }) => {
   if (error) return <div className={styles.errorContainer}>{error}</div>;
   if (!profileData) return <div className={styles.emptyState}>No profile data found</div>;
 
+  // Render non-edit mode with grid layout
+  const renderBasicInfoGridNonEdit = () => {
+    return (
+      <div className={styles.gridRow}>
+        <div className={styles.gridItem}>
+          <div className={styles.detailLabel}>First Name</div>
+          <div className={styles.detailValue}>
+            {profileData.firstName || '-'}
+          </div>
+        </div>
+        <div className={styles.gridItem}>
+          <div className={styles.detailLabel}>Last Name</div>
+          <div className={styles.detailValue}>
+            {profileData.lastName || '-'}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+ 
+
   return (
     <div className={styles.profileOuterContainer}>
       <div className={styles.profileGrid}>
         <div className={styles.profileHeader}>
-          <h2>Profile</h2>
+          <h2>User Profile</h2>
           <div className={styles.profileActions}>
             <button
               className={styles.editButton}
@@ -88,46 +108,85 @@ const ProfileView = ({ onGeneratePlan }) => {
         <div className={styles.scrollableContent}>
           <div className={styles.detailsSection}>
             <h4 className={styles.sectionTitle}>BASIC INFORMATION</h4>
-            <DetailRow
-              label="First Name"
-              value={editMode ? formData.firstName : profileData.firstName}
-              editMode={editMode}
-              onChange={(value) => handleInputChange('firstName', value)}
-            />
-            <DetailRow
-              label="Last Name"
-              value={editMode ? formData.lastName : profileData.lastName}
-              editMode={editMode}
-              onChange={(value) => handleInputChange('lastName', value)}
-            />
+            {!editMode ? (
+              renderBasicInfoGridNonEdit()
+            ) : (
+              <>
+                <DetailRow
+                  label="First Name"
+                  value={formData.firstName}
+                  editMode={true}
+                  onChange={(value) => handleInputChange('firstName', value)}
+                />
+                <DetailRow
+                  label="Last Name"
+                  value={formData.lastName}
+                  editMode={true}
+                  onChange={(value) => handleInputChange('lastName', value)}
+                />
+              </>
+            )}
           </div>
 
           <div className={styles.detailsSection}>
             <h4 className={styles.sectionTitle}>DIET PREFERENCES</h4>
-            <DetailRow
-              label="Meal Size"
-              value={editMode ? formData.size : profileData.size}
-              editMode={editMode}
-              isDropdown={true}
-              options={['extra_small', 'small', 'medium', 'large', 'extra_large']}
-              onChange={(value) => handleInputChange('size', value)}
-            />
-            <DetailRow
-              label="Spice Level"
-              value={editMode ? formData.spice_level : profileData.spice_level}
-              editMode={editMode}
-              isDropdown={true}
-              options={['low', 'medium', 'high']}
-              onChange={(value) => handleInputChange('spice_level', value)}
-            />
-            <DetailRow
-              label="Protein Category"
-              value={editMode ? formData.protein_category : profileData.protein_category}
-              editMode={editMode}
-              isDropdown={true}
-              options={['low', 'balance', 'high']}
-              onChange={(value) => handleInputChange('protein_category', value)}
-            />
+            {!editMode ? (
+              <>
+                <div className={styles.gridRow}>
+                  <div className={styles.gridItem}>
+                    <div className={styles.detailLabel}>Meal Size</div>
+                    <div className={styles.detailValue}>
+                      {profileData.size ? profileData.size.replace('_', ' ') : '-'}
+                    </div>
+                    </div>
+                    </div>
+                    <div className={styles.gridRow}>
+                  <div className={styles.gridItem}>
+                    <div className={styles.detailLabel}>Spice Level</div>
+                    <div className={styles.detailValue}>
+                      {profileData.spice_level || '-'}
+                      </div>
+
+                    </div>
+                  </div>
+                <div className={styles.gridRow}>
+                  <div className={styles.gridItem}>
+                    <div className={styles.detailLabel}>Protein Category</div>
+                    <div className={styles.detailValue}>
+                      {profileData.protein_category || '-'}
+                    </div>
+                  </div>
+                 
+                  </div>
+              </>
+            ) : (
+              <>
+                <DetailRow
+                  label="Meal Size"
+                  value={formData.size}
+                  editMode={true}
+                  isDropdown={true}
+                  options={['extra_small', 'small', 'medium', 'large', 'extra_large']}
+                  onChange={(value) => handleInputChange('size', value)}
+                />
+                <DetailRow
+                  label="Spice Level"
+                  value={formData.spice_level}
+                  editMode={true}
+                  isDropdown={true}
+                  options={['low', 'medium', 'high']}
+                  onChange={(value) => handleInputChange('spice_level', value)}
+                />
+                <DetailRow
+                  label="Protein Category"
+                  value={formData.protein_category}
+                  editMode={true}
+                  isDropdown={true}
+                  options={['low', 'balance', 'high']}
+                  onChange={(value) => handleInputChange('protein_category', value)}
+                />
+              </>
+            )}
             <TagGroup
               label="Meal Types"
               tags={editMode ? formData.meal_types || [] : profileData.meal_types || []}
@@ -135,7 +194,6 @@ const ProfileView = ({ onGeneratePlan }) => {
               onTagsChange={(tags) => handleTagChange('meal_types', tags)}
             />
           </div>
-
           <div className={styles.detailsSection}>
             <h4 className={styles.sectionTitle}>FOOD PREFERENCES</h4>
             <TagGroup
@@ -213,7 +271,7 @@ const DetailRow = ({ label, value, editMode, isDropdown = false, options = [], o
             >
               {options.map((option, index) => (
                 <option key={index} value={option}>
-                  {option}
+                  {option.replace('_', ' ')}
                 </option>
               ))}
             </select>
@@ -227,7 +285,7 @@ const DetailRow = ({ label, value, editMode, isDropdown = false, options = [], o
             />
           )
         ) : (
-          value || '-'
+          <span>{value ? (typeof value === 'string' ? value.replace('_', ' ') : value) : '-'}</span>
         )}
       </div>
     </div>
@@ -269,7 +327,7 @@ const TagGroup = ({ label, tags, editMode, tagStyle = 'default', onTagsChange })
                 value={newTag}
                 onChange={(e) => setNewTag(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}
-                placeholder="Add new..."
+                placeholder={`Add new ${label.toLowerCase()}...`}
                 className={styles.tagInput}
               />
               <button
@@ -281,107 +339,31 @@ const TagGroup = ({ label, tags, editMode, tagStyle = 'default', onTagsChange })
               </button>
             </div>
           )}
+
+          <div className={`${styles.tagContainer} ${styles[tagStyle]}`}>
+            {tagList.length > 0 ? (
+              tagList.map((tag, index) => (
+                <span key={index} className={styles.tag}>
+                  {tag}
+                  {editMode && (
+                    <button
+                      className={styles.tagRemove}
+                      onClick={() => handleRemoveTag(tag)}
+                      aria-label={`Remove ${tag}`}
+                    >
+                      &times;
+                    </button>
+                  )}
+                </span>
+              ))
+            ) : (
+              <span className={styles.noTags}>None specified</span>
+            )}
+          </div>
         </div>
-      </div>
-      <div className={`${styles.tagContainer} ${styles[tagStyle]}`}>
-        {tagList.length > 0 ? (
-          tagList.map((tag, index) => (
-            <span key={index} className={styles.tag}>
-              {tag}
-              {editMode && (
-                <button
-                  className={styles.tagRemove}
-                  onClick={() => handleRemoveTag(tag)}
-                >
-                  &times;
-                </button>
-              )}
-            </span>
-          ))
-        ) : (
-          <span className={styles.noTags}> -</span>
-        )}
       </div>
     </div>
   );
 };
-
-
-// const TagGroup = ({ label, tags, editMode, tagStyle = 'default', onTagsChange }) => {
-//   const [newTag, setNewTag] = useState('');
-//   const [tagList, setTagList] = useState(tags || []);
-//   const isFirstRender = React.useRef(true);
-
-//   useEffect(() => {
-//     setTagList(tags || []);
-//   }, [tags]);
-
-//   // useEffect(() => {
-//   //   if (isFirstRender.current) {
-//   //     isFirstRender.current = false; // Prevent triggering on initial render
-//   //     return;
-//   //   }
-//   //   onTagsChange && onTagsChange(tagList);
-//   // }, [tagList, onTagsChange]);
-
-//   const handleAddTag = () => {
-//     if (newTag.trim() && !tagList.includes(newTag.trim())) {
-//       setTagList([...tagList, newTag.trim()]);
-//       setNewTag('');
-//     }
-//   };
-
-//   const handleRemoveTag = (tagToRemove) => {
-//     setTagList(tagList.filter(tag => tag !== tagToRemove));
-//   };
-
-//   return (
-//     <div className={styles.tagGroup}>
-//       <div className={styles.detailRow}>
-//         <div className={styles.detailLabel}>{label}</div>
-//         <div className={styles.detailValue}>
-//           {editMode && (
-//             <div className={styles.tagInputContainer}>
-//               <input
-//                 type="text"
-//                 value={newTag}
-//                 onChange={(e) => setNewTag(e.target.value)}
-//                 onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}
-//                 placeholder="Add new..."
-//                 className={styles.tagInput}
-//               />
-//               <button
-//                 className={styles.addTagButton}
-//                 onClick={handleAddTag}
-//                 disabled={!newTag.trim()}
-//               >
-//                 Add
-//               </button>
-//             </div>
-//           )}
-//         </div>
-//       </div>
-//       <div className={`${styles.tagContainer} ${styles[tagStyle]}`}>
-//         {tagList.length > 0 ? (
-//           tagList.map((tag, index) => (
-//             <span key={index} className={styles.tag}>
-//               {tag}
-//               {editMode && (
-//                 <button
-//                   className={styles.tagRemove}
-//                   onClick={() => handleRemoveTag(tag)}
-//                 >
-//                   &times;
-//                 </button>
-//               )}
-//             </span>
-//           ))
-//         ) : (
-//           <span className={styles.noTags}> -</span>
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
 
 export default ProfileView;

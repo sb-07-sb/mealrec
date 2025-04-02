@@ -1,6 +1,8 @@
-/* body {
-    font-family: 'Lato';
-  } */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    color: #333;
+    background-color: #f5f7fa;
+  }
 
 .adminContainer {
     display: flex;
@@ -30,7 +32,7 @@
     margin: 0;
     font-size: 20px;
     font-weight: 600;
-    color: #007bff;
+    color: #2563eb;
 }
 
 .navSection {

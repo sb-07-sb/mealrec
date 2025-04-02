@@ -8,8 +8,8 @@
   display: flex;
   flex-direction: column;
   overflow: hidden; /* Prevent double scrollbars */
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 }
-
 
 .mealPlanHeader {
   grid-row: 1;
@@ -22,6 +22,7 @@
   position: sticky;
   top: 0;
   z-index: 10;
+  width: 100%;
 }
 
 .mealPlanHeader h2 {
@@ -29,8 +30,24 @@
   font-weight: 600;
   color: #333;
   margin: 0;
+  position: relative;
+  padding-left: 16px;
 }
 
+/* Added blue line */
+.mealPlanHeader h2::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 60%;
+  width: 4px;
+  background-color: #4a90e2;
+  border-radius: 2px;
+}
+
+/* Rest of the CSS remains exactly the same */
 .mealPlanActions {
   display: flex;
   gap: 10px;
@@ -77,7 +94,7 @@
 .dayTitle {
   font-size: 18px;
   font-weight: 600;
-  color: #007bff;
+  color: #2563eb;
   margin-top: 0;
   margin-bottom: 15px;
   padding-bottom: 10px;
@@ -120,13 +137,16 @@
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 20px; /* Increased gap */
   padding: 10px 0; /* Added vertical padding */
-  width: 100%; /* Ensure full width */}
+  width: 100%;
+}
 
 .detailItem {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  min-width: 200px; /* Minimum width for each column */
+  min-width: 0; /* Changed from 200px to allow flexible sizing */
+  flex-grow: 1; /* Allows items to grow to fill available space */
+
 
 }
 
@@ -170,13 +190,13 @@
 
 .primaryButton {
   background-color: #fff;
-  color: #007bff;
-  border: 1px solid #007bff;
+  color: #2563eb;
+  border: 1px solid #2563eb;
 }
 
 .primaryButton:hover {
-  background-color: #007bff;
-  color: #fff;
+  background-color: #f5f7fa;
+
 }
 
 .secondaryButton {
@@ -186,8 +206,7 @@
 }
 
 .secondaryButton:hover {
-  background-color: #6c757d;
-  color: #fff;
+  background-color: #f5f7fa;
 }
 
 @media (max-width: 768px) {
@@ -204,5 +223,17 @@
   
   .mealDetails {
       grid-template-columns: 1fr;
+  }
+}
+
+/* For very large screens, you might want to limit the maximum width */
+@media (min-width: 1600px) {
+  .mealPlanOuterContainer {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  
+  .mealDetails {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   }
 }

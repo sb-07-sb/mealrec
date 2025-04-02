@@ -20,9 +20,7 @@ const UserListSection = ({
       <div className={styles.header}>
         <h2>Users</h2>
         <div className={styles.actions}>
-          <button className={styles.filterButton}>
-            Filter <ChevronRight size={16} />
-          </button>
+          
           <button className={styles.addUserButton}>
             + Add User
           </button>
