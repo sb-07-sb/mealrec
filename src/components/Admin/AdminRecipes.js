@@ -32,17 +32,17 @@ const AdminRecipes = ({ searchQuery }) => {  // Accept searchQuery prop
   useEffect(() => {
     let result = recipes;
     if (filters.cuisine) {
-      result = result.filter(recipe => 
+      result = result.filter(recipe =>
         recipe.cuisine.toLowerCase().includes(filters.cuisine.toLowerCase())
       );
     }
     if (filters.category) {
-      result = result.filter(recipe => 
+      result = result.filter(recipe =>
         recipe.meal_category.toLowerCase().includes(filters.category.toLowerCase())
       );
     }
     if (searchQuery) {
-      result = result.filter(recipe => 
+      result = result.filter(recipe =>
         recipe.dish_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         recipe.cuisine.toLowerCase().includes(searchQuery.toLowerCase()) ||
         recipe.meal_category.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -64,18 +64,46 @@ const AdminRecipes = ({ searchQuery }) => {  // Accept searchQuery prop
     return [...new Set(recipes.map(recipe => recipe[key]))].filter(Boolean);
   };
 
+  const renderLoadingSkeleton = () => {
+    return (
+      <>
+       
+
+        {/* Content Skeleton */}
+        <div className={styles.gridContent}>
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className={styles.gridRow}>
+              <div className={styles.colDish}>
+                <div className={`${styles.shimmer} ${styles.dishNameShimmer}`}></div>
+              </div>
+              <div className={styles.colCuisine}>
+                <div className={`${styles.shimmer} ${styles.cuisineShimmer}`}></div>
+              </div>
+              <div className={styles.colCategory}>
+                <div className={`${styles.shimmer} ${styles.categoryShimmer}`}></div>
+              </div>
+              <div className={styles.colDesc}>
+                <div className={`${styles.shimmer} ${styles.descShimmer}`}></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </>
+    );
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <h2 className={styles.title}>Recipes</h2>
         <div className={styles.filterContainer}>
-          <button 
+          <button
             className={styles.filterButton}
             onClick={() => setShowFilters(!showFilters)}
           >
             Filter <ChevronRight size={16} className={`${styles.filterIcon} ${showFilters ? styles.rotated : ''}`} />
           </button>
-          
+
           {showFilters && (
             <div className={styles.filterDropdown}>
               <div className={styles.filterGroup}>
@@ -92,7 +120,7 @@ const AdminRecipes = ({ searchQuery }) => {  // Accept searchQuery prop
                   ))}
                 </select>
               </div>
-              
+
               <div className={styles.filterGroup}>
                 <label>Category</label>
                 <select
@@ -111,7 +139,7 @@ const AdminRecipes = ({ searchQuery }) => {  // Accept searchQuery prop
           )}
         </div>
       </div>
-      
+
       <div className={styles.gridContainer}>
         {/* Header Row */}
         <div className={`${styles.gridRow} ${styles.headerRow}`}>
@@ -124,10 +152,8 @@ const AdminRecipes = ({ searchQuery }) => {  // Accept searchQuery prop
         {/* Content Area with Scroll */}
         <div className={styles.gridContent}>
           {loading ? (
-            <div className={styles.loadingState}>
-              <div className={styles.spinner}></div>
-              Loading recipes...
-            </div>
+            renderLoadingSkeleton()
+
           ) : error ? (
             <div className={styles.errorState}>{error}</div>
           ) : filteredRecipes.length === 0 ? (

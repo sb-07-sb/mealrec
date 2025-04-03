@@ -53,7 +53,7 @@ const UserModule = () => {
     const handleLogout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('role');
-        localStorage.removeItem('user_id');        
+        localStorage.removeItem('user_id');
         navigate('/');
     };
 
@@ -88,25 +88,32 @@ const UserModule = () => {
 
             <div className={styles.mainContent}>
                 {loadingProfile ? (
-                    <p>Loading profile...</p>
-                ) : (
+                    <div className={styles.profileLoading}>
+                        <div className={`${styles.shimmer} ${styles.profileHeaderShimmer}`}></div>
+                        {[...Array(5)].map((_, i) => (
+                            <div key={i} className={styles.profileFieldShimmer}>
+                                <div className={`${styles.shimmer} ${styles.labelShimmer}`}></div>
+                                <div className={`${styles.shimmer} ${styles.valueShimmer}`}></div>
+                            </div>
+                        ))}
+                    </div>) : (
                     <>
                         {currentStep === 1 && (
-                            <ProfileView 
-                                profileData={profileData} 
-                                setProfileData={setProfileData} 
+                            <ProfileView
+                                profileData={profileData}
+                                setProfileData={setProfileData}
                                 onGeneratePlan={() => setCurrentStep(2)}  // Pass function to button
                             />
                         )}
                         {currentStep === 2 && (
-                            <ProfileWithMealPlan 
-                                profileData={profileData} 
-                                mealPlan={mealPlan} 
-                                setMealPlan={setMealPlan} 
+                            <ProfileWithMealPlan
+                                profileData={profileData}
+                                mealPlan={mealPlan}
+                                setMealPlan={setMealPlan}
                                 onBack={() => setCurrentStep(1)}
-                                currentStep={currentStep} 
+                                currentStep={currentStep}
 
-                                
+
                             />
                         )}
                     </>
