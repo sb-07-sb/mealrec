@@ -178,11 +178,13 @@ body {
     flex-direction: column;
     margin-bottom: 15px;
     width: 100%;
-    max-width: 39vh;
+    max-width: 70vh;
     justify-content: space-between;
     transition: max-width 0.3s ease-in-out; /* Smooth transition */
 
 }
+
+
 
 .form-group label {
     font-size: 14px;

@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import styles from '../assets/styles/AdminPanel.module.css';
 import UserList from './Admin/UserList';
 import AdminRecipes from './Admin/AdminRecipes';
-import { Users, BookOpen, ChevronRight, Menu, X } from 'lucide-react';
+import { Users, BookOpen, ChevronRight, Menu, X, LogOut, Save } from 'lucide-react';
+import { saveRecipesToPinecone } from '../api/auth';
 
 const AdminPanel = () => {
     const navigate = useNavigate();
     const [currentStep, setCurrentStep] = useState(1);
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
 
     // Check if the user is an admin
     const userRole = localStorage.getItem('role');
@@ -22,10 +24,42 @@ const AdminPanel = () => {
 
     const handleNavItemClick = (step) => {
         setCurrentStep(step);
+        setSearchQuery('');  // Reset search when switching steps
         // Close sidebar on mobile after navigation
         if (window.innerWidth <= 768) {
             setSidebarOpen(false);
         }
+    };
+
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
+    };
+
+    const handleSaveToPinecone = async () => {
+        try {
+            // Call the saveToPinecone function from auth.js
+            const result = await saveRecipesToPinecone();
+            
+            // Check if the response contains an error (matches your Flask endpoint)
+            if (result.error) {
+              throw new Error(result.error);
+            }
+            
+            // Success case - show the message from your Flask endpoint
+            alert(result.message || 'Recipes successfully saved to Pinecone!');
+          } catch (error) {
+            console.error('Pinecone save error:', error);
+            
+            // Show specific error messages from the endpoint or generic message
+            alert(error.message || 'Failed to save recipes to Pinecone. Please try again.');
+          } 
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('role');
+        localStorage.removeItem('user_id');        
+        navigate('/');
     };
 
     return (
@@ -54,7 +88,24 @@ const AdminPanel = () => {
                             <span className={styles.navText}>Recipe List</span>
                             <ChevronRight size={16} className={styles.navArrow} />
                         </li>
+                    {/* New Save to Pinecone button */}
+                    <li 
+                            className={styles.navItem}
+                            onClick={handleSaveToPinecone}
+                        >
+                            <Save size={18} className={styles.navIcon} />
+                            <span className={styles.navText}>Save to Pinecone</span>
+                            <ChevronRight size={16} className={styles.navArrow} />
+                        </li>
                     </ul>
+                </div>
+
+                {/* Logout Button */}
+                <div className={styles.logoutSection}>
+                    <button className={styles.logoutButton} onClick={handleLogout}>
+                        <LogOut size={18} className={styles.navIcon} />
+                        <span className={styles.navText}>Logout</span>
+                    </button>
                 </div>
             </div>
 
@@ -65,15 +116,21 @@ const AdminPanel = () => {
                         {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
                     </button>
                     <div className={styles.searchContainer}>
-                        <input type="text" placeholder="Search..." className={styles.searchInput} />
+                        <input 
+                            type="text" 
+                            placeholder={currentStep === 1 ? "Search users..." : "Search recipes..."} 
+                            className={styles.searchInput} 
+                            value={searchQuery}
+                            onChange={handleSearchChange}
+                        />
                     </div>
                     <div className={styles.userMenu}>
                         <span className={styles.userAvatar}>A</span>
                     </div>
                 </div>
                 
-                {currentStep === 1 && <UserList />}
-                {currentStep === 2 && <AdminRecipes />}
+                {currentStep === 1 && <UserList searchQuery={searchQuery} />}
+                {currentStep === 2 && <AdminRecipes searchQuery={searchQuery} />}
             </div>
         </div>
     );

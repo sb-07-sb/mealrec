@@ -11,6 +11,7 @@ import { getUserFormData } from './api/auth';
 
 const StepperForm = () => {
     const navigate = useNavigate(); // Hook for navigation
+    const [isSubmitted, setIsSubmitted] = useState(false); // ✅ Track form submission
 
     const [currentStep, setCurrentStep] = useState(1);
     const [formData, setFormData] = useState({
@@ -20,8 +21,8 @@ const StepperForm = () => {
         city: '',
         allergenTags: [], // For allergen tags
         dislikeTags: [],  // For dislike tags
-        user_pref: [],    // For preferred dishes
-        user_likes: [     // Initialize with predefined cuisines
+        user_likes: [],    // For preferred dishes
+        user_pref: [     // Initialize with predefined cuisines
             'Mediterranean',
             'European',
             'Arabic',
@@ -51,6 +52,7 @@ const StepperForm = () => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
         setErrors((prevErrors) => ({ ...prevErrors, [name]: '' })); // Clear the error for the field being edited
+        
     };
 
     const TOTAL_STEPS = 4; // Adjust this based on your total steps
@@ -71,10 +73,15 @@ const StepperForm = () => {
             navigate('/admin', { replace: true }); // Replace history entry
             return;
         }
+
+        if (isSubmitted) {
+            navigate('/test', { replace: true }); // ✅ Prevents going back
+          }
+          
         const fetchUserFormData = async () => {
             const user_id = localStorage.getItem('user_id');
             if (!user_id) return;
-        
+
             const response = await getUserFormData(user_id);
             if (response.data) {
                 // Merge API response with default values
@@ -157,6 +164,14 @@ const StepperForm = () => {
 
     const handleFormSubmit = async () => {
         try {
+
+            // Validate step 4 before submission
+            const { isValid, errors } = validateStep(4, formData);
+
+            if (!isValid) {
+                setErrors(errors); // Update the errors state
+                return; // Stop the function if validation fails
+            }
             // Retrieve user_id from local storage (or update with your preferred state management method)
             const user_id = localStorage.getItem('user_id');
 
@@ -178,6 +193,8 @@ const StepperForm = () => {
 
             if (response.ok) {
                 alert('Form submitted successfully!');
+                setIsSubmitted(true); 
+                navigate('/test',{ replace: true }); 
             } else {
                 const errorData = await response.json();
                 alert(`Failed to submit form: ${errorData.error}`);
@@ -187,6 +204,7 @@ const StepperForm = () => {
             alert('An error occurred while submitting the form.');
         }
     };
+  
 
     const renderForm = () => {
         switch (currentStep) {
@@ -225,7 +243,7 @@ const StepperForm = () => {
                 return (
                     <MealTypeSelectionForm
                         size={formData.size}
-                        protein_option={formData.protein_option}
+                        spice_level={formData.spice_level}
                         protein_category={formData.protein_category}
                         meal_types={formData.meal_types}
                         mealTypeInput={mealTypeInput}

@@ -2,7 +2,7 @@ import React from 'react';
 
 const MealTypeSelectionForm = ({
     size,
-    protein_option,
+    spice_level,
     protein_category,
     meal_types,
     setFormData,
@@ -12,9 +12,9 @@ const MealTypeSelectionForm = ({
     setErrors
 }) => {
     // Predefined options
-    const sizeOptions = ['large', 'standard'];
-    const proteinOptions = ['chicken', 'beef', 'vegetarian'];
-    const proteinCategoryOptions = ['balance', 'high-protein', 'low-carb'];
+    const sizeOptions = ['extra_small', 'small', 'medium', 'large', 'extra_large'];
+    const spiceOptions = ['Low', 'Medium', 'High'];
+    const proteinCategoryOptions = ['balance', 'high', 'low'];
     const mealTypeOptions = ['breakfast', 'morning_snack', 'lunch', 'evening_snack', 'dinner'];
 
     // Handle change for dropdown fields (size, protein_option, protein_category)
@@ -94,17 +94,17 @@ const MealTypeSelectionForm = ({
             <div className="form-row">
                 <div className="form-group">
                     <div className="label-container">
-                        <label>Protein Option</label>
-                        {errors.protein_option && <span className="error">{errors.protein_option}</span>}
+                        <label>Spice Level</label>
+                        {errors.spice_level && <span className="error">{errors.spice_level}</span>}
                     </div>
                     <div className="select-container">
                         <select
-                            value={protein_option}
-                            onChange={(e) => handleDropdownChange('protein_option', e.target.value)}
-                            className={errors.protein_option ? "error-border" : ""}
+                            value={spice_level}
+                            onChange={(e) => handleDropdownChange('spice_level', e.target.value)}
+                            className={errors.spice_level ? "error-border" : ""}
                         >
                             <option value="" disabled>Select an option</option>
-                            {proteinOptions.map((option) => (
+                            {spiceOptions.map((option) => (
                                 <option key={option} value={option}>
                                     {option}
                                 </option>

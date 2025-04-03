@@ -140,7 +140,29 @@ export const getMealPlan = async (userId) => {
 
         return await response.json();
     } catch (error) {
-        console.error("Error fetching meal plan:", error);
+        // console.error("Error fetching meal plan:", error);
         return { mealPlan: null };
     }
 };
+
+export const saveRecipesToPinecone = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/recommendation/save_to_pinecone`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save recipes to Pinecone');
+      }
+  
+      return await response.json();
+    } catch (error) {
+      console.error('Error saving to Pinecone:', error);
+      throw error; // Re-throw to allow handling in the calling component
+    }
+  };

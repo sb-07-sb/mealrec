@@ -20,8 +20,8 @@ export const validateStep = (step, formData) => {
             if (formData.meal_types.length === 0) errors.meal_types = 'Required*';
             break;
         case 4:
-            if (formData.allergenTags.length === 0) errors.allergenTags = 'Required*';
-            if (formData.dislikeTags.length === 0) errors.dislikeTags = 'Required*';
+            // if (formData.allergenTags.length === 0) errors.allergenTags = 'Required*';
+            // if (formData.dislikeTags.length === 0) errors.dislikeTags = 'Required*';
             break;
         default:
             break;

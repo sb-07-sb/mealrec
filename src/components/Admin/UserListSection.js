@@ -13,7 +13,9 @@ const UserListSection = ({
   totalPages,
   indexOfFirstUser,
   indexOfLastUser,
-  filteredUsers
+  filteredUsers,
+  setShowAddUser // Receive setShowAddUser as a prop
+
 }) => {
   return (
     <div className={styles.userListSection}>
@@ -21,7 +23,10 @@ const UserListSection = ({
         <h2>Users</h2>
         <div className={styles.actions}>
           
-          <button className={styles.addUserButton}>
+        <button 
+            className={styles.addUserButton} 
+            onClick={() => setShowAddUser(true)} // Set showAddUser to true when clicked
+          >
             + Add User
           </button>
         </div>

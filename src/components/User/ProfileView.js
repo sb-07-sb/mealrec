@@ -9,6 +9,8 @@ const ProfileView = ({ onGeneratePlan }) => {
   const [error, setError] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const userId = localStorage.getItem('user_id');
+  const [validationErrors, setValidationErrors] = useState({});
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -40,16 +42,52 @@ const ProfileView = ({ onGeneratePlan }) => {
       ...prev,
       [field]: value
     }));
+
+    setValidationErrors(prevErrors => {
+      const updatedErrors = { ...prevErrors };
+      delete updatedErrors[field]; // Remove error for the updated field
+      return updatedErrors;
+    });
   };
+
+
 
   const handleTagChange = (field, tags) => {
     setFormData(prev => ({
       ...prev,
       [field]: tags
     }));
+
+    // Clear validation error for the field when user types
+    setValidationErrors(prevErrors => ({
+      ...prevErrors,
+      [field]: undefined, // Remove error message for this field
+    }));
   };
 
   const handleSaveChanges = async () => {
+    const errors = {};
+
+    if (!formData.firstName?.trim()) errors.firstName = "Required*";
+    if (!formData.size) errors.size = "Required*";
+    if (!formData.spice_level) errors.spice_level = "Required*";
+    if (!formData.protein_category) errors.protein_category = "Required*";
+    if (!formData.meal_types || formData.meal_types.length === 0) {
+      errors.meal_types = "Required*";
+    }
+    if (!formData.user_pref || formData.user_pref.length === 0) {
+      errors.user_pref = "Required*";
+    }
+    if (!formData.user_likes || formData.user_likes.length === 0) {
+      errors.user_likes = "Required*";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      return;
+    }
+
+    setIsSaving(true);
     try {
       await handleSave(userId, formData);
       setProfileData(formData); // Update the displayed data with the saved data
@@ -84,7 +122,7 @@ const ProfileView = ({ onGeneratePlan }) => {
     );
   };
 
- 
+
 
   return (
     <div className={styles.profileOuterContainer}>
@@ -94,7 +132,13 @@ const ProfileView = ({ onGeneratePlan }) => {
           <div className={styles.profileActions}>
             <button
               className={styles.editButton}
-              onClick={() => setEditMode(!editMode)}
+              onClick={() => {
+                if (editMode) {
+                  setValidationErrors({});  
+                  setFormData(profileData); 
+                }
+                setEditMode(!editMode);
+              }}
             >
               {editMode ? 'Cancel' : 'Edit Profile'}
             </button>
@@ -117,6 +161,9 @@ const ProfileView = ({ onGeneratePlan }) => {
                   value={formData.firstName}
                   editMode={true}
                   onChange={(value) => handleInputChange('firstName', value)}
+                  field="firstName"
+                  validationErrors={validationErrors}
+
                 />
                 <DetailRow
                   label="Last Name"
@@ -138,17 +185,17 @@ const ProfileView = ({ onGeneratePlan }) => {
                     <div className={styles.detailValue}>
                       {profileData.size ? profileData.size.replace('_', ' ') : '-'}
                     </div>
-                    </div>
-                    </div>
-                    <div className={styles.gridRow}>
+                  </div>
+                </div>
+                <div className={styles.gridRow}>
                   <div className={styles.gridItem}>
                     <div className={styles.detailLabel}>Spice Level</div>
                     <div className={styles.detailValue}>
                       {profileData.spice_level || '-'}
-                      </div>
-
                     </div>
+
                   </div>
+                </div>
                 <div className={styles.gridRow}>
                   <div className={styles.gridItem}>
                     <div className={styles.detailLabel}>Protein Category</div>
@@ -156,8 +203,8 @@ const ProfileView = ({ onGeneratePlan }) => {
                       {profileData.protein_category || '-'}
                     </div>
                   </div>
-                 
-                  </div>
+
+                </div>
               </>
             ) : (
               <>
@@ -168,6 +215,8 @@ const ProfileView = ({ onGeneratePlan }) => {
                   isDropdown={true}
                   options={['extra_small', 'small', 'medium', 'large', 'extra_large']}
                   onChange={(value) => handleInputChange('size', value)}
+                  field="size"
+
                 />
                 <DetailRow
                   label="Spice Level"
@@ -176,6 +225,8 @@ const ProfileView = ({ onGeneratePlan }) => {
                   isDropdown={true}
                   options={['low', 'medium', 'high']}
                   onChange={(value) => handleInputChange('spice_level', value)}
+                  field="spice_level"
+                  validationErrors={validationErrors}
                 />
                 <DetailRow
                   label="Protein Category"
@@ -184,6 +235,9 @@ const ProfileView = ({ onGeneratePlan }) => {
                   isDropdown={true}
                   options={['low', 'balance', 'high']}
                   onChange={(value) => handleInputChange('protein_category', value)}
+                  field="protein_category"
+                  validationErrors={validationErrors}
+
                 />
               </>
             )}
@@ -192,6 +246,9 @@ const ProfileView = ({ onGeneratePlan }) => {
               tags={editMode ? formData.meal_types || [] : profileData.meal_types || []}
               editMode={editMode}
               onTagsChange={(tags) => handleTagChange('meal_types', tags)}
+              field="meal_types"
+              validationErrors={validationErrors}
+
             />
           </div>
           <div className={styles.detailsSection}>
@@ -201,12 +258,16 @@ const ProfileView = ({ onGeneratePlan }) => {
               tags={editMode ? formData.user_pref || [] : profileData.user_pref || []}
               editMode={editMode}
               onTagsChange={(tags) => handleTagChange('user_pref', tags)}
+              field="user_pref"
+              validationErrors={validationErrors}
             />
             <TagGroup
               label="Preferred Dishes"
               tags={editMode ? formData.user_likes || [] : profileData.user_likes || []}
               editMode={editMode}
               onTagsChange={(tags) => handleTagChange('user_likes', tags)}
+              field="user_likes"
+              validationErrors={validationErrors}
             />
           </div>
 
@@ -234,6 +295,7 @@ const ProfileView = ({ onGeneratePlan }) => {
                 className={styles.secondaryButton}
                 onClick={() => {
                   setFormData(profileData); // Reset to original data
+                  setValidationErrors({});
                   setEditMode(false);
                 }}
               >
@@ -253,7 +315,13 @@ const ProfileView = ({ onGeneratePlan }) => {
   );
 };
 
-const DetailRow = ({ label, value, editMode, isDropdown = false, options = [], onChange }) => {
+const DetailRow = ({ label, value, editMode, isDropdown = false, options = [], onChange, field, validationErrors = {} }) => {
+
+  // const [validationErrors, setValidationErrors] = useState({});
+  const [isSaving, setIsSaving] = useState(false);
+
+
+
   const handleChange = (e) => {
     onChange && onChange(e.target.value);
   };
@@ -263,36 +331,39 @@ const DetailRow = ({ label, value, editMode, isDropdown = false, options = [], o
       <div className={styles.detailLabel}>{label}</div>
       <div className={styles.detailValue}>
         {editMode ? (
-          isDropdown ? (
-            <select
-              className={styles.editInput}
-              value={value || ''}
-              onChange={handleChange}
-            >
-              {options.map((option, index) => (
-                <option key={index} value={option}>
-                  {option.replace('_', ' ')}
-                </option>
-              ))}
-            </select>
-          ) : (
-            <input
-              type="text"
-              value={value || ''}
-              className={styles.editInput}
-              onChange={handleChange}
-              placeholder={`Enter ${label.toLowerCase()}`}
-            />
-          )
+          <>
+            {isDropdown ? (
+              <select className={styles.editInput} value={value || ''} onChange={handleChange}>
+                <option value="">Select {label.toLowerCase()}</option>
+                {options.map((option, index) => (
+                  <option key={index} value={option}>
+                    {option.replace('_', ' ')}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input
+                type="text"
+                value={value || ''}
+                className={styles.editInput}
+                onChange={handleChange}
+                placeholder={`Enter ${label.toLowerCase()}`}
+              />
+            )}
+            {validationErrors && validationErrors[field] && (
+              <div className={styles.errorText}>{validationErrors[field]}</div>
+            )}
+          </>
         ) : (
-          <span>{value ? (typeof value === 'string' ? value.replace('_', ' ') : value) : '-'}</span>
+          <span>{value ? value.replace('_', ' ') : '-'}</span>
         )}
       </div>
     </div>
   );
 };
 
-const TagGroup = ({ label, tags, editMode, tagStyle = 'default', onTagsChange }) => {
+
+const TagGroup = ({ label, field, tags, editMode, tagStyle = 'default', onTagsChange, validationErrors = {}, setValidationErrors }) => {
   const [newTag, setNewTag] = useState('');
   const [tagList, setTagList] = useState(tags || []);
 
@@ -305,14 +376,23 @@ const TagGroup = ({ label, tags, editMode, tagStyle = 'default', onTagsChange })
       const updatedTags = [...tagList, newTag.trim()];
       setTagList(updatedTags);
       setNewTag('');
-      onTagsChange(updatedTags); // ✅ Manually trigger update
+      onTagsChange(updatedTags);
+
+      // ✅ Remove validation error for this specific field (meal_types, preferred_cuisines, etc.)
+      if (setValidationErrors) {
+        setValidationErrors(prevErrors => {
+          const updatedErrors = { ...prevErrors };
+          delete updatedErrors[field]; // Use field, not label
+          return updatedErrors;
+        });
+      }
     }
   };
 
   const handleRemoveTag = (tagToRemove) => {
     const updatedTags = tagList.filter(tag => tag !== tagToRemove);
     setTagList(updatedTags);
-    onTagsChange(updatedTags); // ✅ Manually trigger update
+    onTagsChange(updatedTags);
   };
 
   return (
@@ -340,6 +420,11 @@ const TagGroup = ({ label, tags, editMode, tagStyle = 'default', onTagsChange })
             </div>
           )}
 
+          {/* ✅ Display Validation Error (using field instead of label) */}
+          {validationErrors && validationErrors[field] && (
+            <div className={styles.errorText}>{validationErrors[field]}</div>
+          )}
+
           <div className={`${styles.tagContainer} ${styles[tagStyle]}`}>
             {tagList.length > 0 ? (
               tagList.map((tag, index) => (
@@ -365,5 +450,6 @@ const TagGroup = ({ label, tags, editMode, tagStyle = 'default', onTagsChange })
     </div>
   );
 };
+
 
 export default ProfileView;

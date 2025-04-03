@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import MealPlanDisplay from './MealPlanDisplay';
 import { generateMealPlan, getMealPlan } from '../../api/auth';
+import styles from '../../assets/styles/MealPlanDisplay.module.css';
 
 const ProfileWithMealPlan = ({ profileData, mealPlan, setMealPlan, onBack, currentStep }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const userId = localStorage.getItem('user_id');
 
-       // Function to load existing meal plan
-       const fetchMealPlan = async () => {
+    // Function to load existing meal plan
+    const fetchMealPlan = async () => {
         if (!userId || mealPlan) return; // ✅ Prevent unnecessary calls
 
         try {
@@ -26,16 +27,16 @@ const ProfileWithMealPlan = ({ profileData, mealPlan, setMealPlan, onBack, curre
         }
     };
 
-    // ✅ Call fetchMealPlan only ONCE when component mounts
+    //  Call fetchMealPlan only ONCE when component mounts
     useEffect(() => {
         fetchMealPlan();
     }, []);
 
-   
-    
-    
 
-    
+
+
+
+
     const saveMealPlanToDB = async (mealPlanData) => {
         try {
             const response = await fetch("http://localhost:5000/save_meal_plan", {
@@ -80,14 +81,14 @@ const ProfileWithMealPlan = ({ profileData, mealPlan, setMealPlan, onBack, curre
                 meal_types: profileData.meal_types || ["dinner", "lunch", "evening_snack"],
                 user_avoid_ingredients: profileData.allergenTags || [],
                 user_dislikes: profileData.dislikeTags || [],
-                query: `Spice Level: ${profileData.spice_level || "Medium"}, Cuisine: ${profileData.user_pref?.[0] || ""}, Popular Dishes: ${profileData.user_likes?.[0] || "" }`,
+                query: `Spice Level: ${profileData.spice_level || "Medium"}, Cuisine: ${profileData.user_pref?.[0] || ""}, Popular Dishes: ${profileData.user_likes?.[0] || ""}`,
                 num_days: 7
             };
 
             const response = await generateMealPlan(requestBody);
             setMealPlan(response.meal_plan); // 🔹 Store meal plan in state
 
-              
+
             // Save the meal plan to MongoDB along with user_id
             await saveMealPlanToDB(response.meal_plan);
 
@@ -107,12 +108,80 @@ const ProfileWithMealPlan = ({ profileData, mealPlan, setMealPlan, onBack, curre
                 </div>
             )}
 
-            {loading && <div className="loading-overlay">Generating your meal plan...</div>}
-
-            {mealPlan ? (
+            {loading ? (
+                <div className={styles.mealPlanOuterContainer}>
+                    <div className={styles.mealPlanHeader}>
+                        <h2>Personalized Meal Plan</h2>
+                        <div className={styles.mealPlanActions}>
+                            <button className={styles.secondaryButton}>Back</button>
+                            <button className={styles.primaryButton}>Regenerate</button>
+                        </div>
+                    </div>
+                    <div className={styles.scrollableContent}>
+                        <div className={styles.mealPlanGrid}>
+                            {[...Array(7)].map((_, i) => (
+                                <div key={i} className={styles.dayCard}>
+                                    <div className={`${styles.shimmer} ${styles.dayTitleShimmer}`}></div>
+                                    <div className={styles.mealsList}>
+                                        {[...Array(3)].map((_, j) => (
+                                            <div key={j} className={styles.mealItem}>
+                                                <div className={`${styles.shimmer} ${styles.mealTypeShimmer}`}></div>
+                                                <div className={styles.mealDetails}>
+                                                    {[...Array(4)].map((_, k) => (
+                                                        <div key={k} className={styles.detailItem}>
+                                                            <div className={`${styles.shimmer} ${styles.detailShimmer}`}></div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            ) : mealPlan ? (
                 <MealPlanDisplay mealPlan={mealPlan} onBack={onBack} onGenerate={generatePlan} />
             ) : (
-                <button onClick={generatePlan}>Generate Meal Plan</button>
+                <div className={styles.mealPlanOuterContainer}>
+                    <div className={styles.mealPlanHeader}>
+                        <h2>Generate Meal Plan</h2>
+                        <div className={styles.mealPlanActions}>
+                            <button
+                                className={styles.secondaryButton}
+                                onClick={onBack}  // Added onClick handler
+                            >Back to Profile</button>
+                            <button
+                                className={styles.primaryButton}
+                                onClick={generatePlan}  // Added onClick handler
+                            >Generate Plan</button>
+                        </div>
+                    </div>
+                    <div className={styles.scrollableContent}>
+                        <div className={styles.mealPlanGrid}>
+                            {[...Array(7)].map((_, i) => (
+                                <div key={i} className={styles.dayCard}>
+                                    <div className={`${styles.shimmer} ${styles.dayTitleShimmer}`}></div>
+                                    <div className={styles.mealsList}>
+                                        {[...Array(3)].map((_, j) => (
+                                            <div key={j} className={styles.mealItem}>
+                                                <div className={`${styles.shimmer} ${styles.mealTypeShimmer}`}></div>
+                                                <div className={styles.mealDetails}>
+                                                    {[...Array(4)].map((_, k) => (
+                                                        <div key={k} className={styles.detailItem}>
+                                                            <div className={`${styles.shimmer} ${styles.detailShimmer}`}></div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );

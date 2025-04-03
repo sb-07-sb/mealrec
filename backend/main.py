@@ -46,7 +46,7 @@ def register():
         'role': 'user'  # Add role field
     }).inserted_id
 
-    return jsonify({'message': 'User registered successfully', 'user_id': str(user_id)}), 201
+    return jsonify({'success': True, 'message': 'User registered successfully', 'user_id': str(user_id)}), 201
 
 # User Login
 @app.route('/login', methods=['POST'])

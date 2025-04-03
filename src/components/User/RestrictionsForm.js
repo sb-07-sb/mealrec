@@ -26,8 +26,11 @@ const RestrictionsForm = ({
 
             {/* Allergens Tags Field */}
             <div className="form-group tag-field-group">
+            <div className="label-container">
+
                 <label>Select your Allergens</label>
                 {errors.allergenTags && <span className="error">{errors.allergenTags}</span>}
+                </div>
 
                 <div className="tags-field-container">
                     <div className="tags-display">
@@ -49,6 +52,8 @@ const RestrictionsForm = ({
                             setAllergenTagInput(e.target.value)
                             if (errors.allergenTags) {
                                 setErrors((prevErrors) => ({ ...prevErrors, allergenTags: '' }));
+                                
+
                             }}}
                         onKeyDown={(e) => handleTagKeyPress(e, 'allergenTags', allergenTagInput, setAllergenTagInput)}
                     />
@@ -57,7 +62,12 @@ const RestrictionsForm = ({
 
             {/* Dislike Tags Field */}
             <div className="form-group tag-field-group">
+            <div className="label-container">
+
                 <label>Select foods you dislike</label>
+                {errors.dislikeTags && <span className="error">{errors.dislikeTags}</span>}
+                </div>
+
                 <div className="tags-field-container">
                     <div className="tags-display">
                         {dislikeTags.map((tag, index) => (
@@ -74,7 +84,12 @@ const RestrictionsForm = ({
                         className="tag-input"
                         placeholder="Type and press Enter"
                         value={dislikeTagInput}
-                        onChange={(e) => setDislikeTagInput(e.target.value)}
+                        onChange={(e) => {
+                            setDislikeTagInput(e.target.value);
+                            if (errors.dislikeTags) {
+                                setErrors((prevErrors) => ({ ...prevErrors, dislikeTags: '' }));
+                            }
+                        }}
                         onKeyDown={(e) => handleTagKeyPress(e, 'dislikeTags', dislikeTagInput, setDislikeTagInput)}
                     />
                 </div>

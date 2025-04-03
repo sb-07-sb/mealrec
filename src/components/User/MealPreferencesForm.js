@@ -25,10 +25,10 @@ const MealPreferencesForm = ({
 
             <p className="form-description">Enter your preferred dishes and cuisines.</p>
 
-            {/* Preferred Dishes Field */}
+            {/* Preferred Cuisines Field */}
             <div className="form-group tag-field-group">
                 <div className="label-container">
-                    <label>Preferred Dishes</label>
+                    <label>Preferred Cuisines</label>
                     {errors.user_pref && <span className="error">{errors.user_pref}</span>}
                 </div>
                 <div className="tags-field-container">
@@ -58,10 +58,10 @@ const MealPreferencesForm = ({
                 </div>
             </div>
 
-            {/* Preferred Cuisines Field */}
+            {/* Preferred Dishes Field */}
             <div className="form-group tag-field-group">
                 <div className="label-container">
-                    <label>Preferred Cuisines</label>
+                    <label>Preferred Dishes</label>
                     {errors.user_likes && <span className="error">{errors.user_likes}</span>}
                 </div>
                 <div className="tags-field-container">

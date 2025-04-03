@@ -3,19 +3,22 @@ import { fetchAllUsers, handleSave, deleteUser } from '../../api/auth';
 import styles from '../../assets/styles/UserList.module.css';
 import UserListSection from './UserListSection';
 import UserDetailsSection from './UserDetailsSection';
+import AddUserSection from './AddUserSection';
 
-const UserList = () => {
+const UserList = ({ searchQuery }) => {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [editingUser, setEditingUser] = useState(null);
   const [activeTab, setActiveTab] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
+  const searchTerm = searchQuery; // Use the searchQuery from AdminPanel
   const [currentPage, setCurrentPage] = useState(1);
   const [showingDetails, setShowingDetails] = useState(false);
   const [newTagInput, setNewTagInput] = useState('');
   const [tagField, setTagField] = useState('');
-    const [editMode, setEditMode] = useState(false);
-  
+  const [editMode, setEditMode] = useState(false);
+  const [showAddUser, setShowAddUser] = useState(false);
+
+
   const usersPerPage = 5;
 
   const fetchUsers = async () => {
@@ -33,6 +36,7 @@ const UserList = () => {
 
   const handleUserSelect = (user) => {
     setSelectedUser(user);
+    setShowAddUser(false); // ✅ Close "Add User" if a user is selected
     setEditingUser(null);
     if (window.innerWidth <= 768) {
       setShowingDetails(true);
@@ -41,8 +45,15 @@ const UserList = () => {
 
   const handleBackToList = () => {
     setShowingDetails(false);
+    setShowAddUser(false); // Ensure AddUserSection closes
+
   };
 
+  const handleAddUserClick = () => {
+    setSelectedUser(null); // ✅ Clear selected user
+    setShowAddUser(true);  // ✅ Open "Add User"
+  };
+  
   const handleDeleteUser = async (userId) => {
     try {
       await deleteUser(userId);
@@ -76,14 +87,14 @@ const UserList = () => {
       console.error("Editing user is missing or _id is not defined");
       return;
     }
-  
+
     // Remove the _id field from the editingUser before updating
     const { _id, ...updatedUserData } = editingUser;
-  
+
     try {
       // Make API call to save the changes, excluding the _id field from the payload
       const updatedUser = await handleSave(_id, updatedUserData); // Pass only the updated data without _id
-  
+
       // Update the user list with the modified user
       setUsers(prevUsers =>
         prevUsers.map(user =>
@@ -100,7 +111,7 @@ const UserList = () => {
       console.error("Error saving user changes:", error);
     }
   };
-  
+
 
   const handleTagAction = (action, field, value) => {
     if (!editingUser || !value || typeof value !== 'string' || !value.trim()) return;
@@ -128,6 +139,8 @@ const UserList = () => {
     return matchesSearch;
   });
 
+
+
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
@@ -147,16 +160,17 @@ const UserList = () => {
         indexOfFirstUser={indexOfFirstUser}
         indexOfLastUser={indexOfLastUser}
         filteredUsers={filteredUsers}
+        setShowAddUser={handleAddUserClick}  // ✅ Now clicking "Add User" always works
       />
-      
-      {selectedUser && (
+  
+      {selectedUser ? (  
         <UserDetailsSection
           selectedUser={selectedUser}
           editingUser={editingUser}
           handleBackToList={handleBackToList}
           startEditing={startEditing}
           cancelEditing={cancelEditing}
-          saveChanges={saveChanges} // Now calling the updated saveChanges function
+          saveChanges={saveChanges}
           handleDeleteUser={handleDeleteUser}
           handleInputChange={handleInputChange}
           newTagInput={newTagInput}
@@ -165,9 +179,16 @@ const UserList = () => {
           setTagField={setTagField}
           handleTagAction={handleTagAction}
         />
-      )}
+      ) : showAddUser ? (  
+        <AddUserSection
+          setShowAddUser={setShowAddUser}
+          fetchUsers={fetchUsers}
+        />
+      ) : null}
     </div>
   );
+  
+  
 };
 
 export default UserList;

@@ -64,9 +64,9 @@ body {
 }
 
 .profileHeader h2 {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 600;
-  color: #2c3e50;
+  color: #333;
   margin: 0;
   position: relative;
   padding-left: 16px;
@@ -345,13 +345,14 @@ select.editInput {
 
 .primaryButton {
   background-color: #fff;
-  color: #2563eb;
   border: 1px solid #2563eb;
+  color: #2563eb;
+  font-weight: 500;
 }
 
 .primaryButton:hover {
-  background-color: #2563eb;
-  color: #fff;
+  background-color: #f5f7fa;
+
 }
 
 .secondaryButton {
@@ -494,4 +495,11 @@ select.editInput {
   .addTagButton {
     width: 100%;
   }
+}
+
+.errorText {
+  color: #dc3545; /* Red color */
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 5px;
 }

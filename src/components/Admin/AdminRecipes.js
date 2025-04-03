@@ -3,7 +3,7 @@ import styles from '../../assets/styles/AdminRecipes.module.css';
 import { fetchAllRecipesAdmin } from '../../api/auth';
 import { ChevronRight } from 'lucide-react';
 
-const AdminRecipes = () => {
+const AdminRecipes = ({ searchQuery }) => {  // Accept searchQuery prop
   const [recipes, setRecipes] = useState([]);
   const [filteredRecipes, setFilteredRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,8 +41,16 @@ const AdminRecipes = () => {
         recipe.meal_category.toLowerCase().includes(filters.category.toLowerCase())
       );
     }
+    if (searchQuery) {
+      result = result.filter(recipe => 
+        recipe.dish_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        recipe.cuisine.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        recipe.meal_category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (recipe.description && recipe.description.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+    }
     setFilteredRecipes(result);
-  }, [filters, recipes]);
+  }, [filters, recipes, searchQuery]);  // Include searchQuery in dependencies
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;

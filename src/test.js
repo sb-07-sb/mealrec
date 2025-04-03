@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './assets/styles/UserModule.module.css';
-import { User, Utensils, ChevronRight } from 'lucide-react';
+import { User, Utensils, ChevronRight, LogOut } from 'lucide-react';
 import ProfileView from './components/User/ProfileView';
 import ProfileWithMealPlan from './components/MealPlan/ProfileWithMealPlan';
 import { getUserFormData, generateMealPlan } from './api/auth'; // Ensure this function exists in your API
@@ -50,6 +50,13 @@ const UserModule = () => {
         setCurrentStep(step);
     };
 
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('role');
+        localStorage.removeItem('user_id');        
+        navigate('/');
+    };
+
     return (
         <div className={styles.userContainer}>
             <div className={styles.sidebar}>
@@ -69,6 +76,13 @@ const UserModule = () => {
                             <ChevronRight size={16} className={styles.navArrow} />
                         </li>
                     </ul>
+                </div>
+                {/* Logout Button */}
+                <div className={styles.logoutSection}>
+                    <button className={styles.logoutButton} onClick={handleLogout}>
+                        <LogOut size={18} className={styles.navIcon} />
+                        <span className={styles.navText}>Logout</span>
+                    </button>
                 </div>
             </div>
 

@@ -45,49 +45,7 @@ const PersonalInfoForm = ({ formData, handleInputChange, prevStep, nextStep, cur
                 </div>
             </div>
             
-            <div className="form-row">
-                <div className="form-group">
-                    <div className="label-container">
-                        <label>City</label>
-                        {errors.city && <span className="error">{errors.city}</span>}
-                    </div>
-                    <input
-                        type="text"
-                        name="city"
-                        value={formData.city}
-                        onChange={handleInputChange}
-                        placeholder="Antalya"
-                        className={errors.city ? "error-border" : ""}
-                    />
-                </div>
-                <div className="form-group">
-                    <div className="label-container">
-                        <label>Country</label>
-                        {errors.country && <span className="error">{errors.country}</span>}
-                    </div>
-                    <div className="select-container">
-                        <select
-                            name="country"
-                            value={formData.country}
-                            onChange={handleInputChange}
-                            className={errors.country ? "error-border" : ""}
-                        >
-                            <option value="">Select Country</option>
-                            <option>Turkey</option>
-                            <option>United States</option>
-                            <option>United Kingdom</option>
-                            <option>Germany</option>
-                            <option>France</option>
-                        </select>
-                        <div className="select-arrow">
-                            <svg viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+           
             <div className="form-actions">
                 {currentStep > 1 && (
                     <button onClick={prevStep} className="btn-back">Back</button>
