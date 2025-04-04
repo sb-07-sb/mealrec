@@ -98,7 +98,98 @@ const ProfileView = ({ onGeneratePlan }) => {
     }
   };
 
-  if (loading) return <div className={styles.loadingContainer}>Loading...</div>;
+ 
+  const renderLoadingSkeleton = () => (
+    <div className={styles.profileOuterContainer}>
+      <div className={styles.profileGrid}>
+        <div className={styles.profileHeader}>
+          <div className={`${styles.shimmer} ${styles.headerShimmer}`}></div>
+          <div className={styles.profileActions}>
+            <div className={`${styles.shimmer} ${styles.buttonShimmer}`}></div>
+            <div className={`${styles.shimmer} ${styles.buttonShimmer}`}></div>
+          </div>
+        </div>
+
+        <div className={styles.scrollableContent}>
+          {/* Basic Information Section */}
+          <div className={styles.detailsSection}>
+            <div className={`${styles.shimmer} ${styles.sectionTitleShimmer}`}></div>
+            {[...Array(2)].map((_, i) => (
+              <div key={`basic-${i}`} className={styles.detailRow}>
+                <div className={`${styles.shimmer} ${styles.labelShimmer}`}></div>
+                <div className={`${styles.shimmer} ${styles.valueShimmer}`}></div>
+              </div>
+            ))}
+          </div>
+
+          {/* Diet Preferences Section */}
+          <div className={styles.detailsSection}>
+            <div className={`${styles.shimmer} ${styles.sectionTitleShimmer}`}></div>
+            {[...Array(3)].map((_, i) => (
+              <div key={`diet-${i}`} className={styles.detailRow}>
+                <div className={`${styles.shimmer} ${styles.labelShimmer}`}></div>
+                <div className={`${styles.shimmer} ${styles.valueShimmer}`}></div>
+              </div>
+            ))}
+            {[...Array(2)].map((_, i) => (
+              <div key={`tags-${i}`} className={styles.tagGroup}>
+                <div className={styles.detailRow}>
+                  <div className={`${styles.shimmer} ${styles.labelShimmer}`}></div>
+                  <div className={styles.detailValue}>
+                    <div className={styles.tagContainer}>
+                      {[...Array(3)].map((_, j) => (
+                        <div key={`tag-${j}`} className={`${styles.shimmer} ${styles.tagShimmer}`}></div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Food Preferences Section */}
+          <div className={styles.detailsSection}>
+            <div className={`${styles.shimmer} ${styles.sectionTitleShimmer}`}></div>
+            {[...Array(2)].map((_, i) => (
+              <div key={`food-${i}`} className={styles.tagGroup}>
+                <div className={styles.detailRow}>
+                  <div className={`${styles.shimmer} ${styles.labelShimmer}`}></div>
+                  <div className={styles.detailValue}>
+                    <div className={styles.tagContainer}>
+                      {[...Array(4)].map((_, j) => (
+                        <div key={`food-tag-${j}`} className={`${styles.shimmer} ${styles.tagShimmer}`}></div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Dietary Restrictions Section */}
+          <div className={styles.detailsSection}>
+            <div className={`${styles.shimmer} ${styles.sectionTitleShimmer}`}></div>
+            {[...Array(2)].map((_, i) => (
+              <div key={`restriction-${i}`} className={styles.tagGroup}>
+                <div className={styles.detailRow}>
+                  <div className={`${styles.shimmer} ${styles.labelShimmer}`}></div>
+                  <div className={styles.detailValue}>
+                    <div className={styles.tagContainer}>
+                      {[...Array(2)].map((_, j) => (
+                        <div key={`restriction-tag-${j}`} className={`${styles.shimmer} ${styles.tagShimmer}`}></div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  if (loading) return renderLoadingSkeleton();
   if (error) return <div className={styles.errorContainer}>{error}</div>;
   if (!profileData) return <div className={styles.emptyState}>No profile data found</div>;
 

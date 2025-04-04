@@ -65,11 +65,11 @@ const LoginForm = () => {
                 let response;
                 if (isRegister) {
                     response = await registerUser(formData.email, formData.password);
-                    alert(response.message);
+                    // alert(response.message);
                     toggleForm();
                 } else {
                     response = await loginUser(formData.email, formData.password);
-                    alert(response.message);
+                    // alert(response.message);
                     localStorage.setItem('token', response.token);
                     localStorage.setItem('role', response.role);
                     localStorage.setItem('user_id', response.user_id);
@@ -94,14 +94,23 @@ const LoginForm = () => {
                     if (response.role === 'admin') {
                         navigate('/admin', { replace: true }); // Replace history entry
                     } else if (formDataJson.data && Object.keys(formDataJson.data).length > 0) {
-                        navigate('/test', { replace: true }); // Navigate to another page if form data exists
+                        navigate('/user', { replace: true }); // Navigate to another page if form data exists
                     }
                     else {
-                        navigate('/user', { replace: true }); // Replace history entry
+                        navigate('/user-form', { replace: true }); // Replace history entry
                     }
                 }
             } catch (error) {
-                setSubmitError(error.message);
+                if (error.response?.status === 401) {
+                    setSubmitError('Invalid email or password. Please try again.');
+                    setFormData(prev => ({ ...prev, password: '' }));
+                    setErrors({
+                        email: 'Invalid credentials',
+                        password: 'Invalid credentials'
+                    });
+                } else {
+                    setSubmitError(error.message || 'An error occurred. Please try again.');
+                }
             } finally {
                 setIsLoading(false);
             }
@@ -173,6 +182,12 @@ const LoginForm = () => {
                                 />
                             </div>
                         )}
+                        {submitError && (
+                            <div className={styles.submitError}>
+                                {submitError}
+                            </div>
+                        )}
+
                         <div className={styles.formActions}>
                             <button type="button" className={styles.btnBack} onClick={toggleForm}>
                                 {isRegister ? 'Back to Login' : 'Register'}

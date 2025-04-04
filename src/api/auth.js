@@ -19,7 +19,17 @@ export const loginUser = async (email, password) => {
         },
         body: JSON.stringify({ email, password }),
     });
-    return response.json();
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        // Create an error object that includes both status and message
+        const error = new Error(data.message || 'Login failed');
+        error.status = response.status;
+        throw error;
+    }
+
+    return data;
 };
 
 export const getUserFormData = async (userId) => {

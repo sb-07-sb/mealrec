@@ -403,6 +403,73 @@ select.editInput {
   color: #5f6c7b;
 }
 
+/* Shimmer Animation */
+.shimmer {
+  background: #f6f7f8;
+  background-image: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
+  background-repeat: no-repeat;
+  background-size: 800px 104px;
+  display: inline-block;
+  position: relative;
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  animation-name: shimmer;
+  animation-timing-function: linear;
+  border-radius: 4px;
+}
+
+@keyframes shimmer {
+  0% { background-position: -468px 0 }
+  100% { background-position: 468px 0 }
+}
+
+/* Skeleton specific styles */
+.headerShimmer {
+  height: 32px;
+  width: 200px;
+}
+
+.buttonShimmer {
+  height: 36px;
+  width: 120px;
+  margin-left: 10px;
+}
+
+.sectionTitleShimmer {
+  height: 24px;
+  width: 180px;
+  margin-bottom: 15px;
+}
+
+.labelShimmer {
+  height: 18px;
+  width: 120px;
+  margin-bottom: 8px;
+}
+
+.valueShimmer {
+  height: 20px;
+  width: 80%;
+}
+
+.tagShimmer {
+  height: 28px;
+  width: 80px;
+  margin-right: 8px;
+  margin-bottom: 8px;
+  display: inline-block;
+}
+
+/* Adjust existing styles for skeleton */
+.detailRow {
+  min-height: 40px;
+}
+
+.tagContainer {
+  min-height: 40px;
+}
+
 /* Enhanced mobile responsiveness */
 @media (max-width: 768px) {
   .profileOuterContainer {

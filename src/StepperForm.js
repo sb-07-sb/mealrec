@@ -75,7 +75,7 @@ const StepperForm = () => {
         }
 
         if (isSubmitted) {
-            navigate('/test', { replace: true }); // ✅ Prevents going back
+            navigate('/user', { replace: true }); // ✅ Prevents going back
           }
           
         const fetchUserFormData = async () => {
@@ -192,9 +192,9 @@ const StepperForm = () => {
             });
 
             if (response.ok) {
-                alert('Form submitted successfully!');
+                // alert('Form submitted successfully!');
                 setIsSubmitted(true); 
-                navigate('/test',{ replace: true }); 
+                navigate('/user',{ replace: true }); 
             } else {
                 const errorData = await response.json();
                 alert(`Failed to submit form: ${errorData.error}`);

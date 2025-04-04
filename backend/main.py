@@ -51,24 +51,41 @@ def register():
 # User Login
 @app.route('/login', methods=['POST'])
 def login():
-    data = request.json
-    email = data.get('email')
-    password = data.get('password')
+    data = request.get_json()
+    
+    # Validate input
+    if not data or 'email' not in data or 'password' not in data:
+        return jsonify({
+            'success': False,
+            'message': 'Email and password are required'
+        }), 400
 
-    # Find user in login collection
+    email = data['email']
+    password = data['password']
+
+    # Find user
     user = login_collection.find_one({'email': email})
     if not user:
-        return jsonify({'error': 'User not found'}), 404
+        return jsonify({
+            'success': False,
+            'message': 'Invalid credentials'
+        }), 401
 
     # Verify password
-    if bcrypt.checkpw(password.encode('utf-8'), user['password']):
+    if not bcrypt.checkpw(password.encode('utf-8'), user['password']):
         return jsonify({
-            'message': 'Login successful',
-            'user_id': str(user['_id']),
-            'role': user['role']  # Include role in the response
-        }), 200    
-    else:
-        return jsonify({'error': 'Invalid password'}), 401
+            'success': False,
+            'message': 'Invalid credentials'
+        }), 401
+
+    # Successful login
+    return jsonify({
+        'success': True,
+        'message': 'Login successful',
+        'token': str(user['_id']),  # Changed from user_id to token for consistency
+        'role': user['role'],
+        'user_id': str(user['_id'])
+    }), 200
 
 # Save Form Data
 @app.route('/save-form', methods=['POST'])

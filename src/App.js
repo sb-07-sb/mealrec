@@ -38,7 +38,7 @@ function App() {
                 }
             />
             <Route
-                path="/user"
+                path="/user-form"
                 element={
                     <ProtectedRoute requiredRole="user" formSubmittedRedirect="/test">
                         <StepperForm />
@@ -49,7 +49,7 @@ function App() {
             <Route path="/" element={<HomePage/>} />
                 {/* Add the new route for /another-page */}
                 <Route
-                    path="/test"
+                    path="/user"
                     element={
                         <ProtectedRoute requiredRole="user">
                             <AnotherPage/>

@@ -200,7 +200,15 @@ body {
         max-width: 100%;
     }
 }
-
+.submitError {
+    color: #d32f2f;
+    /* background-color: #fde8e8; */
+    padding: 0.2rem;
+    margin:  0;
+    /* border-radius: 4px; */
+    /* border-left: 0.2rem solid #d32f2f; */
+    font-size: 0.7rem;
+}
 .error {
     color: red;
     font-size: 12px;
