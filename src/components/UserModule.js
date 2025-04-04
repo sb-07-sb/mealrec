@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from './assets/styles/UserModule.module.css';
+import styles from '../assets/styles/UserModule.module.css';
 import { User, Utensils, ChevronRight, LogOut } from 'lucide-react';
-import ProfileView from './components/User/ProfileView';
-import ProfileWithMealPlan from './components/MealPlan/ProfileWithMealPlan';
-import { getUserFormData, generateMealPlan } from './api/auth'; // Ensure this function exists in your API
+import ProfileView from './User/ProfileView';
+import ProfileWithMealPlan from './MealPlan/ProfileWithMealPlan';
+import { getUserFormData, generateMealPlan } from '../api/auth'; // Ensure this function exists in your API
 
 const UserModule = () => {
     const navigate = useNavigate();

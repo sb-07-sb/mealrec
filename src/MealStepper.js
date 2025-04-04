@@ -80,13 +80,20 @@ const LandingPage = () => {
                 } else {
                   window.location.href = '/user';
                 }
-              }}            
-              >
+              }}
+            >
               Create My Plan
             </button>
-            <button className={styles.learnMoreButton}>
-              Learn More
-            </button>
+              <button className={styles.learnMoreButton}
+               onClick={() => {
+                const element = document.getElementById('how-it-works');
+                if (element) {
+                  element.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}>
+                Learn More
+              </button>
+
           </div>
         </div>
         <div className={styles.heroImage}>
@@ -194,7 +201,6 @@ const LandingPage = () => {
             <a href="#about">About</a>
             <a href="#features">Features</a>
             <a href="#how-it-works">How It Works</a>
-            <a href="/contact">Contact</a>
           </div>
         </div>
       </footer>
