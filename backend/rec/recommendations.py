@@ -98,7 +98,7 @@ def filter_recipes(vectorstore, user_avoid_ingredients, user_dislikes, query, me
         }
         for data in merged_recipes.values()
     ]
-    print("final",final_recipes[:top_k])
+    # print("final",final_recipes[:top_k])
     return final_recipes[:top_k]
 
 # Function to format the filtered recipes into a structured meal plan prompt
@@ -116,45 +116,47 @@ def format_meal_plan_prompt(merged_recipes, query, user_avoid_ingredients, user_
     
     prompt = f"""Generate a {num_days} day meal plan in JSON format using ONLY the provided recipes. Follow these rules exactly:
 
-1. Recipe Usage:
-- Use recipes exactly as provided - do not modify or create new ones
-- Format each meal as: "<Dish Name> - <Selected Protein> - <Cuisine> - <Dish Type>"
-- Use ONLY the dish_type field for the last component (never meal_category)
-- For recipes with multiple protein options:
-    * Ensure protein variety across the week (don't serve chicken 3 days in a row)
+        1. Recipe Usage:
+        - Use recipes exactly as provided - do not modify or create new ones
+        - Format each meal as: "<Dish Name> - <Selected Protein> - <Cuisine> - <Dish Type>"
+        - Use ONLY the dish_type field for the last component (never meal_category)
+        - For recipes with multiple protein options:
+            * Ensure protein variety across the week (don't serve chicken 3 days in a row)
 
-3. Meal Diversity:
-- Alternate between:
-  * Light vs heavy meals (e.g. salad → hearty stew)
-  * Different cuisines (don't repeat back-to-back)
-  * Cooking methods (grilled, baked, fried, etc.)
-- Ensure no two consecutive meals have:
-  * The same primary ingredient
-  * Similar textures/flavor profiles
+        3. Meal Diversity:
+        - Alternate between:
+        * Light vs heavy meals (e.g. salad → hearty stew)
+        * Different cuisines (don't repeat back-to-back)
+        * Cooking methods (grilled, baked, fried, etc.)
+        - Ensure no two consecutive meals have:
+        * The same primary ingredient
+        * Similar textures/flavor profiles
 
-2. Meal Assignment:
-- Never repeat recipes before all are used once
-- Fill all selected meal slots - no empty values
-- **Strictly follow meal categories:**
-    * Breakfast: only 'breakfast' recipes having meal_category as breakfast
-    * Lunch/Dinner: only 'meal' recipes having meal_category as meal
-    * evening_snavk/morning_snack: only 'snack' recipes i.e. recipes having meal_category as snack
-- Include only these meal types: {meal_types}
+        2. Meal Assignment:
+        - Never repeat recipes before all are used once.
+        - If recipes are less than required then you may repeat them.
+        - Only consider the recipes provided for meal plan not even the ones that are present in the Likes and preferences of the user.
+        - Fill all selected meal slots - no empty values
+        - **Strictly follow meal categories:**
+            * Breakfast: only 'breakfast' recipes having meal_category as breakfast
+            * Lunch/Dinner: only 'meal' recipes having meal_category as meal
+            * evening_snavk/morning_snack: only 'snack' recipes i.e. recipes having meal_category as snack
+        - Include only these meal types: {meal_types}
 
-3. Daily Structure:
-- You MUST include these meal types in EXACTLY this order: {ordered_meal_types}
-- Never skip or rearrange these meal types
-- Never include meal types not in this list
-- Maintain consistent meal types across all days
+        3. Daily Structure:
+        - You MUST include these meal types in EXACTLY this order: {ordered_meal_types}
+        - Never skip or rearrange these meal types
+        - Never include meal types not in this list
+        - Maintain consistent meal types across all days
 
-Output Format: Present the meal plan as a JSON object where each day contains meal types as keys and the formatted meal string as values, like this example for Monday: {{\"Monday\": {{\"breakfast\": \"Dish Name - Protein - Cuisine - Dish Type\", \"lunch\": \"...\"}}}}User Preferences:
-- Allergens: {user_avoid_ingredients}
-- Likes: {user_likes}
-- Dislikes: {user_dislikes}
-- Preferred Dishes: {user_pref}
-- Selected Meal Types: {meal_types}
+        Output Format: Present the meal plan as a JSON object where each day contains meal types as keys and the formatted meal string as values, like this example for Monday: {{\"Monday\": {{\"breakfast\": \"Dish Name - Protein - Cuisine - Dish Type\", \"lunch\": \"...\"}}}}User Preferences:
+        - Allergens: {user_avoid_ingredients}
+        - Likes: {user_likes}
+        - Dislikes: {user_dislikes}
+        - Preferred Dishes: {user_pref}
+        - Selected Meal Types: {meal_types}
 
-Available Recipes:"""
+        Available Recipes:"""
     
 
     for i, recipe in enumerate(merged_recipes, 1):
@@ -224,7 +226,7 @@ def generate_meal_plan(vectorstore, user_avoid_ingredients, user_dislikes, query
     expected_snack = max(total_snack_count - (0 if num_days <= 3 else 1 if num_days <= 5 else min(2, total_snack_count // 3)), 1) if any("snack" in mt for mt in meal_types) else 0
     expected_meal = max(total_meal_count - (0 if num_days <= 3 else 1 if num_days <= 5 else min(2, total_meal_count // 3)), 1) if ("lunch" in meal_types or "dinner" in meal_types) else 0    
     
-    print("fetched",fetched_recipes)
+    # print("fetched",fetched_recipes)
 
 
     # Selective retry (only replaces deficient categories)
@@ -248,7 +250,7 @@ def generate_meal_plan(vectorstore, user_avoid_ingredients, user_dislikes, query
             vectorstore, set(), user_dislikes, query,
             "meal", size, protein_option, protein_category, total_meal_count+3
         )
-    print("fetched",fetched_recipes)
+    # print("fetched",fetched_recipes)
 
     # Debug output
     print("\nFinal recipe counts:")
