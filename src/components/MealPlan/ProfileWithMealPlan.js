@@ -30,14 +30,14 @@ const ProfileWithMealPlan = ({ profileData, mealPlan, setMealPlan, onBack, curre
     //  Call fetchMealPlan only ONCE when component mounts
     useEffect(() => {
         fetchMealPlan();
-    }, []);
+    }, [profileData]);
 
 
 
 
 
 
-    const saveMealPlanToDB = async (mealPlanData) => {
+    const saveMealPlanToDB = async (mealPlanData, matchedRecipes) => {
         try {
             const response = await fetch("http://localhost:5000/save_meal_plan", {
                 method: "POST",
@@ -46,7 +46,8 @@ const ProfileWithMealPlan = ({ profileData, mealPlan, setMealPlan, onBack, curre
                 },
                 body: JSON.stringify({
                     user_id: userId, // Include user ID
-                    mealPlan: mealPlanData
+                    mealPlan: mealPlanData,
+                    recipes: matchedRecipes
                 }),
             });
 
@@ -90,7 +91,7 @@ const ProfileWithMealPlan = ({ profileData, mealPlan, setMealPlan, onBack, curre
 
 
             // Save the meal plan to MongoDB along with user_id
-            await saveMealPlanToDB(response.meal_plan);
+            await saveMealPlanToDB(response.meal_plan, response.matched_recipes);
 
         } catch (err) {
             setError(err.message || "Failed to generate meal plan.");

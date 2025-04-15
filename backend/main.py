@@ -267,6 +267,7 @@ def save_meal_plan():
 
         meal_plan_entry = {
             "mealPlan": data["mealPlan"],
+            "recipes": data.get("recipes", []),  # Include matched recipes
             "created_at": datetime.utcnow()
         }
 
@@ -297,6 +298,24 @@ def get_meal_plan(user_id):
 
         return jsonify({
             "mealPlan": meal_plan_entry["mealPlan"]
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@app.route('/get_meal_recipes/<user_id>', methods=['GET'])
+def get_meal_recipes(user_id):
+    try:
+        meal_plan_entry = meal_plans_collection.find_one({"user_id": user_id})
+        
+        if not meal_plan_entry:
+            return jsonify({"message": "No meal plan found"}), 404
+
+        if "recipes" not in meal_plan_entry:
+            return jsonify({"message": "No recipes found for this meal plan"}), 404
+
+        return jsonify({
+            "recipes": meal_plan_entry["recipes"]
         }), 200
 
     except Exception as e:

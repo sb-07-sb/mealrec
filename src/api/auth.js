@@ -155,6 +155,19 @@ export const getMealPlan = async (userId) => {
     }
 };
 
+export const fetchMealRecipes = async (userId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/get_meal_recipes/${userId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch recipe data');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching recipe data:', error);
+      throw error;
+    }
+  };
+
 export const saveRecipesToPinecone = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/recommendation/save_to_pinecone`, {

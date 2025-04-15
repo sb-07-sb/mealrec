@@ -67,7 +67,16 @@ def generate_meal_plan_api():
     user_dislikes = set(data.get('user_dislikes', []))  # Default to empty list if not provided 
 
     query = data.get("query", "")
-
+   # Log processed inputs
+    print("Processed inputs:")
+    print(f"- user_pref: {user_pref}")
+    print(f"- user_likes: {user_likes}")
+    print(f"- size: {size}")
+    print(f"- protein_category: {protein_category}")
+    print(f"- protein_option: {protein_option}")
+    print(f"- meal_types: {meal_types}")
+    print(f"- avoid_ingredients: {user_avoid_ingredients}")
+    print(f"- dislikes: {user_dislikes}")
 
     # Call the function
     meal_plan, final_docs = generate_meal_plan(
@@ -105,8 +114,28 @@ def generate_meal_plan_api():
         print("JSONDecodeError:", e)
         return jsonify({"error": "Failed to decode the meal plan response", "details": str(e)}), 500
     
-    # Return the parsed meal plan
-    return jsonify({"meal_plan": meal_plan_json})
+     # Extract all dish names from the meal plan
+    meal_plan_dishes = set()
+    if isinstance(meal_plan_json, dict):
+        for day, meals in meal_plan_json.items():
+            if isinstance(meals, dict):
+                for meal_type, meal_desc in meals.items():
+                    if isinstance(meal_desc, str):
+                        # Extract dish name (first part before ' - ')
+                        dish_name = meal_desc.split(' - ')[0].strip()
+                        meal_plan_dishes.add(dish_name)
+
+    # Filter final_docs to only include recipes that are in the meal plan
+    matched_recipes = []
+    for recipe in final_docs:  # final_docs is already a list of dicts
+        if 'dish_name' in recipe and recipe['dish_name'] in meal_plan_dishes:
+            matched_recipes.append(recipe)
+
+    # Return the parsed meal plan along with matched recipes
+    return jsonify({
+        "meal_plan": meal_plan_json,
+        "matched_recipes": matched_recipes
+    })
 
 # Function to clean the meal plan string
 def clean_meal_plan_string(meal_plan: str) -> str:

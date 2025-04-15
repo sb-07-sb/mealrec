@@ -92,6 +92,7 @@ const ProfileView = ({ onGeneratePlan }) => {
       await handleSave(userId, formData);
       setProfileData(formData); // Update the displayed data with the saved data
       setEditMode(false);
+      window.location.reload(); // ✅ Reload page 
     } catch (error) {
       console.error('Error saving profile:', error);
       setError('Failed to save profile changes');

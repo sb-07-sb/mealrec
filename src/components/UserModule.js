@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../assets/styles/UserModule.module.css';
-import { User, Utensils, ChevronRight, LogOut } from 'lucide-react';
+import { User, Utensils, ChevronRight, LogOut, LineChart } from 'lucide-react';
 import ProfileView from './User/ProfileView';
 import ProfileWithMealPlan from './MealPlan/ProfileWithMealPlan';
+import RecipeAnalytics from './MealPlan/RecipeAnalytics'; // Import the new component
 import { getUserFormData, generateMealPlan } from '../api/auth'; // Ensure this function exists in your API
+
 
 const UserModule = () => {
     const navigate = useNavigate();
@@ -75,8 +77,13 @@ const UserModule = () => {
                             <span className={styles.navText}>Meal Plan</span>
                             <ChevronRight size={16} className={styles.navArrow} />
                         </li>
-                    </ul>
-                </div>
+                        <li className={`${styles.navItem} ${currentStep === 3 ? styles.activeNavItem : ''}`} onClick={() => handleNavItemClick(3)}>
+                            <LineChart size={18} className={styles.navIcon} />
+                            <span className={styles.navText}>Analytics</span>
+                            <ChevronRight size={16} className={styles.navArrow} />
+                        </li>
+                    </ul>               
+                     </div>
                 {/* Logout Button */}
                 <div className={styles.logoutSection}>
                     <button className={styles.logoutButton} onClick={handleLogout}>
@@ -114,6 +121,11 @@ const UserModule = () => {
                                 currentStep={currentStep}
 
 
+                            />
+                        )}
+                        {currentStep === 3 && (
+                            <RecipeAnalytics 
+                                onBack={() => setCurrentStep(2)}
                             />
                         )}
                     </>
